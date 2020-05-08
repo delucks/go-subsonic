@@ -9,6 +9,8 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"net/url"
+	"path"
 )
 
 type SubsonicResponse struct {
@@ -50,11 +52,15 @@ func (s *SubsonicClient) Authenticate(password string) error {
 	return nil
 }
 
-func (s *SubsonicClient) Ping() bool {
-	req, err := http.NewRequest("GET", s.baseUrl+"rest/ping", nil)
+func (s *SubsonicClient) Request(method string, endpoint string, params map[string]string) ([]byte, error) {
+	baseUrl, err := url.Parse(s.baseUrl)
 	if err != nil {
-		log.Fatal(err)
-		return false
+		return nil, err
+	}
+	baseUrl.Path = path.Join(baseUrl.Path, "/rest/", endpoint)
+	req, err := http.NewRequest(method, baseUrl.String(), nil)
+	if err != nil {
+		return nil, err
 	}
 
 	q := req.URL.Query()
@@ -68,10 +74,17 @@ func (s *SubsonicClient) Ping() bool {
 
 	resp, err := s.client.Do(req)
 	if err != nil {
-		log.Fatal(err)
-		return false
+		return nil, err
 	}
 	contents, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	return contents, nil
+}
+
+func (s *SubsonicClient) Ping() bool {
+	contents, err := s.Request("GET", "ping", nil)
 	if err != nil {
 		log.Fatal(err)
 		return false
