@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/md5"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -13,19 +14,34 @@ import (
 	"path"
 )
 
+const (
+	supportedApiVersion = "1.8.0"
+	libraryVersion      = "0.0.1"
+)
+
+type LicenseValidity struct {
+	Valid bool `json:"valid"`
+}
+
 type SubsonicResponse struct {
 	Status        string `json:"status"`
 	Version       string `json:"version"`
 	Type          string `json:"type"`
 	ServerVersion string `json:"serverVersion"`
+	License       *LicenseValidity
+}
+
+type APIResponse struct {
+	Response *SubsonicResponse `json:"subsonic-response"`
 }
 
 type SubsonicClient struct {
-	client  *http.Client
-	baseUrl string
-	user    string
-	salt    string
-	token   string
+	client     *http.Client
+	BaseUrl    string
+	User       string
+	ClientName string
+	salt       string
+	token      string
 }
 
 func generateSalt() string {
@@ -53,7 +69,7 @@ func (s *SubsonicClient) Authenticate(password string) error {
 }
 
 func (s *SubsonicClient) Request(method string, endpoint string, params map[string]string) ([]byte, error) {
-	baseUrl, err := url.Parse(s.baseUrl)
+	baseUrl, err := url.Parse(s.BaseUrl)
 	if err != nil {
 		return nil, err
 	}
@@ -65,9 +81,9 @@ func (s *SubsonicClient) Request(method string, endpoint string, params map[stri
 
 	q := req.URL.Query()
 	q.Add("f", "json")
-	q.Add("v", "1.8.0")
-	q.Add("c", "override-me")
-	q.Add("u", s.user)
+	q.Add("v", supportedApiVersion)
+	q.Add("c", s.ClientName)
+	q.Add("u", s.User)
 	q.Add("t", s.token)
 	q.Add("s", s.salt)
 	req.URL.RawQuery = q.Encode()
@@ -80,27 +96,45 @@ func (s *SubsonicClient) Request(method string, endpoint string, params map[stri
 	if err != nil {
 		return nil, err
 	}
+	log.Printf("%s\n", contents)
 	return contents, nil
 }
 
 func (s *SubsonicClient) Ping() bool {
-	contents, err := s.Request("GET", "ping", nil)
+	_, err := s.Request("GET", "ping", nil)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return false
 	}
-	fmt.Printf("%s\n", contents)
 	return true
+}
+
+func (s *SubsonicClient) GetLicense() *SubsonicResponse {
+	contents, err := s.Request("GET", "getLicense", nil)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	resp := APIResponse{}
+	err = json.Unmarshal(contents, &resp)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	return resp.Response
 }
 
 func main() {
 	client := SubsonicClient{
-		client:  &http.Client{},
-		baseUrl: "http://192.168.1.7:4040/",
-		user:    "test",
+		client:     &http.Client{},
+		BaseUrl:    "http://192.168.1.7:4040/",
+		User:       "test",
+		ClientName: "go-subsonic_" + libraryVersion,
 	}
 	err := client.Authenticate("blah")
 	if err != nil {
 		log.Fatal(err)
 	}
+	lic := client.GetLicense()
+	fmt.Printf("%#v\n", lic)
 }
