@@ -38,6 +38,7 @@ type SubsonicResponse struct {
 	ServerVersion string `json:"serverVersion"` // navidrome
 	Error         *ErrorResponse
 	License       *LicenseValidity
+	MusicFolders  *MusicFolderContainer
 }
 
 type APIResponse struct {
@@ -139,13 +140,13 @@ func (s *SubsonicClient) Ping() bool {
 	return true
 }
 
-func (s *SubsonicClient) GetLicense() *SubsonicResponse {
+func (s *SubsonicClient) GetLicense() *LicenseValidity {
 	resp, err := s.Get("getLicense", nil)
 	if err != nil {
 		log.Println(err)
 		return nil
 	}
-	return resp
+	return resp.License
 }
 
 func main() {
@@ -167,7 +168,7 @@ func main() {
 		log.Fatal(err)
 	}
 	x := client.GetLicense()
-	fmt.Printf("%#v\n", x.License)
-	x = client.GetMusicFolders()
 	fmt.Printf("%#v\n", x)
+	folders := client.GetMusicFolders()
+	fmt.Printf("%#v\n", folders[0])
 }
