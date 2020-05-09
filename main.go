@@ -161,6 +161,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	indexes = client.GetIndexes(map[string]string{"musicFolderId": "0"})
+	indexes := client.GetIndexes(map[string]string{"musicFolderId": "0"})
 	fmt.Printf("%#v\n", len(indexes.Indexes))
 }
