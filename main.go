@@ -158,22 +158,9 @@ func main() {
 		ClientName: "go-subsonic_" + libraryVersion,
 	}
 	err := client.Authenticate("blah")
-	/*client := SubsonicClient{
-		client:     &http.Client{},
-		BaseUrl:    "http://demo.subsonic.org/",
-		User:       "guest5",
-		ClientName: "go-subsonic_" + libraryVersion,
-	}
-	err := client.Authenticate("guest")*/
 	if err != nil {
 		log.Fatal(err)
 	}
-	//x := client.GetLicense()
-	//fmt.Printf("%#v\n", x)
-	//folders := client.GetMusicFolders()
-	//fmt.Printf("%#v\n", folders[0])
-	indexes := client.GetIndexes(nil)
-	fmt.Printf("%#v\n", len(indexes.Indexes))
 	indexes = client.GetIndexes(map[string]string{"musicFolderId": "0"})
 	fmt.Printf("%#v\n", len(indexes.Indexes))
 }
