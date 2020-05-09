@@ -3,7 +3,7 @@ package main
 import "log"
 
 type MusicFolder struct {
-	Id   int    `json:"id"`
+	Id   int    `json:"id"` // subsonic returns an int, navidrome a string
 	Name string `json:"name"`
 }
 
@@ -32,7 +32,7 @@ type Index struct {
 }
 
 type IndexContainer struct {
-	LastModified    string  `json:"lastModified"` // subsonic returns an int64, navidrome a string
+	LastModified    int64   `json:"lastModified"` // subsonic returns an int64, navidrome a string
 	IgnoredArticles string  `json:"ignoredArticles"`
 	Indexes         []Index `json:"index"`
 }
@@ -49,4 +49,13 @@ func (s *SubsonicClient) GetIndexes(parameters map[string]string) *IndexContaine
 		return nil
 	}
 	return resp.Indexes
+}
+
+func (s *SubsonicClient) GetMusicDirectory(id string) *SubsonicResponse {
+	resp, err := s.Get("getMusicDirectory", map[string]string{"id": id})
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	return resp
 }

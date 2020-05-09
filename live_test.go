@@ -6,6 +6,7 @@ import (
 )
 
 func runCommonTests(client SubsonicClient, t *testing.T) {
+	// These test the library's ability to unmarshal server responses
 	t.Run("Ping", func(t *testing.T) {
 		if !client.Ping() {
 			t.Error("Ping failed (somehow)")
@@ -22,14 +23,16 @@ func runCommonTests(client SubsonicClient, t *testing.T) {
 		if len(folders) < 1 {
 			t.Error("No music folders were returned from the API")
 		}
-		t.Log(folders[0].Name)
+		for _, f := range folders {
+			t.Log(f.Name)
+		}
 	})
 	t.Run("GetIndexes", func(t *testing.T) {
 		// Compare no-args usage versus usage with the folder ID
 		idx := client.GetIndexes(nil)
 		specified := client.GetIndexes(map[string]string{"musicFolderId": "0"})
 		if idx.LastModified != specified.LastModified {
-			t.Errorf("LastModified differs: %s -> %s (specified)", idx.LastModified, specified.LastModified)
+			t.Errorf("LastModified differs: %v -> %v (specified)", idx.LastModified, specified.LastModified)
 		}
 		if idx.IgnoredArticles != specified.IgnoredArticles {
 			t.Errorf("IgnoredArticles differs: %s -> %s (specified)", idx.IgnoredArticles, specified.IgnoredArticles)
@@ -42,6 +45,7 @@ func runCommonTests(client SubsonicClient, t *testing.T) {
 	})
 }
 
+/*
 func TestNavidrome(t *testing.T) {
 	client := SubsonicClient{
 		client:     &http.Client{},
@@ -50,6 +54,21 @@ func TestNavidrome(t *testing.T) {
 		ClientName: "go-subsonic_" + libraryVersion,
 	}
 	err := client.Authenticate("blah")
+	if err != nil {
+		t.Error(err)
+	}
+	runCommonTests(client, t)
+}
+*/
+
+func TestAirsonic(t *testing.T) {
+	client := SubsonicClient{
+		client:     &http.Client{},
+		BaseUrl:    "http://127.0.0.1:8080/",
+		User:       "admin",
+		ClientName: "go-subsonic_" + libraryVersion,
+	}
+	err := client.Authenticate("admin")
 	if err != nil {
 		t.Error(err)
 	}
