@@ -25,15 +25,17 @@ type ErrorResponse struct {
 }
 
 type LicenseValidity struct {
-	Valid bool `json:"valid"`
+	Valid        bool   `json:"valid"`        // standard
+	Email        string `json:"email"`        // subsonic
+	TrialExpires string `json:"trialExpires"` // subsonic
 }
 
 // type SubsonicResponse is the main target for unmarshalling JSON data from the API - everything within the "subsonic-response" key
 type SubsonicResponse struct {
-	Status        string `json:"status"`
-	Version       string `json:"version"`
-	Type          string `json:"type"`
-	ServerVersion string `json:"serverVersion"`
+	Status        string `json:"status"`        // standard
+	Version       string `json:"version"`       // standard
+	Type          string `json:"type"`          // navidrome
+	ServerVersion string `json:"serverVersion"` // navidrome
 	Error         *ErrorResponse
 	License       *LicenseValidity
 }
@@ -93,6 +95,9 @@ func (s *SubsonicClient) Request(method string, endpoint string, params map[stri
 	q.Add("u", s.User)
 	q.Add("t", s.token)
 	q.Add("s", s.salt)
+	for key, val := range params {
+		q.Add(key, val)
+	}
 	req.URL.RawQuery = q.Encode()
 
 	resp, err := s.client.Do(req)
@@ -143,17 +148,35 @@ func (s *SubsonicClient) GetLicense() *SubsonicResponse {
 	return resp
 }
 
+func (s *SubsonicClient) GetMusicFolders() *SubsonicResponse {
+	resp, err := s.Get("getMusicFolders", nil)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	return resp
+}
+
 func main() {
-	client := SubsonicClient{
-		client:     &http.Client{},
+	/*navidrome := SubsonicClient{
+		client:  &http.Client{},
 		BaseUrl:    "http://192.168.1.7:4040/",
 		User:       "test",
 		ClientName: "go-subsonic_" + libraryVersion,
 	}
-	err := client.Authenticate("blah")
+	err := client.Authenticate("blah")*/
+	client := SubsonicClient{
+		client:     &http.Client{},
+		BaseUrl:    "http://demo.subsonic.org/",
+		User:       "guest5",
+		ClientName: "go-subsonic_" + libraryVersion,
+	}
+	err := client.Authenticate("guest")
 	if err != nil {
 		log.Fatal(err)
 	}
-	lic := client.GetLicense()
-	fmt.Printf("%#v\n", lic.License.Valid)
+	x := client.GetLicense()
+	fmt.Printf("%#v\n", x.License)
+	x = client.GetMusicFolders()
+	fmt.Printf("%#v\n", x)
 }
