@@ -110,7 +110,7 @@ func (s *SubsonicClient) Request(method string, endpoint string, params map[stri
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("%s\n", contents)
+	//log.Printf("%s\n", contents)
 	return contents, nil
 }
 
@@ -172,6 +172,8 @@ func main() {
 	//fmt.Printf("%#v\n", x)
 	//folders := client.GetMusicFolders()
 	//fmt.Printf("%#v\n", folders[0])
-	indexes := client.GetIndexes()
-	fmt.Printf("%#v\n", indexes)
+	indexes := client.GetIndexes(nil)
+	fmt.Printf("%#v\n", len(indexes.Indexes))
+	indexes = client.GetIndexes(map[string]string{"musicFolderId": "0"})
+	fmt.Printf("%#v\n", len(indexes.Indexes))
 }

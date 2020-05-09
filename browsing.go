@@ -37,8 +37,13 @@ type IndexContainer struct {
 	Indexes         []Index `json:"index"`
 }
 
-func (s *SubsonicClient) GetIndexes() *IndexContainer {
-	resp, err := s.Get("getIndexes", nil)
+/*
+ * Parameters:
+ *   musicFolderId   If specified, only return artists in the music folder with the given ID. See getMusicFolders.
+ *   ifModifiedSince If specified, only return a result if the artist collection has changed since the given time (in milliseconds since 1 Jan 1970).
+ */
+func (s *SubsonicClient) GetIndexes(parameters map[string]string) *IndexContainer {
+	resp, err := s.Get("getIndexes", parameters)
 	if err != nil {
 		log.Println(err)
 		return nil
