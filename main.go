@@ -37,8 +37,9 @@ type SubsonicResponse struct {
 	Type          string `json:"type"`          // navidrome
 	ServerVersion string `json:"serverVersion"` // navidrome
 	Error         *ErrorResponse
-	License       *LicenseValidity
-	MusicFolders  *MusicFolderContainer
+	License       *LicenseValidity      // getLicense
+	MusicFolders  *MusicFolderContainer // getMusicFolders
+	Indexes       *IndexContainer       // getIndexes
 }
 
 type APIResponse struct {
@@ -73,7 +74,7 @@ func (s *SubsonicClient) Authenticate(password string) error {
 	s.token = fmt.Sprintf("%x", h.Sum(nil))
 	// Test authentication
 	if !s.Ping() {
-		return errors.New("Invalid authentication parameters!")
+		return errors.New("Authentication failed")
 	}
 	return nil
 }
@@ -150,25 +151,27 @@ func (s *SubsonicClient) GetLicense() *LicenseValidity {
 }
 
 func main() {
-	/*navidrome := SubsonicClient{
-		client:  &http.Client{},
+	client := SubsonicClient{
+		client:     &http.Client{},
 		BaseUrl:    "http://192.168.1.7:4040/",
 		User:       "test",
 		ClientName: "go-subsonic_" + libraryVersion,
 	}
-	err := client.Authenticate("blah")*/
-	client := SubsonicClient{
+	err := client.Authenticate("blah")
+	/*client := SubsonicClient{
 		client:     &http.Client{},
 		BaseUrl:    "http://demo.subsonic.org/",
 		User:       "guest5",
 		ClientName: "go-subsonic_" + libraryVersion,
 	}
-	err := client.Authenticate("guest")
+	err := client.Authenticate("guest")*/
 	if err != nil {
 		log.Fatal(err)
 	}
-	x := client.GetLicense()
-	fmt.Printf("%#v\n", x)
-	folders := client.GetMusicFolders()
-	fmt.Printf("%#v\n", folders[0])
+	//x := client.GetLicense()
+	//fmt.Printf("%#v\n", x)
+	//folders := client.GetMusicFolders()
+	//fmt.Printf("%#v\n", folders[0])
+	indexes := client.GetIndexes()
+	fmt.Printf("%#v\n", indexes)
 }
