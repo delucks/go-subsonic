@@ -19,15 +19,22 @@ const (
 	libraryVersion      = "0.0.1"
 )
 
+type ErrorResponse struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
+
 type LicenseValidity struct {
 	Valid bool `json:"valid"`
 }
 
+// type SubsonicResponse is the main target for unmarshalling JSON data from the API - everything within the "subsonic-response" key
 type SubsonicResponse struct {
 	Status        string `json:"status"`
 	Version       string `json:"version"`
 	Type          string `json:"type"`
 	ServerVersion string `json:"serverVersion"`
+	Error         *ErrorResponse
 	License       *LicenseValidity
 }
 
@@ -100,6 +107,24 @@ func (s *SubsonicClient) Request(method string, endpoint string, params map[stri
 	return contents, nil
 }
 
+// Get is a convenience interface to issue a GET request and parse the response body (99% of Subsonic API calls)
+func (s *SubsonicClient) Get(endpoint string, params map[string]string) (*SubsonicResponse, error) {
+	responseBody, err := s.Request("GET", endpoint, params)
+	if err != nil {
+		return nil, err
+	}
+	parsed := APIResponse{}
+	err = json.Unmarshal(responseBody, &parsed)
+	if err != nil {
+		return nil, err
+	}
+	resp := parsed.Response
+	if resp.Error != nil {
+		return nil, fmt.Errorf("Error #%d: %s\n", resp.Error.Code, resp.Error.Message)
+	}
+	return resp, nil
+}
+
 func (s *SubsonicClient) Ping() bool {
 	_, err := s.Request("GET", "ping", nil)
 	if err != nil {
@@ -110,18 +135,12 @@ func (s *SubsonicClient) Ping() bool {
 }
 
 func (s *SubsonicClient) GetLicense() *SubsonicResponse {
-	contents, err := s.Request("GET", "getLicense", nil)
+	resp, err := s.Get("getLicense", nil)
 	if err != nil {
 		log.Println(err)
 		return nil
 	}
-	resp := APIResponse{}
-	err = json.Unmarshal(contents, &resp)
-	if err != nil {
-		log.Println(err)
-		return nil
-	}
-	return resp.Response
+	return resp
 }
 
 func main() {
@@ -136,5 +155,5 @@ func main() {
 		log.Fatal(err)
 	}
 	lic := client.GetLicense()
-	fmt.Printf("%#v\n", lic)
+	fmt.Printf("%#v\n", lic.License.Valid)
 }
