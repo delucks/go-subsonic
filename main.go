@@ -41,6 +41,7 @@ type SubsonicResponse struct {
 	MusicFolders  *MusicFolderContainer // getMusicFolders
 	Indexes       *IndexContainer       // getIndexes
 	Directory     *Directory            // getMusicDirectory
+	Genres        *GenreContainer       // getGenres
 }
 
 type APIResponse struct {

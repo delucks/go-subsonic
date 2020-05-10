@@ -55,6 +55,20 @@ func runCommonTests(client SubsonicClient, t *testing.T) {
 			}
 		}
 	})
+	t.Run("GetGenres", func(t *testing.T) {
+		genres, err := client.GetGenres()
+		if err != nil {
+			t.Error(err)
+		}
+		for _, g := range genres {
+			if g.Value == "" {
+				t.Error("Empty genre present")
+			}
+			if g.SongCount == 0 {
+				t.Errorf("Genre %s has no songs", g.Value)
+			}
+		}
+	})
 }
 
 func runAirsonicTests(client SubsonicClient, t *testing.T) {

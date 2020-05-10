@@ -94,3 +94,21 @@ func (s *SubsonicClient) GetMusicDirectory(id string) (*Directory, error) {
 	}
 	return resp.Directory, nil
 }
+
+type Genre struct {
+	SongCount  int    `json:"songCount"`
+	AlbumCount int    `json:"albumCount"`
+	Value      string `json:"value"`
+}
+
+type GenreContainer struct {
+	Genre []*Genre `json:"genre"`
+}
+
+func (s *SubsonicClient) GetGenres() ([]*Genre, error) {
+	resp, err := s.Get("getGenres", nil)
+	if err != nil {
+		return nil, err
+	}
+	return resp.Genres.Genre, nil
+}
