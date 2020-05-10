@@ -13,13 +13,19 @@ func runCommonTests(client SubsonicClient, t *testing.T) {
 		}
 	})
 	t.Run("License", func(t *testing.T) {
-		license := client.GetLicense()
+		license, err := client.GetLicense()
+		if err != nil {
+			t.Error(err)
+		}
 		if !license.Valid {
 			t.Errorf("Invalid license returned- %#v\n", license)
 		}
 	})
 	t.Run("GetMusicFolders", func(t *testing.T) {
-		folders := client.GetMusicFolders()
+		folders, err := client.GetMusicFolders()
+		if err != nil {
+			t.Error(err)
+		}
 		if len(folders) < 1 {
 			t.Error("No music folders were returned from the API")
 		}
@@ -29,8 +35,14 @@ func runCommonTests(client SubsonicClient, t *testing.T) {
 	})
 	t.Run("GetIndexes", func(t *testing.T) {
 		// Compare no-args usage versus usage with the folder ID
-		idx := client.GetIndexes(nil)
-		specified := client.GetIndexes(map[string]string{"musicFolderId": "0"})
+		idx, err := client.GetIndexes(nil)
+		if err != nil {
+			t.Error(err)
+		}
+		specified, err := client.GetIndexes(map[string]string{"musicFolderId": "0"})
+		if err != nil {
+			t.Error(err)
+		}
 		if idx.LastModified != specified.LastModified {
 			t.Errorf("LastModified differs: %v -> %v (specified)", idx.LastModified, specified.LastModified)
 		}
@@ -49,7 +61,10 @@ func runAirsonicTests(client SubsonicClient, t *testing.T) {
 	// Subsonic/Airsonic uses numeric IDs
 	t.Run("GetMusicDirectory", func(t *testing.T) {
 		// TODO replace this magic number with a song ID when search2 is ready
-		dir := client.GetMusicDirectory("5")
+		dir, err := client.GetMusicDirectory("5")
+		if err != nil {
+			t.Error(err)
+		}
 		if dir.ID == "" {
 			t.Error("Directory has an empty ID")
 		}
@@ -81,7 +96,10 @@ func TestNavidrome(t *testing.T) {
 	// Navidrome uses UUIDs (strings)
 	t.Run("GetMusicDirectory", func(t *testing.T) {
 		// TODO replace this magic uuid with a real one when search2 is ready
-		dir := client.GetMusicDirectory("6b59470bff90cf113faa72dc01f84995")
+		dir, err := client.GetMusicDirectory("6b59470bff90cf113faa72dc01f84995")
+		if err != nil {
+			t.Error(err)
+		}
 		if dir.ID == "" {
 			t.Error("Directory has an empty ID")
 		}

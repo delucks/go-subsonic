@@ -142,26 +142,10 @@ func (s *SubsonicClient) Ping() bool {
 	return true
 }
 
-func (s *SubsonicClient) GetLicense() *LicenseValidity {
+func (s *SubsonicClient) GetLicense() (*LicenseValidity, error) {
 	resp, err := s.Get("getLicense", nil)
 	if err != nil {
-		log.Println(err)
-		return nil
+		return nil, err
 	}
-	return resp.License
-}
-
-func main() {
-	client := SubsonicClient{
-		client:     &http.Client{},
-		BaseUrl:    "http://192.168.1.7:4040/",
-		User:       "test",
-		ClientName: "go-subsonic_" + libraryVersion,
-	}
-	err := client.Authenticate("blah")
-	if err != nil {
-		log.Fatal(err)
-	}
-	indexes := client.GetIndexes(map[string]string{"musicFolderId": "0"})
-	fmt.Printf("%#v\n", len(indexes.Indexes))
+	return resp.License, nil
 }

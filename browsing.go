@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"time"
 )
 
@@ -14,13 +13,12 @@ type MusicFolderContainer struct {
 	Folders []*MusicFolder `json:"musicFolder"`
 }
 
-func (s *SubsonicClient) GetMusicFolders() []*MusicFolder {
+func (s *SubsonicClient) GetMusicFolders() ([]*MusicFolder, error) {
 	resp, err := s.Get("getMusicFolders", nil)
 	if err != nil {
-		log.Println(err)
-		return nil
+		return nil, err
 	}
-	return resp.MusicFolders.Folders
+	return resp.MusicFolders.Folders, nil
 }
 
 type Artist struct {
@@ -45,13 +43,12 @@ type IndexContainer struct {
  *   musicFolderId   If specified, only return artists in the music folder with the given ID. See getMusicFolders.
  *   ifModifiedSince If specified, only return a result if the artist collection has changed since the given time (in milliseconds since 1 Jan 1970).
  */
-func (s *SubsonicClient) GetIndexes(parameters map[string]string) *IndexContainer {
+func (s *SubsonicClient) GetIndexes(parameters map[string]string) (*IndexContainer, error) {
 	resp, err := s.Get("getIndexes", parameters)
 	if err != nil {
-		log.Println(err)
-		return nil
+		return nil, err
 	}
-	return resp.Indexes
+	return resp.Indexes, nil
 }
 
 type Child struct {
@@ -90,11 +87,10 @@ type Directory struct {
 }
 
 // The parameter is an object ID from the database
-func (s *SubsonicClient) GetMusicDirectory(id string) *Directory {
+func (s *SubsonicClient) GetMusicDirectory(id string) (*Directory, error) {
 	resp, err := s.Get("getMusicDirectory", map[string]string{"id": id})
 	if err != nil {
-		log.Println(err)
-		return nil
+		return nil, err
 	}
-	return resp.Directory
+	return resp.Directory, nil
 }
