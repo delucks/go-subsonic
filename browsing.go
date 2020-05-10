@@ -1,6 +1,9 @@
 package main
 
-import "log"
+import (
+	"log"
+	"time"
+)
 
 type MusicFolder struct {
 	Id   int    `json:"id"` // subsonic returns an int, navidrome a string
@@ -51,11 +54,47 @@ func (s *SubsonicClient) GetIndexes(parameters map[string]string) *IndexContaine
 	return resp.Indexes
 }
 
-func (s *SubsonicClient) GetMusicDirectory(id string) *SubsonicResponse {
+type Child struct {
+	ID          string    `json:"id"`
+	Parent      string    `json:"parent"`
+	IsDir       bool      `json:"isDir"`
+	Title       string    `json:"title"`
+	Album       string    `json:"album"`
+	CoverArt    string    `json:"coverArt"`
+	Size        int64     `json:"size"` // string in navidrome
+	ContentType string    `json:"contentType"`
+	Suffix      string    `json:"suffix"`
+	Duration    int       `json:"duration"`
+	BitRate     int       `json:"bitRate"`
+	Path        string    `json:"path"`
+	IsVideo     bool      `json:"isVideo"`
+	Created     time.Time `json:"created"`
+	Type        string    `json:"type"`
+	PlayCount   int       `json:"playCount"` // airsonic only
+	Artist      string    `json:"artist"`    // this and all following fields are navidrome only
+	Track       int       `json:"track"`
+	Year        int       `json:"year"`
+	Genre       string    `json:"genre"`
+	DiscNumber  int       `json:"discNumber"`
+	AlbumID     string    `json:"albumId"`
+	ArtistID    string    `json:"artistId"`
+}
+
+type Directory struct {
+	Children   []Child `json:"child"`
+	ID         string  `json:"id"`
+	Name       string  `json:"name"`
+	PlayCount  int     `json:"playCount"`  // airsonic only
+	AlbumCount int     `json:"albumCount"` // navidrome only
+	Parent     string  `json:"parent"`     // navidrome only
+}
+
+// The parameter is an object ID from the database
+func (s *SubsonicClient) GetMusicDirectory(id string) *Directory {
 	resp, err := s.Get("getMusicDirectory", map[string]string{"id": id})
 	if err != nil {
 		log.Println(err)
 		return nil
 	}
-	return resp
+	return resp.Directory
 }

@@ -40,6 +40,7 @@ type SubsonicResponse struct {
 	License       *LicenseValidity      // getLicense
 	MusicFolders  *MusicFolderContainer // getMusicFolders
 	Indexes       *IndexContainer       // getIndexes
+	Directory     *Directory            // getMusicDirectory
 }
 
 type APIResponse struct {

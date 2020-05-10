@@ -45,6 +45,26 @@ func runCommonTests(client SubsonicClient, t *testing.T) {
 	})
 }
 
+func runAirsonicTests(client SubsonicClient, t *testing.T) {
+	// Subsonic/Airsonic uses numeric IDs
+	t.Run("GetMusicDirectory", func(t *testing.T) {
+		// TODO replace this magic number with a song ID when search2 is ready
+		dir := client.GetMusicDirectory("5")
+		if dir.ID == "" {
+			t.Error("Directory has an empty ID")
+		}
+		if dir.Name == "" {
+			t.Error("Directory has an empty Name")
+		}
+		for _, child := range dir.Children {
+			t.Log(child.Title)
+			if child.ID == "" {
+				t.Errorf("Child %s has an empty ID", child.Title)
+			}
+		}
+	})
+}
+
 /*
 func TestNavidrome(t *testing.T) {
 	client := SubsonicClient{
@@ -58,6 +78,23 @@ func TestNavidrome(t *testing.T) {
 		t.Error(err)
 	}
 	runCommonTests(client, t)
+	// Navidrome uses UUIDs (strings)
+	t.Run("GetMusicDirectory", func(t *testing.T) {
+		// TODO replace this magic uuid with a real one when search2 is ready
+		dir := client.GetMusicDirectory("6b59470bff90cf113faa72dc01f84995")
+		if dir.ID == "" {
+			t.Error("Directory has an empty ID")
+		}
+		if dir.Name == "" {
+			t.Error("Directory has an empty Name")
+		}
+		for _, child := range dir.Children {
+			t.Log(child.Title)
+			if child.ID == "" {
+				t.Errorf("Child %s has an empty ID", child.Title)
+			}
+		}
+	})
 }
 */
 
@@ -73,6 +110,7 @@ func TestAirsonic(t *testing.T) {
 		t.Error(err)
 	}
 	runCommonTests(client, t)
+	runAirsonicTests(client, t)
 }
 
 func TestSubsonic(t *testing.T) {
@@ -87,4 +125,5 @@ func TestSubsonic(t *testing.T) {
 		t.Error(err)
 	}
 	runCommonTests(client, t)
+	runAirsonicTests(client, t)
 }
