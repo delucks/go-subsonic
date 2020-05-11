@@ -69,6 +69,24 @@ func runCommonTests(client SubsonicClient, t *testing.T) {
 			}
 		}
 	})
+	t.Run("GetArtists", func(t *testing.T) {
+		idx, err := client.GetArtists(nil)
+		if err != nil {
+			t.Error(err)
+		}
+		specified, err := client.GetArtists(map[string]string{"musicFolderId": "0"})
+		if err != nil {
+			t.Error(err)
+		}
+		if idx.IgnoredArticles != specified.IgnoredArticles {
+			t.Errorf("IgnoredArticles differs: %s -> %s (specified)", idx.IgnoredArticles, specified.IgnoredArticles)
+		}
+		for position, index := range idx.Indexes {
+			if index.Name != specified.Indexes[position].Name {
+				t.Errorf("Names differ: %s -> %s (specified)", index.Name, specified.Indexes[position].Name)
+			}
+		}
+	})
 }
 
 func runAirsonicTests(client SubsonicClient, t *testing.T) {

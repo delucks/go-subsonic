@@ -24,7 +24,9 @@ func (s *SubsonicClient) GetMusicFolders() ([]*MusicFolder, error) {
 type Artist struct {
 	ID             string `json:"id"`
 	Name           string `json:"name"`
-	ArtistImageURL string `json:"artistImageUrl"`
+	AlbumCount     int    `json:"albumCount"`
+	ArtistImageURL string `json:"artistImageUrl"` // subsonic only
+	CoverArt       string `json:"coverArt"`       // subsonic only
 }
 
 type Index struct {
@@ -78,12 +80,12 @@ type Child struct {
 }
 
 type Directory struct {
-	Children   []Child `json:"child"`
-	ID         string  `json:"id"`
-	Name       string  `json:"name"`
-	PlayCount  int     `json:"playCount"`  // airsonic only
-	AlbumCount int     `json:"albumCount"` // navidrome only
-	Parent     string  `json:"parent"`     // navidrome only
+	Children   []*Child `json:"child"`
+	ID         string   `json:"id"`
+	Name       string   `json:"name"`
+	PlayCount  int      `json:"playCount"`  // airsonic only
+	AlbumCount int      `json:"albumCount"` // navidrome only
+	Parent     string   `json:"parent"`     // navidrome only
 }
 
 // The parameter is an object ID from the database
@@ -111,4 +113,21 @@ func (s *SubsonicClient) GetGenres() ([]*Genre, error) {
 		return nil, err
 	}
 	return resp.Genres.Genre, nil
+}
+
+type ArtistsContainer struct {
+	IgnoredArticles string  `json:"ignoredArticles"`
+	Indexes         []Index `json:"index"`
+}
+
+/*
+ * Parameters:
+ *   musicFolderId   If specified, only return artists in the music folder with the given ID. See getMusicFolders.
+ */
+func (s *SubsonicClient) GetArtists(parameters map[string]string) (*ArtistsContainer, error) {
+	resp, err := s.Get("getArtists", parameters)
+	if err != nil {
+		return nil, err
+	}
+	return resp.Artists, nil
 }
