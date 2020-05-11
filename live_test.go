@@ -119,6 +119,15 @@ func runAirsonicTests(client SubsonicClient, t *testing.T) {
 			t.Errorf("Artist %s has %d albums in the 'album' key, but an AlbumCount of %d", artist.Name, len(artist.Albums), artist.AlbumCount)
 		}
 	})
+	t.Run("GetAlbum", func(t *testing.T) {
+		album, err := client.GetAlbum("1")
+		if err != nil {
+			t.Error(err)
+		}
+		if len(album.Songs) != album.SongCount {
+			t.Errorf("Album %s has %d songs in the 'song' key, but an songCount of %d", album.Name, len(album.Songs), album.SongCount)
+		}
+	})
 }
 
 /*

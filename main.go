@@ -44,6 +44,7 @@ type SubsonicResponse struct {
 	Genres        *GenreContainer       // getGenres
 	Artists       *ArtistsContainer     // getArtists
 	Artist        *Artist               // getArtist
+	Album         *Album                // getAlbum
 }
 
 type APIResponse struct {

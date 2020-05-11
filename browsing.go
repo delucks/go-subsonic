@@ -21,6 +21,30 @@ func (s *SubsonicClient) GetMusicFolders() ([]*MusicFolder, error) {
 	return resp.MusicFolders.Folders, nil
 }
 
+type Song struct {
+	ID            string    `json:"id"`
+	AlbumID       string    `json:"albumId"`
+	Album         string    `json:"album"`
+	ArtistID      string    `json:"artistId"`
+	Artist        string    `json:"artist"`
+	AverageRating float32   `json:"averageRating,omitempty"`
+	BitRate       int       `json:"bitRate"`
+	ContentType   string    `json:"contentType"`
+	CoverArt      string    `json:"coverArt"`
+	Created       time.Time `json:"created"`
+	Duration      int       `json:"duration"`
+	Genre         string    `json:"genre"`
+	IsDir         bool      `json:"isDir"`
+	Parent        string    `json:"parent"`
+	Path          string    `json:"path"`
+	PlayCount     int       `json:"playCount"`
+	Size          int       `json:"size"`
+	Suffix        string    `json:"suffix"`
+	Title         string    `json:"title"`
+	Track         int       `json:"track"`
+	Type          string    `json:"type"`
+}
+
 type Album struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name"`
@@ -33,6 +57,7 @@ type Album struct {
 	Genre     string    `json:"genre"`
 	PlayCount int       `json:"playCount"`
 	CoverArt  string    `json:"coverArt"`
+	Songs     []*Song   `json:"song"`    // populated by getAlbum
 	IsDir     bool      `json:"isDir"`   // navidrome only
 	IsVideo   bool      `json:"isVideo"` // navidrome only
 	Size      string    `json:"size"`    // navidrome only
@@ -87,10 +112,10 @@ type Child struct {
 	Suffix        string    `json:"suffix"`
 	Title         string    `json:"title"`
 	Type          string    `json:"type"`
-	PlayCount     int       `json:"playCount"`     // subsonic / airsonic
-	UserRating    int       `json:"userRating"`    // subsonic only
-	AverageRating float32   `json:"averageRating"` // subsonic only
-	Artist        string    `json:"artist"`        // this and all following fields are navidrome only
+	PlayCount     int       `json:"playCount"`               // subsonic / airsonic
+	UserRating    int       `json:"userRating"`              // subsonic only
+	AverageRating float32   `json:"averageRating,omitempty"` // subsonic only
+	Artist        string    `json:"artist"`                  // this and all following fields are navidrome only
 	Track         int       `json:"track"`
 	Year          int       `json:"year"`
 	Genre         string    `json:"genre"`
@@ -158,4 +183,12 @@ func (s *SubsonicClient) GetArtist(id string) (*Artist, error) {
 		return nil, err
 	}
 	return resp.Artist, nil
+}
+
+func (s *SubsonicClient) GetAlbum(id string) (*Album, error) {
+	resp, err := s.Get("getAlbum", map[string]string{"id": id})
+	if err != nil {
+		return nil, err
+	}
+	return resp.Album, nil
 }
