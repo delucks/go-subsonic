@@ -43,6 +43,7 @@ type SubsonicResponse struct {
 	Directory     *Directory            // getMusicDirectory
 	Genres        *GenreContainer       // getGenres
 	Artists       *ArtistsContainer     // getArtists
+	Artist        *Artist               // getArtist
 }
 
 type APIResponse struct {

@@ -21,12 +21,30 @@ func (s *SubsonicClient) GetMusicFolders() ([]*MusicFolder, error) {
 	return resp.MusicFolders.Folders, nil
 }
 
+type Album struct {
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	Artist    string    `json:"artist"`
+	ArtistID  string    `json:"artistId"`
+	SongCount int       `json:"songCount"`
+	Duration  int       `json:"duration"`
+	Created   time.Time `json:"created"`
+	Year      int       `json:"year"`
+	Genre     string    `json:"genre"`
+	PlayCount int       `json:"playCount"`
+	CoverArt  string    `json:"coverArt"`
+	IsDir     bool      `json:"isDir"`   // navidrome only
+	IsVideo   bool      `json:"isVideo"` // navidrome only
+	Size      string    `json:"size"`    // navidrome only
+}
+
 type Artist struct {
-	ID             string `json:"id"`
-	Name           string `json:"name"`
-	AlbumCount     int    `json:"albumCount"`
-	ArtistImageURL string `json:"artistImageUrl"` // subsonic only
-	CoverArt       string `json:"coverArt"`       // subsonic only
+	ID             string   `json:"id"`
+	Name           string   `json:"name"`
+	AlbumCount     int      `json:"albumCount"`
+	ArtistImageURL string   `json:"artistImageUrl"` // subsonic only
+	CoverArt       string   `json:"coverArt"`       // subsonic only
+	Albums         []*Album `json:"album"`          // only filled by getArtist
 }
 
 type Index struct {
@@ -54,29 +72,31 @@ func (s *SubsonicClient) GetIndexes(parameters map[string]string) (*IndexContain
 }
 
 type Child struct {
-	ID          string    `json:"id"`
-	Parent      string    `json:"parent"`
-	IsDir       bool      `json:"isDir"`
-	Title       string    `json:"title"`
-	Album       string    `json:"album"`
-	CoverArt    string    `json:"coverArt"`
-	Size        int64     `json:"size"` // string in navidrome
-	ContentType string    `json:"contentType"`
-	Suffix      string    `json:"suffix"`
-	Duration    int       `json:"duration"`
-	BitRate     int       `json:"bitRate"`
-	Path        string    `json:"path"`
-	IsVideo     bool      `json:"isVideo"`
-	Created     time.Time `json:"created"`
-	Type        string    `json:"type"`
-	PlayCount   int       `json:"playCount"` // airsonic only
-	Artist      string    `json:"artist"`    // this and all following fields are navidrome only
-	Track       int       `json:"track"`
-	Year        int       `json:"year"`
-	Genre       string    `json:"genre"`
-	DiscNumber  int       `json:"discNumber"`
-	AlbumID     string    `json:"albumId"`
-	ArtistID    string    `json:"artistId"`
+	ID            string    `json:"id"`
+	Album         string    `json:"album"`
+	BitRate       int       `json:"bitRate"`
+	ContentType   string    `json:"contentType"`
+	CoverArt      string    `json:"coverArt"`
+	Created       time.Time `json:"created"`
+	Duration      int       `json:"duration"`
+	IsDir         bool      `json:"isDir"`
+	IsVideo       bool      `json:"isVideo"`
+	Parent        string    `json:"parent"`
+	Path          string    `json:"path"`
+	Size          int64     `json:"size"` // string in navidrome
+	Suffix        string    `json:"suffix"`
+	Title         string    `json:"title"`
+	Type          string    `json:"type"`
+	PlayCount     int       `json:"playCount"`     // subsonic / airsonic
+	UserRating    int       `json:"userRating"`    // subsonic only
+	AverageRating float32   `json:"averageRating"` // subsonic only
+	Artist        string    `json:"artist"`        // this and all following fields are navidrome only
+	Track         int       `json:"track"`
+	Year          int       `json:"year"`
+	Genre         string    `json:"genre"`
+	DiscNumber    int       `json:"discNumber"`
+	AlbumID       string    `json:"albumId"`
+	ArtistID      string    `json:"artistId"`
 }
 
 type Directory struct {
@@ -130,4 +150,12 @@ func (s *SubsonicClient) GetArtists(parameters map[string]string) (*ArtistsConta
 		return nil, err
 	}
 	return resp.Artists, nil
+}
+
+func (s *SubsonicClient) GetArtist(id string) (*Artist, error) {
+	resp, err := s.Get("getArtist", map[string]string{"id": id})
+	if err != nil {
+		return nil, err
+	}
+	return resp.Artist, nil
 }
