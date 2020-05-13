@@ -14,7 +14,7 @@
 - [x] getArtists (1.8.0)
 - [x] getArtist (1.8.0)
 - [x] getAlbum
-- [ ] getSong (1.8.0)
+- [x] getSong (1.8.0)
 - [ ] getVideos (1.8.0)
 - [ ] getVideoInfo (1.14.0)
 - [ ] getArtistInfo (1.11.0)

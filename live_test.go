@@ -128,6 +128,15 @@ func runAirsonicTests(client SubsonicClient, t *testing.T) {
 			t.Errorf("Album %s has %d songs in the 'song' key, but an songCount of %d", album.Name, len(album.Songs), album.SongCount)
 		}
 	})
+	t.Run("GetSong", func(t *testing.T) {
+		song, err := client.GetSong("27")
+		if err != nil {
+			t.Error(err)
+		}
+		if song.ID == "" {
+			t.Errorf("Song was not returned properly, %#v\n", song)
+		}
+	})
 }
 
 /*
@@ -168,10 +177,8 @@ func TestNavidrome(t *testing.T) {
 
 func TestAirsonic(t *testing.T) {
 	client := SubsonicClient{
-		client:     &http.Client{},
-		BaseUrl:    "http://127.0.0.1:8080/",
-		User:       "admin",
-		ClientName: "go-subsonic_" + libraryVersion,
+		client:  &http.Client{},
+		BaseUrl: "http://127.0.0.1:8080/",
 	}
 	err := client.Authenticate("admin")
 	if err != nil {

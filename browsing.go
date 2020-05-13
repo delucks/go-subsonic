@@ -27,10 +27,8 @@ type Song struct {
 	Album         string    `json:"album"`
 	ArtistID      string    `json:"artistId"`
 	Artist        string    `json:"artist"`
-	AverageRating float32   `json:"averageRating,omitempty"`
 	BitRate       int       `json:"bitRate"`
 	ContentType   string    `json:"contentType"`
-	CoverArt      string    `json:"coverArt"`
 	Created       time.Time `json:"created"`
 	Duration      int       `json:"duration"`
 	Genre         string    `json:"genre"`
@@ -43,6 +41,8 @@ type Song struct {
 	Title         string    `json:"title"`
 	Track         int       `json:"track"`
 	Type          string    `json:"type"`
+	AverageRating float32   `json:"averageRating,omitempty"` // subsonic only
+	CoverArt      string    `json:"coverArt"`                // subsonic only
 }
 
 type Album struct {
@@ -191,4 +191,12 @@ func (s *SubsonicClient) GetAlbum(id string) (*Album, error) {
 		return nil, err
 	}
 	return resp.Album, nil
+}
+
+func (s *SubsonicClient) GetSong(id string) (*Song, error) {
+	resp, err := s.Get("getSong", map[string]string{"id": id})
+	if err != nil {
+		return nil, err
+	}
+	return resp.Song, nil
 }
