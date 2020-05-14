@@ -252,3 +252,28 @@ func (s *SubsonicClient) GetArtistInfo2(id string, parameters map[string]string)
 	}
 	return resp.ArtistInfo2, nil
 }
+
+type AlbumInfo struct {
+	Notes          string `json:"notes"`
+	MusicBrainzID  string `json:"musicBrainzId"`
+	LastFmURL      string `json:"lastFmUrl"`
+	SmallImageURL  string `json:"smallImageUrl"`
+	MediumImageURL string `json:"mediumImageUrl"`
+	LargeImageURL  string `json:"largeImageUrl"`
+}
+
+func (s *SubsonicClient) GetAlbumInfo(id string) (*AlbumInfo, error) {
+	resp, err := s.Get("getAlbumInfo", map[string]string{"id": id})
+	if err != nil {
+		return nil, err
+	}
+	return resp.AlbumInfo, nil
+}
+
+func (s *SubsonicClient) GetAlbumInfo2(id string) (*AlbumInfo, error) {
+	resp, err := s.Get("getAlbumInfo2", map[string]string{"id": id})
+	if err != nil {
+		return nil, err
+	}
+	return resp.AlbumInfo, nil
+}

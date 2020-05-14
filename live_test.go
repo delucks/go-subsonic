@@ -104,8 +104,8 @@ func runAirsonicTests(client SubsonicClient, t *testing.T) {
 			t.Error("Directory has an empty Name")
 		}
 		for _, child := range dir.Children {
-			t.Log(child.Title)
 			if child.ID == "" {
+				t.Log(child.Title)
 				t.Errorf("Child %s has an empty ID", child.Title)
 			}
 		}
@@ -151,6 +151,24 @@ func runAirsonicTests(client SubsonicClient, t *testing.T) {
 		}
 		if ai.Biography == "" {
 			t.Error("Empty biography, invalid response")
+		}
+	})
+	t.Run("GetAlbumInfo", func(t *testing.T) {
+		ai, err := client.GetAlbumInfo("48")
+		if err != nil {
+			t.Error(err)
+		}
+		if ai.MusicBrainzID == "" {
+			t.Logf("%#v\n", ai)
+			t.Error("Empty MB id from GetAlbumInfo, invalid response")
+		}
+		ai, err = client.GetAlbumInfo2("1")
+		if err != nil {
+			t.Error(err)
+		}
+		if ai.MusicBrainzID == "" {
+			t.Logf("%#v\n", ai)
+			t.Error("Empty MB id from GetAlbumInfo2, invalid response")
 		}
 	})
 }
