@@ -63,6 +63,7 @@ type Album struct {
 	Size      string    `json:"size"`    // navidrome only
 }
 
+// Artists are obtained by calls to GetIndex (with few fields), and GetArtists/GetArtist with more fields.
 type Artist struct {
 	ID             string   `json:"id"`
 	Name           string   `json:"name"`
@@ -72,6 +73,7 @@ type Artist struct {
 	Albums         []*Album `json:"album"`          // only filled by getArtist
 }
 
+// Index contains a by-letter representation of every item in the database.
 type Index struct {
 	Name    string   `json:"name"`
 	Artists []Artist `json:"artist"`
@@ -83,11 +85,10 @@ type IndexContainer struct {
 	Indexes         []Index `json:"index"`
 }
 
-/*
- * Parameters:
- *   musicFolderId   If specified, only return artists in the music folder with the given ID. See getMusicFolders.
- *   ifModifiedSince If specified, only return a result if the artist collection has changed since the given time (in milliseconds since 1 Jan 1970).
- */
+// GetIndexes returns the index of entries by letter/number.
+// Optional Parameters:
+// * musicFolderId   If specified, only return artists in the music folder with the given ID. See getMusicFolders.
+// * ifModifiedSince If specified, only return a result if the artist collection has changed since the given time (in milliseconds since 1 Jan 1970).
 func (s *SubsonicClient) GetIndexes(parameters map[string]string) (*IndexContainer, error) {
 	resp, err := s.Get("getIndexes", parameters)
 	if err != nil {
@@ -133,7 +134,7 @@ type Directory struct {
 	Parent     string   `json:"parent"`     // navidrome only
 }
 
-// The parameter is an object ID from the database
+// GetMusicDirectory returns the context around an object ID from the database.
 func (s *SubsonicClient) GetMusicDirectory(id string) (*Directory, error) {
 	resp, err := s.Get("getMusicDirectory", map[string]string{"id": id})
 	if err != nil {
@@ -152,6 +153,7 @@ type GenreContainer struct {
 	Genre []*Genre `json:"genre"`
 }
 
+// GetGenres returns all genres in the server.
 func (s *SubsonicClient) GetGenres() ([]*Genre, error) {
 	resp, err := s.Get("getGenres", nil)
 	if err != nil {
@@ -165,10 +167,7 @@ type ArtistsContainer struct {
 	Indexes         []Index `json:"index"`
 }
 
-/*
- * Parameters:
- *   musicFolderId   If specified, only return artists in the music folder with the given ID. See getMusicFolders.
- */
+// GetArtists returns all artists in the server. If specified, musicFolderId will return only the artists from a specific folder.
 func (s *SubsonicClient) GetArtists(parameters map[string]string) (*ArtistsContainer, error) {
 	resp, err := s.Get("getArtists", parameters)
 	if err != nil {
@@ -177,6 +176,7 @@ func (s *SubsonicClient) GetArtists(parameters map[string]string) (*ArtistsConta
 	return resp.Artists, nil
 }
 
+// GetAlbum returns an Artist by ID.
 func (s *SubsonicClient) GetArtist(id string) (*Artist, error) {
 	resp, err := s.Get("getArtist", map[string]string{"id": id})
 	if err != nil {
@@ -185,6 +185,7 @@ func (s *SubsonicClient) GetArtist(id string) (*Artist, error) {
 	return resp.Artist, nil
 }
 
+// GetAlbum returns an Album by ID.
 func (s *SubsonicClient) GetAlbum(id string) (*Album, error) {
 	resp, err := s.Get("getAlbum", map[string]string{"id": id})
 	if err != nil {
@@ -193,6 +194,7 @@ func (s *SubsonicClient) GetAlbum(id string) (*Album, error) {
 	return resp.Album, nil
 }
 
+// GetSong returns a Song by ID.
 func (s *SubsonicClient) GetSong(id string) (*Song, error) {
 	resp, err := s.Get("getSong", map[string]string{"id": id})
 	if err != nil {
@@ -201,6 +203,7 @@ func (s *SubsonicClient) GetSong(id string) (*Song, error) {
 	return resp.Song, nil
 }
 
+// ArtistInfo is all auxillary information about an artist from GetArtistInfo/GetArtistInfo2
 type ArtistInfo struct {
 	Biography      string          `json:"biography"`
 	MusicBrainzID  string          `json:"musicBrainzId"`
@@ -217,11 +220,10 @@ type SimilarArtist struct {
 	AlbumCount int    `json:"albumCount"`
 }
 
-/*
- * Optional Parameters
- * count             Max number of similar artists to return.
- * includeNotPresent Whether to return artists that are not present in the media library.
- */
+// GetArtistInfo returns biography, image links, and similar artists from last.fm.
+// Optional Parameters:
+// * count:             Max number of similar artists to return.
+// * includeNotPresent: Whether to return artists that are not present in the media library.
 func (s *SubsonicClient) GetArtistInfo(id string, parameters map[string]string) (*ArtistInfo, error) {
 	params := make(map[string]string)
 	params["id"] = id
@@ -235,11 +237,10 @@ func (s *SubsonicClient) GetArtistInfo(id string, parameters map[string]string) 
 	return resp.ArtistInfo, nil
 }
 
-/*
- * Optional Parameters
- * count             Max number of similar artists to return.
- * includeNotPresent Whether to return artists that are not present in the media library.
- */
+// GetArtistInfo2 returns biography, image links, and similar artists like GetArtistInfo, but using id3 tags.
+// Optional Parameters:
+// * count:             Max number of similar artists to return.
+// * includeNotPresent: Whether to return artists that are not present in the media library.
 func (s *SubsonicClient) GetArtistInfo2(id string, parameters map[string]string) (*ArtistInfo, error) {
 	params := make(map[string]string)
 	params["id"] = id
@@ -253,6 +254,8 @@ func (s *SubsonicClient) GetArtistInfo2(id string, parameters map[string]string)
 	return resp.ArtistInfo2, nil
 }
 
+// AlbumInfo is a collection of notes and links describing an album.
+// Fetch one by ID with GetAlbumInfo/GetAlbumInfo2.
 type AlbumInfo struct {
 	Notes          string `json:"notes"`
 	MusicBrainzID  string `json:"musicBrainzId"`
@@ -262,6 +265,8 @@ type AlbumInfo struct {
 	LargeImageURL  string `json:"largeImageUrl"`
 }
 
+// GetAlbumInfo returns album notes, image data, etc using data from last.fm.
+// This accepts both album and song IDs.
 func (s *SubsonicClient) GetAlbumInfo(id string) (*AlbumInfo, error) {
 	resp, err := s.Get("getAlbumInfo", map[string]string{"id": id})
 	if err != nil {
@@ -270,6 +275,8 @@ func (s *SubsonicClient) GetAlbumInfo(id string) (*AlbumInfo, error) {
 	return resp.AlbumInfo, nil
 }
 
+// GetAlbumInfo2 returns the same data as GetAlbumInfo, but organized by id3 tag.
+// It only accepts album IDs.
 func (s *SubsonicClient) GetAlbumInfo2(id string) (*AlbumInfo, error) {
 	resp, err := s.Get("getAlbumInfo2", map[string]string{"id": id})
 	if err != nil {
