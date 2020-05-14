@@ -137,6 +137,22 @@ func runAirsonicTests(client SubsonicClient, t *testing.T) {
 			t.Errorf("Song was not returned properly, %#v\n", song)
 		}
 	})
+	t.Run("GetArtistInfo", func(t *testing.T) {
+		ai, err := client.GetArtistInfo("3", nil)
+		if err != nil {
+			t.Error(err)
+		}
+		if ai.Biography == "" {
+			t.Error("Empty biography, invalid response")
+		}
+		ai, err = client.GetArtistInfo2("1", nil)
+		if err != nil {
+			t.Error(err)
+		}
+		if ai.Biography == "" {
+			t.Error("Empty biography, invalid response")
+		}
+	})
 }
 
 /*
@@ -177,8 +193,10 @@ func TestNavidrome(t *testing.T) {
 
 func TestAirsonic(t *testing.T) {
 	client := SubsonicClient{
-		client:  &http.Client{},
-		BaseUrl: "http://127.0.0.1:8080/",
+		client:     &http.Client{},
+		BaseUrl:    "http://127.0.0.1:8080/",
+		User:       "admin",
+		ClientName: "go-subsonic_" + libraryVersion,
 	}
 	err := client.Authenticate("admin")
 	if err != nil {

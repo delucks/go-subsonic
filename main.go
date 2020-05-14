@@ -46,6 +46,8 @@ type SubsonicResponse struct {
 	Artist        *Artist               // getArtist
 	Album         *Album                // getAlbum
 	Song          *Song                 // getSong
+	ArtistInfo    *ArtistInfo           // getArtistInfo
+	ArtistInfo2   *ArtistInfo           // getArtistInfo2
 }
 
 type APIResponse struct {
@@ -116,6 +118,7 @@ func (s *SubsonicClient) Request(method string, endpoint string, params map[stri
 	if err != nil {
 		return nil, err
 	}
+	//log.Printf("%s\n", req.URL)
 	//log.Printf("%s\n", contents)
 	return contents, nil
 }

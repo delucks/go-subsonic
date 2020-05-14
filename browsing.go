@@ -200,3 +200,55 @@ func (s *SubsonicClient) GetSong(id string) (*Song, error) {
 	}
 	return resp.Song, nil
 }
+
+type ArtistInfo struct {
+	Biography      string          `json:"biography"`
+	MusicBrainzID  string          `json:"musicBrainzId"`
+	LastFmURL      string          `json:"lastFmUrl"`
+	SmallImageURL  string          `json:"smallImageUrl"`
+	MediumImageURL string          `json:"mediumImageUrl"`
+	LargeImageURL  string          `json:"largeImageUrl"`
+	SimilarArtist  []SimilarArtist `json:"similarArtist"`
+}
+
+type SimilarArtist struct {
+	ID         string `json:"id"`
+	Name       string `json:"name"`
+	AlbumCount int    `json:"albumCount"`
+}
+
+/*
+ * Optional Parameters
+ * count             Max number of similar artists to return.
+ * includeNotPresent Whether to return artists that are not present in the media library.
+ */
+func (s *SubsonicClient) GetArtistInfo(id string, parameters map[string]string) (*ArtistInfo, error) {
+	params := make(map[string]string)
+	params["id"] = id
+	for k, v := range parameters {
+		params[k] = v
+	}
+	resp, err := s.Get("getArtistInfo", params)
+	if err != nil {
+		return nil, err
+	}
+	return resp.ArtistInfo, nil
+}
+
+/*
+ * Optional Parameters
+ * count             Max number of similar artists to return.
+ * includeNotPresent Whether to return artists that are not present in the media library.
+ */
+func (s *SubsonicClient) GetArtistInfo2(id string, parameters map[string]string) (*ArtistInfo, error) {
+	params := make(map[string]string)
+	params["id"] = id
+	for k, v := range parameters {
+		params[k] = v
+	}
+	resp, err := s.Get("getArtistInfo2", params)
+	if err != nil {
+		return nil, err
+	}
+	return resp.ArtistInfo2, nil
+}

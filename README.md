@@ -15,15 +15,15 @@
 - [x] getArtist (1.8.0)
 - [x] getAlbum
 - [x] getSong (1.8.0)
-- [ ] getVideos (1.8.0)
-- [ ] getVideoInfo (1.14.0)
-- [ ] getArtistInfo (1.11.0)
-- [ ] getArtistInfo2 (1.11.0)
+- [x] getArtistInfo (1.11.0)
+- [x] getArtistInfo2 (1.11.0)
 - [ ] getAlbumInfo (1.14.0)
 - [ ] getAlbumInfo2 (1.14.0)
 - [ ] getSimilarSongs (1.11.0)
 - [ ] getSimilarSongs2 (1.11.0)
 - [ ] getTopSongs (1.13.0)
+- [ ] getVideos (1.8.0)
+- [ ] getVideoInfo (1.14.0)
 
 ## Album/song lists
 
