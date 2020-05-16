@@ -1,6 +1,9 @@
 package subsonic
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 type AlbumList struct {
 	Albums []*Album `json:"album"`
@@ -38,6 +41,21 @@ func (s *SubsonicClient) GetAlbumList(listType string, parameters map[string]str
 	if !validateListType(listType) {
 		return nil, fmt.Errorf("List type %s is invalid, see http://www.subsonic.org/pages/api.jsp#getAlbumList", listType)
 	}
+	if listType == "byYear" {
+		_, ok := parameters["fromYear"]
+		if !ok {
+			return nil, errors.New("Required argument fromYear was not found when using GetAlbumList byYear")
+		}
+		_, ok = parameters["toYear"]
+		if !ok {
+			return nil, errors.New("Required argument toYear was not found when using GetAlbumList byYear")
+		}
+	} else if listType == "byGenre" {
+		_, ok := parameters["genre"]
+		if !ok {
+			return nil, errors.New("Required argument genre was not found when using GetAlbumList byGenre")
+		}
+	}
 	params := make(map[string]string)
 	params["type"] = listType
 	for k, v := range parameters {
@@ -64,6 +82,21 @@ func (s *SubsonicClient) GetAlbumList(listType string, parameters map[string]str
 func (s *SubsonicClient) GetAlbumList2(listType string, parameters map[string]string) ([]*Album, error) {
 	if !validateListType(listType) {
 		return nil, fmt.Errorf("List type %s is invalid, see http://www.subsonic.org/pages/api.jsp#getAlbumList", listType)
+	}
+	if listType == "byYear" {
+		_, ok := parameters["fromYear"]
+		if !ok {
+			return nil, errors.New("Required argument fromYear was not found when using GetAlbumList2 byYear")
+		}
+		_, ok = parameters["toYear"]
+		if !ok {
+			return nil, errors.New("Required argument toYear was not found when using GetAlbumList2 byYear")
+		}
+	} else if listType == "byGenre" {
+		_, ok := parameters["genre"]
+		if !ok {
+			return nil, errors.New("Required argument genre was not found when using GetAlbumList2 byGenre")
+		}
 	}
 	params := make(map[string]string)
 	params["type"] = listType

@@ -106,10 +106,24 @@ func runCommonTests(client SubsonicClient, t *testing.T) {
 		}
 	})
 	t.Run("GetAlbumList2", func(t *testing.T) {
+		// Test incorrect parameters
 		_, err := client.GetAlbumList2("foobar", nil)
 		if err == nil {
 			t.Error("No error was returned with an invalid listType argument")
 		}
+		_, err = client.GetAlbumList2("byYear", nil)
+		if err == nil {
+			t.Error("Failed to validate byYear parameters")
+		}
+		_, err = client.GetAlbumList2("byYear", map[string]string{"fromYear": "1990"})
+		if err == nil {
+			t.Error("Failed to validate partial byYear parameters")
+		}
+		_, err = client.GetAlbumList2("byGenre", nil)
+		if err == nil {
+			t.Error("Failed to validate byGenre parameters")
+		}
+		// Test with proper parameters
 		albums, err := client.GetAlbumList2("recent", nil)
 		if err != nil {
 			t.Error(err)
