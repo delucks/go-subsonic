@@ -1,4 +1,4 @@
-package main
+package subsonic
 
 import (
 	"net/http"

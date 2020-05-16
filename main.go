@@ -1,4 +1,5 @@
-package main
+// Package subsonic implements an API client library for Subsonic-compatible music streaming servers
+package subsonic
 
 import (
 	"crypto/md5"
@@ -16,7 +17,7 @@ import (
 
 const (
 	supportedApiVersion = "1.8.0"
-	libraryVersion      = "0.0.1"
+	libraryVersion      = "0.0.2"
 )
 
 type ErrorResponse struct {
