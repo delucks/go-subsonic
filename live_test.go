@@ -171,6 +171,28 @@ func runAirsonicTests(client SubsonicClient, t *testing.T) {
 			t.Error("Empty MB id from GetAlbumInfo2, invalid response")
 		}
 	})
+	t.Run("GetSimilarSongs", func(t *testing.T) {
+		_, err := client.GetSimilarSongs("48", nil)
+		if err != nil {
+			t.Error(err)
+		}
+		// Cannot check for song contents here because GetSimilarSongs on ID 48 may or may not return data
+		songs, err := client.GetSimilarSongs2("1", nil)
+		if err != nil {
+			t.Error(err)
+		}
+		if songs == nil {
+			t.Error("GetSimilarSongs2 returned nil recommendations for ID 1!")
+		}
+		// Make sure the count argument is getting properly passed
+		songs, err = client.GetSimilarSongs2("1", map[string]string{"count": "1"})
+		if err != nil {
+			t.Error(err)
+		}
+		if len(songs) != 1 {
+			t.Errorf("Count argument did not work properly: got %d songs in response to a request for one", len(songs))
+		}
+	})
 }
 
 /*

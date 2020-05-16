@@ -49,6 +49,8 @@ type SubsonicResponse struct {
 	ArtistInfo    *ArtistInfo           // getArtistInfo
 	ArtistInfo2   *ArtistInfo           // getArtistInfo2
 	AlbumInfo     *AlbumInfo            // getAlbumInfo
+	SimilarSongs  *SimilarSongs         // getSimilarSongs
+	SimilarSongs2 *SimilarSongs         // getSimilarSongs2
 }
 
 type APIResponse struct {

@@ -284,3 +284,40 @@ func (s *SubsonicClient) GetAlbumInfo2(id string) (*AlbumInfo, error) {
 	}
 	return resp.AlbumInfo, nil
 }
+
+type SimilarSongs struct {
+	Songs []*Song `json:"song"`
+}
+
+// GetSimilarSongs finds similar songs to an album, track, or artist.
+// This is mostly used for radio features. This accepts artist, album, or song IDs.
+// Optional Parameters:
+// * count: Number of songs to return
+func (s *SubsonicClient) GetSimilarSongs(id string, parameters map[string]string) ([]*Song, error) {
+	params := make(map[string]string)
+	params["id"] = id
+	for k, v := range parameters {
+		params[k] = v
+	}
+	resp, err := s.Get("getSimilarSongs", params)
+	if err != nil {
+		return nil, err
+	}
+	return resp.SimilarSongs.Songs, nil
+}
+
+// GetSimilarSongs2 finds similar songs like GetSimilarSongs, but using id3 tags.
+// Optional Parameters:
+// * count: Number of songs to return
+func (s *SubsonicClient) GetSimilarSongs2(id string, parameters map[string]string) ([]*Song, error) {
+	params := make(map[string]string)
+	params["id"] = id
+	for k, v := range parameters {
+		params[k] = v
+	}
+	resp, err := s.Get("getSimilarSongs2", params)
+	if err != nil {
+		return nil, err
+	}
+	return resp.SimilarSongs2.Songs, nil
+}
