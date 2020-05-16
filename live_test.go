@@ -244,6 +244,23 @@ func TestAirsonic(t *testing.T) {
 	}
 	runCommonTests(client, t)
 	runAirsonicTests(client, t)
+	t.Run("GetTopSongs", func(t *testing.T) {
+		knownArtist := "St Germain"
+		songs, err := client.GetTopSongs(knownArtist, nil)
+		if err != nil {
+			t.Error(err)
+		}
+		if songs == nil {
+			t.Error("No top songs returned for a known artist")
+		}
+		songs, err = client.GetTopSongs(knownArtist, map[string]string{"count": "1"})
+		if err != nil {
+			t.Error(err)
+		}
+		if len(songs) != 1 {
+			t.Errorf("Incorrect song count returned from call to getTopSongs, %d actual 1 expected", len(songs))
+		}
+	})
 }
 
 func TestSubsonic(t *testing.T) {
@@ -259,4 +276,22 @@ func TestSubsonic(t *testing.T) {
 	}
 	runCommonTests(client, t)
 	runAirsonicTests(client, t)
+	t.Run("GetTopSongs", func(t *testing.T) {
+		// the topSongs test requires a known artist name from the server
+		knownArtist := "Ugress"
+		songs, err := client.GetTopSongs(knownArtist, nil)
+		if err != nil {
+			t.Error(err)
+		}
+		if songs == nil {
+			t.Error("No top songs returned for a known artist")
+		}
+		songs, err = client.GetTopSongs(knownArtist, map[string]string{"count": "1"})
+		if err != nil {
+			t.Error(err)
+		}
+		if len(songs) != 1 {
+			t.Errorf("Incorrect song count returned from call to getTopSongs, %d actual 1 expected", len(songs))
+		}
+	})
 }

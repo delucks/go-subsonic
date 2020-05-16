@@ -285,7 +285,7 @@ func (s *SubsonicClient) GetAlbumInfo2(id string) (*AlbumInfo, error) {
 	return resp.AlbumInfo, nil
 }
 
-type SimilarSongs struct {
+type SongList struct {
 	Songs []*Song `json:"song"`
 }
 
@@ -320,4 +320,20 @@ func (s *SubsonicClient) GetSimilarSongs2(id string, parameters map[string]strin
 		return nil, err
 	}
 	return resp.SimilarSongs2.Songs, nil
+}
+
+// GetTopSongs returns the top songs for a given artist by name.
+// Optional Parameters:
+// * count: Number of songs to return
+func (s *SubsonicClient) GetTopSongs(name string, parameters map[string]string) ([]*Song, error) {
+	params := make(map[string]string)
+	params["artist"] = name
+	for k, v := range parameters {
+		params[k] = v
+	}
+	resp, err := s.Get("getTopSongs", params)
+	if err != nil {
+		return nil, err
+	}
+	return resp.TopSongs.Songs, nil
 }

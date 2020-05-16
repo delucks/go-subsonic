@@ -1,3 +1,9 @@
+# go-subsonic
+
+This is an API client library for Subsonic and Subsonic-compatible music servers. It has been tested on Subsonic, Airsonic, and Navidrome.
+
+Unless support is requested, video endpoints will be out of scope.
+
 # API Support
 
 ## System
@@ -21,7 +27,7 @@
 - [x] getAlbumInfo2 (1.14.0)
 - [x] getSimilarSongs (1.11.0)
 - [x] getSimilarSongs2 (1.11.0)
-- [ ] getTopSongs (1.13.0)
+- [x] getTopSongs (1.13.0)
 - [ ] getVideos (1.8.0)
 - [ ] getVideoInfo (1.14.0)
 
