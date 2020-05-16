@@ -48,6 +48,7 @@ type Song struct {
 type Album struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name"`
+	Title     string    `json:"title"` // getAlbumList returns each album with a "title" key rather than a "name" key
 	Artist    string    `json:"artist"`
 	ArtistID  string    `json:"artistId"`
 	SongCount int       `json:"songCount"`
@@ -57,8 +58,8 @@ type Album struct {
 	Genre     string    `json:"genre"`
 	PlayCount int       `json:"playCount"`
 	CoverArt  string    `json:"coverArt"`
+	IsDir     bool      `json:"isDir"`
 	Songs     []*Song   `json:"song"`    // populated by getAlbum
-	IsDir     bool      `json:"isDir"`   // navidrome only
 	IsVideo   bool      `json:"isVideo"` // navidrome only
 	Size      string    `json:"size"`    // navidrome only
 }

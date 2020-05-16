@@ -87,6 +87,43 @@ func runCommonTests(client SubsonicClient, t *testing.T) {
 			}
 		}
 	})
+	t.Run("GetAlbumList", func(t *testing.T) {
+		_, err := client.GetAlbumList("foobar", nil)
+		if err == nil {
+			t.Error("No error was returned with an invalid listType argument")
+		}
+		albums, err := client.GetAlbumList("recent", nil)
+		if err != nil {
+			t.Error(err)
+		}
+		if albums == nil {
+			t.Error("No albums were returned in a call to recent getAlbumList")
+		}
+		for _, album := range albums {
+			if album.Title == "" {
+				t.Errorf("Album %#v has an empty name :(", album)
+			}
+		}
+	})
+	t.Run("GetAlbumList2", func(t *testing.T) {
+		_, err := client.GetAlbumList2("foobar", nil)
+		if err == nil {
+			t.Error("No error was returned with an invalid listType argument")
+		}
+		albums, err := client.GetAlbumList2("recent", nil)
+		if err != nil {
+			t.Error(err)
+		}
+		if albums == nil {
+			t.Error("No albums were returned in a call to recent getAlbumList2")
+		}
+		for _, album := range albums {
+			if album.Name == "" {
+				t.Errorf("Album %#v has an empty name :(", album)
+			}
+		}
+	})
+
 }
 
 func runAirsonicTests(client SubsonicClient, t *testing.T) {

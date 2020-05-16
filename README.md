@@ -33,8 +33,8 @@ Unless support is requested, video endpoints will be out of scope.
 
 ## Album/song lists
 
-- [ ] getAlbumList (1.2.0)
-- [ ] getAlbumList2 (1.8.0)
+- [x] getAlbumList (1.2.0)
+- [x] getAlbumList2 (1.8.0)
 - [ ] getRandomSongs (1.2.0)
 - [ ] getSongsByGenre (1.9.0)
 - [ ] getNowPlaying (1.0.0)

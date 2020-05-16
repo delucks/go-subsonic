@@ -53,6 +53,8 @@ type SubsonicResponse struct {
 	SimilarSongs  *SongList             // getSimilarSongs
 	SimilarSongs2 *SongList             // getSimilarSongs2
 	TopSongs      *SongList             // getTopSongs
+	AlbumList     *AlbumList            // getAlbumList
+	AlbumList2    *AlbumList            // getAlbumList2
 }
 
 type APIResponse struct {
