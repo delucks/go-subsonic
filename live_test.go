@@ -24,7 +24,17 @@ func getRandomGenre(client SubsonicClient) *Genre {
 	return selection
 }
 
+func getSampleArtist(client SubsonicClient) *Artist {
+	artists, err := client.GetArtists(nil)
+	if err != nil {
+		return nil
+	}
+	return artists.Indexes[0].Artists[0]
+}
+
 func runCommonTests(client SubsonicClient, t *testing.T) {
+	sampleArtist := getSampleArtist(client)
+	sampleGenre := getRandomGenre(client)
 	// These test the library's ability to unmarshal server responses
 	t.Run("Ping", func(t *testing.T) {
 		if !client.Ping() {
@@ -135,6 +145,14 @@ func runCommonTests(client SubsonicClient, t *testing.T) {
 				t.Errorf("Album %#v has an empty name :(", album)
 			}
 		}
+		// Work out genre matching
+		albums, err = client.GetAlbumList("byGenre", map[string]string{"genre": sampleGenre.Value})
+		if err != nil {
+			t.Error(err)
+		}
+		if albums == nil || len(albums) < 1 {
+			t.Error("No albums were returned in a call to recent getAlbumList")
+		}
 	})
 	t.Run("GetAlbumList2", func(t *testing.T) {
 		// Test incorrect parameters
@@ -179,15 +197,14 @@ func runCommonTests(client SubsonicClient, t *testing.T) {
 		}
 	})
 	t.Run("GetSongsByGenre", func(t *testing.T) {
-		genre := getRandomGenre(client)
-		songs, err := client.GetSongsByGenre(genre.Value, nil)
+		songs, err := client.GetSongsByGenre(sampleGenre.Value, nil)
 		if err != nil {
 			t.Error(err)
 		}
 		if songs == nil {
-			t.Errorf("No songs returned for genre %v", genre)
+			t.Errorf("No songs returned for genre %v", sampleGenre)
 		}
-		songs, err = client.GetSongsByGenre(genre.Value, map[string]string{"count": "1"})
+		songs, err = client.GetSongsByGenre(sampleGenre.Value, map[string]string{"count": "1"})
 		if err != nil {
 			t.Error(err)
 		}
@@ -216,7 +233,37 @@ func runCommonTests(client SubsonicClient, t *testing.T) {
 			t.Error(err)
 		}
 	})
-
+	t.Run("Search2", func(t *testing.T) {
+		results, err := client.Search2(sampleArtist.Name, nil)
+		if err != nil {
+			t.Error(err)
+		}
+		// The non-id3 matching does not consistently return an artist, but it does erturn that artist's albums
+		if len(results.Albums) == 0 {
+			t.Errorf("Could not find any albums for a known artist %s", sampleArtist.Name)
+		}
+	})
+	t.Run("Search3", func(t *testing.T) {
+		results, err := client.Search3(sampleArtist.Name, nil)
+		if err != nil {
+			t.Error(err)
+		}
+		if len(results.Artists) == 0 {
+			t.Errorf("Could not find a known artist %s", sampleArtist.Name)
+		}
+		returnOneArtist := map[string]string{
+			"artistCount": "1",
+			"songCount":   "0",
+			"albumCount":  "0",
+		}
+		results, err = client.Search3(sampleArtist.Name, returnOneArtist)
+		if err != nil {
+			t.Error(err)
+		}
+		if len(results.Artists) != 1 || len(results.Songs) != 0 || len(results.Albums) != 0 {
+			t.Errorf("Improperly limited results of search for %s: %#v", sampleArtist.Name, results)
+		}
+	})
 }
 
 func runAirsonicTests(client SubsonicClient, t *testing.T) {

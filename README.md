@@ -2,9 +2,19 @@
 
 This is an API client library for Subsonic and Subsonic-compatible music servers. It has been tested on Subsonic, Airsonic, and Navidrome.
 
-Unless support is requested, video endpoints will be out of scope.
-
 # API Support
+
+## Out of Scope
+
+Video endpoints are currently out of scope- please file an issue if you would like support for them.
+
+- [ ] getVideos (1.8.0)
+- [ ] getVideoInfo (1.14.0)
+- [ ] getCaptions (1.14.0)
+
+Some deprecated endpoints are not implemented.
+
+- [ ] search (1.0.0)
 
 ## System
 
@@ -28,8 +38,6 @@ Unless support is requested, video endpoints will be out of scope.
 - [x] getSimilarSongs (1.11.0)
 - [x] getSimilarSongs2 (1.11.0)
 - [x] getTopSongs (1.13.0)
-- [ ] getVideos (1.8.0)
-- [ ] getVideoInfo (1.14.0)
 
 ## Album/song lists
 
@@ -43,9 +51,8 @@ Unless support is requested, video endpoints will be out of scope.
 
 ## Searching
 
-- [ ] search (1.0.0)
-- [ ] search2 (1.4.0)
-- [ ] search3 (1.8.0)
+- [x] search2 (1.4.0)
+- [x] search3 (1.8.0)
 
 ## Playlists
 
@@ -60,7 +67,6 @@ Unless support is requested, video endpoints will be out of scope.
 - [ ] stream (1.0.0)
 - [ ] download (1.0.0)
 - [ ] hls.m3u8 (1.8.0)
-- [ ] getCaptions (1.14.0)
 - [ ] getCoverArt (1.0.0)
 - [ ] getLyrics (1.2.0)
 - [ ] getAvatar (1.8.0)

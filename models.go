@@ -31,6 +31,8 @@ type SubsonicResponse struct {
 	NowPlaying    *NowPlayingList       // getNowPlaying
 	Starred       *Starred              // getStarred
 	Starred2      *Starred              // getStarred2
+	SearchResult2 *SearchResult         // search2
+	SearchResult3 *SearchResult         // search3
 }
 
 type APIResponse struct {
@@ -240,6 +242,12 @@ type NowPlayingList struct {
 }
 
 type Starred struct {
+	Songs   []*Song   `json:"song"`
+	Albums  []*Album  `json:"album"`
+	Artists []*Artist `json:"artist"`
+}
+
+type SearchResult struct {
 	Songs   []*Song   `json:"song"`
 	Albums  []*Album  `json:"album"`
 	Artists []*Artist `json:"artist"`
