@@ -21,7 +21,7 @@ const (
 )
 
 type SubsonicClient struct {
-	client     *http.Client
+	Client     *http.Client
 	BaseUrl    string
 	User       string
 	ClientName string
@@ -82,7 +82,7 @@ func (s *SubsonicClient) Request(method string, endpoint string, params map[stri
 	}
 	req.URL.RawQuery = q.Encode()
 
-	resp, err := s.client.Do(req)
+	resp, err := s.Client.Do(req)
 	if err != nil {
 		return nil, err
 	}
