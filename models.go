@@ -28,6 +28,7 @@ type SubsonicResponse struct {
 	AlbumList2    *AlbumList            // getAlbumList2
 	RandomSongs   *SongList             // getRandomSongs
 	SongsByGenre  *SongList             // getSongsByGenre
+	NowPlaying    *NowPlayingList       // getNowPlaying
 }
 
 type APIResponse struct {
@@ -205,4 +206,30 @@ type SongList struct {
 
 type AlbumList struct {
 	Albums []*Album `json:"album"`
+}
+
+type NowPlaying struct {
+	ID          string `json:"id"`
+	Album       string `json:"album"`
+	BitRate     int64  `json:"bitRate"`
+	ContentType string `json:"contentType"`
+	CoverArt    string `json:"coverArt"`
+	Created     string `json:"created"`
+	Duration    int64  `json:"duration"`
+	IsDir       bool   `json:"isDir"`
+	IsVideo     bool   `json:"isVideo"`
+	MinutesAgo  int64  `json:"minutesAgo"`
+	Parent      string `json:"parent"`
+	Path        string `json:"path"`
+	PlayCount   int64  `json:"playCount"`
+	PlayerID    int64  `json:"playerId"`
+	Size        int64  `json:"size"`
+	Suffix      string `json:"suffix"`
+	Title       string `json:"title"`
+	Type        string `json:"type"`
+	Username    string `json:"username"`
+}
+
+type NowPlayingList struct {
+	Entries []*NowPlaying `json:"entry"`
 }

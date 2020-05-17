@@ -138,3 +138,11 @@ func (s *SubsonicClient) GetSongsByGenre(name string, parameters map[string]stri
 	}
 	return resp.SongsByGenre.Songs, nil
 }
+
+func (s *SubsonicClient) GetNowPlaying() ([]*NowPlaying, error) {
+	resp, err := s.Get("getNowPlaying", nil)
+	if err != nil {
+		return nil, err
+	}
+	return resp.NowPlaying.Entries, nil
+}

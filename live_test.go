@@ -195,6 +195,16 @@ func runCommonTests(client SubsonicClient, t *testing.T) {
 			t.Errorf("Limiting songs returned by GetSongsByGenre failed: expected 1, length actual %d", len(songs))
 		}
 	})
+	t.Run("GetNowPlaying", func(t *testing.T) {
+		// This test is essentially a no-op because we can't depend on the state of playing something in a test environment
+		entries, err := client.GetNowPlaying()
+		if err != nil {
+			t.Error(err)
+		}
+		for _, nowPlaying := range entries {
+			t.Logf("%#v", nowPlaying)
+		}
+	})
 }
 
 func runAirsonicTests(client SubsonicClient, t *testing.T) {
