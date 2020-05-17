@@ -149,6 +149,16 @@ func runCommonTests(client SubsonicClient, t *testing.T) {
 			}
 		}
 	})
+	t.Run("GetRandomSongs", func(t *testing.T) {
+		songs, err := client.GetRandomSongs(nil)
+		if err != nil || songs == nil {
+			t.Error("Basic call to getRandomSongs failed")
+		}
+		songs, err = client.GetRandomSongs(map[string]string{"size": "1"})
+		if len(songs) != 1 {
+			t.Errorf("Limiting songs returned by getRandomSongs failed: expected 1, length actual %d", len(songs))
+		}
+	})
 }
 
 func runAirsonicTests(client SubsonicClient, t *testing.T) {
