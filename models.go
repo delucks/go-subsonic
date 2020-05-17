@@ -2,18 +2,18 @@ package subsonic
 
 import "time"
 
-// Type SubsonicResponse is the main target for unmarshalling JSON data from the API - everything within the "subsonic-response" key
-type SubsonicResponse struct {
+// Type subsonicResponse is the main target for unmarshalling JSON data from the API - everything within the "subsonic-response" key
+type subsonicResponse struct {
 	Status        string `json:"status"`        // standard
 	Version       string `json:"version"`       // standard
 	Type          string `json:"type"`          // navidrome
 	ServerVersion string `json:"serverVersion"` // navidrome
-	Error         *ErrorResponse
-	License       *LicenseValidity      // getLicense
-	MusicFolders  *MusicFolderContainer // getMusicFolders
+	Error         *errorResponse
+	License       *License              // getLicense
+	MusicFolders  *musicFolderContainer // getMusicFolders
 	Indexes       *IndexContainer       // getIndexes
 	Directory     *Directory            // getMusicDirectory
-	Genres        *GenreContainer       // getGenres
+	Genres        *genreContainer       // getGenres
 	Artists       *ArtistsContainer     // getArtists
 	Artist        *Artist               // getArtist
 	Album         *Album                // getAlbum
@@ -21,44 +21,47 @@ type SubsonicResponse struct {
 	ArtistInfo    *ArtistInfo           // getArtistInfo
 	ArtistInfo2   *ArtistInfo           // getArtistInfo2
 	AlbumInfo     *AlbumInfo            // getAlbumInfo
-	SimilarSongs  *SongList             // getSimilarSongs
-	SimilarSongs2 *SongList             // getSimilarSongs2
-	TopSongs      *SongList             // getTopSongs
-	AlbumList     *AlbumList            // getAlbumList
-	AlbumList2    *AlbumList            // getAlbumList2
-	RandomSongs   *SongList             // getRandomSongs
-	SongsByGenre  *SongList             // getSongsByGenre
-	NowPlaying    *NowPlayingList       // getNowPlaying
+	SimilarSongs  *songList             // getSimilarSongs
+	SimilarSongs2 *songList             // getSimilarSongs2
+	TopSongs      *songList             // getTopSongs
+	AlbumList     *albumList            // getAlbumList
+	AlbumList2    *albumList            // getAlbumList2
+	RandomSongs   *songList             // getRandomSongs
+	SongsByGenre  *songList             // getSongsByGenre
+	NowPlaying    *nowPlayingList       // getNowPlaying
 	Starred       *Starred              // getStarred
 	Starred2      *Starred              // getStarred2
 	SearchResult2 *SearchResult         // search2
 	SearchResult3 *SearchResult         // search3
 }
 
-type APIResponse struct {
-	Response *SubsonicResponse `json:"subsonic-response"`
+type apiResponse struct {
+	Response *subsonicResponse `json:"subsonic-response"`
 }
 
-type ErrorResponse struct {
+type errorResponse struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 }
 
-type LicenseValidity struct {
+// License contains information about the Subsonic server's license validity and contact information in the case of a trial subscription.
+type License struct {
 	Valid        bool   `json:"valid"`        // standard
 	Email        string `json:"email"`        // subsonic
 	TrialExpires string `json:"trialExpires"` // subsonic
 }
 
+// MusicFolder is a representation of a source of music files added to the server. It is identified primarily by the numeric ID.
 type MusicFolder struct {
 	Id   int    `json:"id"` // subsonic returns an int, navidrome a string
 	Name string `json:"name"`
 }
 
-type MusicFolderContainer struct {
+type musicFolderContainer struct {
 	Folders []*MusicFolder `json:"musicFolder"`
 }
 
+// Song is all metadata about a single song from the server.
 type Song struct {
 	ID            string    `json:"id"`
 	AlbumID       string    `json:"albumId"`
@@ -85,6 +88,7 @@ type Song struct {
 	CoverArt      string    `json:"coverArt"`                // subsonic only
 }
 
+// Album is all metadata about an album from the server, including songs if fetched from getAlbum.
 type Album struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name"`
@@ -100,12 +104,13 @@ type Album struct {
 	PlayCount int       `json:"playCount"`
 	CoverArt  string    `json:"coverArt"`
 	IsDir     bool      `json:"isDir"`
-	Songs     []*Song   `json:"song"`              // populated by getAlbum
+	Songs     []*Song   `json:"song,omitempty"`
 	IsVideo   bool      `json:"isVideo,omitempty"` // navidrome only
 	Size      string    `json:"size,omitempty"`    // navidrome only
 }
 
-// Artists are obtained by calls to GetIndex (with few fields), and GetArtists/GetArtist with more fields.
+// Artist is a representation of one artist from the server.
+// Many calls return Artists with few fields, but getArtist will give more data.
 type Artist struct {
 	ID             string   `json:"id"`
 	Name           string   `json:"name"`
@@ -115,16 +120,18 @@ type Artist struct {
 	Albums         []*Album `json:"album"`          // only filled by getArtist
 }
 
-// Type Index contains a by-letter representation of every item in the database.
+// Index is a by-letter representation of every artist on the server.
 type Index struct {
 	Name    string    `json:"name"`
 	Artists []*Artist `json:"artist"`
 }
 
+// IndexContainer holds every artist or single track in the database alphabetically sorted.
 type IndexContainer struct {
 	LastModified    int64    `json:"lastModified"` // subsonic returns an int64, navidrome a string
 	IgnoredArticles string   `json:"ignoredArticles"`
 	Indexes         []*Index `json:"index"`
+	Children        []*Child `json:"child"`
 }
 
 type Child struct {
@@ -164,36 +171,31 @@ type Directory struct {
 	Parent     string   `json:"parent"`     // navidrome only
 }
 
+// Genre is a generic tag describing the style of a song or album. The Value property of this struct is the name of the genre.
 type Genre struct {
 	SongCount  int    `json:"songCount"`
 	AlbumCount int    `json:"albumCount"`
 	Value      string `json:"value"`
 }
 
-type GenreContainer struct {
+type genreContainer struct {
 	Genre []*Genre `json:"genre"`
 }
 
 type ArtistsContainer struct {
-	IgnoredArticles string  `json:"ignoredArticles"`
-	Indexes         []Index `json:"index"`
+	IgnoredArticles string   `json:"ignoredArticles"`
+	Indexes         []*Index `json:"index"`
 }
 
 // ArtistInfo is all auxillary information about an artist from GetArtistInfo/GetArtistInfo2
 type ArtistInfo struct {
-	Biography      string          `json:"biography"`
-	MusicBrainzID  string          `json:"musicBrainzId"`
-	LastFmURL      string          `json:"lastFmUrl"`
-	SmallImageURL  string          `json:"smallImageUrl"`
-	MediumImageURL string          `json:"mediumImageUrl"`
-	LargeImageURL  string          `json:"largeImageUrl"`
-	SimilarArtist  []SimilarArtist `json:"similarArtist"`
-}
-
-type SimilarArtist struct {
-	ID         string `json:"id"`
-	Name       string `json:"name"`
-	AlbumCount int    `json:"albumCount"`
+	Biography      string    `json:"biography"`
+	MusicBrainzID  string    `json:"musicBrainzId"`
+	LastFmURL      string    `json:"lastFmUrl"`
+	SmallImageURL  string    `json:"smallImageUrl"`
+	MediumImageURL string    `json:"mediumImageUrl"`
+	LargeImageURL  string    `json:"largeImageUrl"`
+	SimilarArtist  []*Artist `json:"similarArtist"`
 }
 
 // AlbumInfo is a collection of notes and links describing an album.
@@ -207,14 +209,15 @@ type AlbumInfo struct {
 	LargeImageURL  string `json:"largeImageUrl"`
 }
 
-type SongList struct {
+type songList struct {
 	Songs []*Song `json:"song"`
 }
 
-type AlbumList struct {
+type albumList struct {
 	Albums []*Album `json:"album"`
 }
 
+// NowPlaying is a data about a recently played song from a user, including recent plays (MinutesAgo).
 type NowPlaying struct {
 	ID          string `json:"id"`
 	Album       string `json:"album"`
@@ -237,16 +240,18 @@ type NowPlaying struct {
 	Username    string `json:"username"`
 }
 
-type NowPlayingList struct {
+type nowPlayingList struct {
 	Entries []*NowPlaying `json:"entry"`
 }
 
+// Starred is a collection of songs, albums, and artists flagged by a user as starred.
 type Starred struct {
 	Songs   []*Song   `json:"song"`
 	Albums  []*Album  `json:"album"`
 	Artists []*Artist `json:"artist"`
 }
 
+// SearchResult is a collection of songs, albums, and artists returned by a call to Search2 or Search3.
 type SearchResult struct {
 	Songs   []*Song   `json:"song"`
 	Albums  []*Album  `json:"album"`

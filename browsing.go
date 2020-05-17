@@ -10,8 +10,8 @@ func (s *SubsonicClient) GetMusicFolders() ([]*MusicFolder, error) {
 
 // GetIndexes returns the index of entries by letter/number.
 // Optional Parameters:
-// * musicFolderId   If specified, only return artists in the music folder with the given ID. See getMusicFolders.
-// * ifModifiedSince If specified, only return a result if the artist collection has changed since the given time (in milliseconds since 1 Jan 1970).
+// * musicFolderId:    Only return songs in the music folder with the given ID. See getMusicFolders.
+// * ifModifiedSince:  If specified, only return a result if the artist collection has changed since the given time (in milliseconds since 1 Jan 1970).
 func (s *SubsonicClient) GetIndexes(parameters map[string]string) (*IndexContainer, error) {
 	resp, err := s.Get("getIndexes", parameters)
 	if err != nil {
@@ -38,7 +38,9 @@ func (s *SubsonicClient) GetGenres() ([]*Genre, error) {
 	return resp.Genres.Genre, nil
 }
 
-// GetArtists returns all artists in the server. If specified, musicFolderId will return only the artists from a specific folder.
+// GetArtists returns all artists in the server.
+// Optional Parameters:
+// * musicFolderId:  Only return songs in the music folder with the given ID. See getMusicFolders.
 func (s *SubsonicClient) GetArtists(parameters map[string]string) (*ArtistsContainer, error) {
 	resp, err := s.Get("getArtists", parameters)
 	if err != nil {

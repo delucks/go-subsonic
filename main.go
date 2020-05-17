@@ -96,12 +96,12 @@ func (s *SubsonicClient) Request(method string, endpoint string, params map[stri
 }
 
 // Get is a convenience interface to issue a GET request and parse the response body (99% of Subsonic API calls)
-func (s *SubsonicClient) Get(endpoint string, params map[string]string) (*SubsonicResponse, error) {
+func (s *SubsonicClient) Get(endpoint string, params map[string]string) (*subsonicResponse, error) {
 	responseBody, err := s.Request("GET", endpoint, params)
 	if err != nil {
 		return nil, err
 	}
-	parsed := APIResponse{}
+	parsed := apiResponse{}
 	err = json.Unmarshal(responseBody, &parsed)
 	if err != nil {
 		return nil, err
@@ -122,7 +122,7 @@ func (s *SubsonicClient) Ping() bool {
 	return true
 }
 
-func (s *SubsonicClient) GetLicense() (*LicenseValidity, error) {
+func (s *SubsonicClient) GetLicense() (*License, error) {
 	resp, err := s.Get("getLicense", nil)
 	if err != nil {
 		return nil, err
