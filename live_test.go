@@ -1,9 +1,28 @@
 package subsonic
 
 import (
+	"math/rand"
 	"net/http"
 	"testing"
+	"time"
 )
+
+func getRandomGenre(client SubsonicClient) *Genre {
+	rand.Seed(time.Now().Unix())
+	genres, err := client.GetGenres()
+	if err != nil {
+		return nil
+	}
+	// make sure the genre has songs present
+	selection := genres[rand.Intn(len(genres))]
+	for {
+		if selection.SongCount > 0 {
+			break
+		}
+		selection = genres[rand.Intn(len(genres))]
+	}
+	return selection
+}
 
 func runCommonTests(client SubsonicClient, t *testing.T) {
 	// These test the library's ability to unmarshal server responses
@@ -157,6 +176,23 @@ func runCommonTests(client SubsonicClient, t *testing.T) {
 		songs, err = client.GetRandomSongs(map[string]string{"size": "1"})
 		if len(songs) != 1 {
 			t.Errorf("Limiting songs returned by getRandomSongs failed: expected 1, length actual %d", len(songs))
+		}
+	})
+	t.Run("GetSongsByGenre", func(t *testing.T) {
+		genre := getRandomGenre(client)
+		songs, err := client.GetSongsByGenre(genre.Value, nil)
+		if err != nil {
+			t.Error(err)
+		}
+		if songs == nil {
+			t.Errorf("No songs returned for genre %v", genre)
+		}
+		songs, err = client.GetSongsByGenre(genre.Value, map[string]string{"count": "1"})
+		if err != nil {
+			t.Error(err)
+		}
+		if len(songs) != 1 {
+			t.Errorf("Limiting songs returned by GetSongsByGenre failed: expected 1, length actual %d", len(songs))
 		}
 	})
 }

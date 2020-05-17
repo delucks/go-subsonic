@@ -27,6 +27,7 @@ type SubsonicResponse struct {
 	AlbumList     *AlbumList            // getAlbumList
 	AlbumList2    *AlbumList            // getAlbumList2
 	RandomSongs   *SongList             // getRandomSongs
+	SongsByGenre  *SongList             // getSongsByGenre
 }
 
 type APIResponse struct {

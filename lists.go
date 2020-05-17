@@ -108,9 +108,9 @@ func (s *SubsonicClient) GetAlbumList2(listType string, parameters map[string]st
 
 // GetRandomSongs returns a randomly selected set of songs limited by the optional parameters.
 // Optional Parameters:
-// * size: 					 The maximum number of songs to return. Max 500, default 10.
-// * genre: 				 Only returns songs belonging to this genre.
-// * fromYear: 			 Only return songs published after or in this year.
+// * size:           The maximum number of songs to return. Max 500, default 10.
+// * genre:          Only returns songs belonging to this genre.
+// * fromYear:       Only return songs published after or in this year.
 // * toYear:         Only return songs published before or in this year.
 // * musicFolderId:  Only return songs in the music folder with the given ID. See getMusicFolders.
 func (s *SubsonicClient) GetRandomSongs(parameters map[string]string) ([]*Song, error) {
@@ -119,4 +119,22 @@ func (s *SubsonicClient) GetRandomSongs(parameters map[string]string) ([]*Song, 
 		return nil, err
 	}
 	return resp.RandomSongs.Songs, nil
+}
+
+// GetSongsByGenre returns songs in a given genre name.
+// Optional Parameters:
+// * count:          The maximum number of songs to return. Max 500, default 10.
+// * offset:         The offset. Useful if you want to page through the songs in a genre.
+// * musicFolderId:  Only return songs in the music folder with the given ID. See getMusicFolders.
+func (s *SubsonicClient) GetSongsByGenre(name string, parameters map[string]string) ([]*Song, error) {
+	params := make(map[string]string)
+	params["genre"] = name
+	for k, v := range parameters {
+		params[k] = v
+	}
+	resp, err := s.Get("getSongsByGenre", params)
+	if err != nil {
+		return nil, err
+	}
+	return resp.SongsByGenre.Songs, nil
 }
