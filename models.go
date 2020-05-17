@@ -115,14 +115,14 @@ type Artist struct {
 
 // Type Index contains a by-letter representation of every item in the database.
 type Index struct {
-	Name    string   `json:"name"`
-	Artists []Artist `json:"artist"`
+	Name    string    `json:"name"`
+	Artists []*Artist `json:"artist"`
 }
 
 type IndexContainer struct {
-	LastModified    int64   `json:"lastModified"` // subsonic returns an int64, navidrome a string
-	IgnoredArticles string  `json:"ignoredArticles"`
-	Indexes         []Index `json:"index"`
+	LastModified    int64    `json:"lastModified"` // subsonic returns an int64, navidrome a string
+	IgnoredArticles string   `json:"ignoredArticles"`
+	Indexes         []*Index `json:"index"`
 }
 
 type Child struct {
