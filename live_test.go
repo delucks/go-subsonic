@@ -133,12 +133,12 @@ func runCommonTests(client SubsonicClient, t *testing.T) {
 		if err == nil {
 			t.Error("Failed to validate byGenre parameters")
 		}
-		albums, err := client.GetAlbumList("recent", nil)
+		albums, err := client.GetAlbumList("random", nil)
 		if err != nil {
 			t.Error(err)
 		}
 		if albums == nil {
-			t.Error("No albums were returned in a call to recent getAlbumList")
+			t.Error("No albums were returned in a call to random getAlbumList")
 		}
 		for _, album := range albums {
 			if album.Title == "" {
@@ -151,7 +151,7 @@ func runCommonTests(client SubsonicClient, t *testing.T) {
 			t.Error(err)
 		}
 		if albums == nil || len(albums) < 1 {
-			t.Error("No albums were returned in a call to recent getAlbumList")
+			t.Error("No albums were returned in a call to a byGenre getAlbumList")
 		}
 	})
 	t.Run("GetAlbumList2", func(t *testing.T) {
@@ -173,12 +173,12 @@ func runCommonTests(client SubsonicClient, t *testing.T) {
 			t.Error("Failed to validate byGenre parameters")
 		}
 		// Test with proper parameters
-		albums, err := client.GetAlbumList2("recent", nil)
+		albums, err := client.GetAlbumList2("newest", nil)
 		if err != nil {
 			t.Error(err)
 		}
 		if albums == nil {
-			t.Error("No albums were returned in a call to recent getAlbumList2")
+			t.Error("No albums were returned in a call to newest getAlbumList2")
 		}
 		for _, album := range albums {
 			if album.Name == "" {
@@ -405,7 +405,7 @@ func runAirsonicTests(client SubsonicClient, t *testing.T) {
 /*
 func TestNavidrome(t *testing.T) {
 	client := SubsonicClient{
-		client:     &http.Client{},
+		Client:     &http.Client{},
 		BaseUrl:    "http://192.168.1.7:4040/",
 		User:       "test",
 		ClientName: "go-subsonic_" + libraryVersion,
@@ -440,7 +440,7 @@ func TestNavidrome(t *testing.T) {
 
 func TestAirsonic(t *testing.T) {
 	client := SubsonicClient{
-		client:     &http.Client{},
+		Client:     &http.Client{},
 		BaseUrl:    "http://127.0.0.1:8080/",
 		User:       "admin",
 		ClientName: "go-subsonic_" + libraryVersion,
@@ -455,7 +455,7 @@ func TestAirsonic(t *testing.T) {
 
 func TestSubsonic(t *testing.T) {
 	client := SubsonicClient{
-		client:     &http.Client{},
+		Client:     &http.Client{},
 		BaseUrl:    "http://demo.subsonic.org/",
 		User:       "guest5",
 		ClientName: "go-subsonic_" + libraryVersion,
