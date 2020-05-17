@@ -59,7 +59,7 @@ func (s *SubsonicClient) Authenticate(password string) error {
 	return nil
 }
 
-func (s *SubsonicClient) Request(method string, endpoint string, params map[string]string) ([]byte, error) {
+func (s *SubsonicClient) Request(method string, endpoint string, params map[string]string) (*http.Response, error) {
 	baseUrl, err := url.Parse(s.BaseUrl)
 	if err != nil {
 		return nil, err
@@ -86,21 +86,20 @@ func (s *SubsonicClient) Request(method string, endpoint string, params map[stri
 	if err != nil {
 		return nil, err
 	}
-	contents, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	//log.Printf("%s\n", req.URL)
-	//log.Printf("%s\n", contents)
-	return contents, nil
+	return resp, nil
 }
 
 // Get is a convenience interface to issue a GET request and parse the response body (99% of Subsonic API calls)
 func (s *SubsonicClient) Get(endpoint string, params map[string]string) (*subsonicResponse, error) {
-	responseBody, err := s.Request("GET", endpoint, params)
+	response, err := s.Request("GET", endpoint, params)
 	if err != nil {
 		return nil, err
 	}
+	responseBody, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+	//log.Printf("%s: %s\n", endpoint, contents)
 	parsed := apiResponse{}
 	err = json.Unmarshal(responseBody, &parsed)
 	if err != nil {

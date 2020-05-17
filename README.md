@@ -6,14 +6,11 @@ This is an API client library for Subsonic and Subsonic-compatible music servers
 
 ## Out of Scope
 
-Video endpoints are currently out of scope- please file an issue if you would like support for them.
+Video endpoints are currently out of scope- please file an issue if you would like support for them. The deprecated "search" endpoint is unimplemented.
 
 - [ ] getVideos (1.8.0)
 - [ ] getVideoInfo (1.14.0)
 - [ ] getCaptions (1.14.0)
-
-Some deprecated endpoints are not implemented.
-
 - [ ] search (1.0.0)
 
 ## System
@@ -64,7 +61,7 @@ Some deprecated endpoints are not implemented.
 
 ## Media retrieval
 
-- [ ] stream (1.0.0)
+- [x] stream (1.0.0)
 - [ ] download (1.0.0)
 - [ ] hls.m3u8 (1.8.0)
 - [ ] getCoverArt (1.0.0)
