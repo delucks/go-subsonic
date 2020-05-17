@@ -38,8 +38,8 @@ Unless support is requested, video endpoints will be out of scope.
 - [x] getRandomSongs (1.2.0)
 - [x] getSongsByGenre (1.9.0)
 - [x] getNowPlaying (1.0.0)
-- [ ] getStarred (1.8.0)
-- [ ] getStarred2 (1.8.0)
+- [x] getStarred (1.8.0)
+- [x] getStarred2 (1.8.0)
 
 ## Searching
 

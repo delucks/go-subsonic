@@ -29,6 +29,8 @@ type SubsonicResponse struct {
 	RandomSongs   *SongList             // getRandomSongs
 	SongsByGenre  *SongList             // getSongsByGenre
 	NowPlaying    *NowPlayingList       // getNowPlaying
+	Starred       *Starred              // getStarred
+	Starred2      *Starred              // getStarred2
 }
 
 type APIResponse struct {
@@ -64,6 +66,7 @@ type Song struct {
 	BitRate       int       `json:"bitRate"`
 	ContentType   string    `json:"contentType"`
 	Created       time.Time `json:"created"`
+	Starred       time.Time `json:"starred,omitempty"` // getStarred only
 	Duration      int       `json:"duration"`
 	Genre         string    `json:"genre"`
 	IsDir         bool      `json:"isDir"`
@@ -75,6 +78,7 @@ type Song struct {
 	Title         string    `json:"title"`
 	Track         int       `json:"track"`
 	Type          string    `json:"type"`
+	Year          int       `json:"year"`
 	AverageRating float32   `json:"averageRating,omitempty"` // subsonic only
 	CoverArt      string    `json:"coverArt"`                // subsonic only
 }
@@ -82,20 +86,21 @@ type Song struct {
 type Album struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name"`
-	Title     string    `json:"title"` // getAlbumList returns each album with a "title" key rather than a "name" key
+	Title     string    `json:"title"` // getAlbumList & getStarred returns each album with a "title" key rather than a "name" key
 	Artist    string    `json:"artist"`
-	ArtistID  string    `json:"artistId"`
+	ArtistID  string    `json:"artistId,omitempty"`
 	SongCount int       `json:"songCount"`
 	Duration  int       `json:"duration"`
 	Created   time.Time `json:"created"`
+	Starred   time.Time `json:"starred,omitempty"` // getStarred only
 	Year      int       `json:"year"`
 	Genre     string    `json:"genre"`
 	PlayCount int       `json:"playCount"`
 	CoverArt  string    `json:"coverArt"`
 	IsDir     bool      `json:"isDir"`
-	Songs     []*Song   `json:"song"`    // populated by getAlbum
-	IsVideo   bool      `json:"isVideo"` // navidrome only
-	Size      string    `json:"size"`    // navidrome only
+	Songs     []*Song   `json:"song"`              // populated by getAlbum
+	IsVideo   bool      `json:"isVideo,omitempty"` // navidrome only
+	Size      string    `json:"size,omitempty"`    // navidrome only
 }
 
 // Artists are obtained by calls to GetIndex (with few fields), and GetArtists/GetArtist with more fields.
@@ -232,4 +237,10 @@ type NowPlaying struct {
 
 type NowPlayingList struct {
 	Entries []*NowPlaying `json:"entry"`
+}
+
+type Starred struct {
+	Songs   []*Song   `json:"song"`
+	Albums  []*Album  `json:"album"`
+	Artists []*Artist `json:"artist"`
 }

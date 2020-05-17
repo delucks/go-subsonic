@@ -205,6 +205,18 @@ func runCommonTests(client SubsonicClient, t *testing.T) {
 			t.Logf("%#v", nowPlaying)
 		}
 	})
+	t.Run("GetStarred", func(t *testing.T) {
+		// State dependent test
+		_, err := client.GetStarred(nil)
+		if err != nil {
+			t.Error(err)
+		}
+		_, err = client.GetStarred2(nil)
+		if err != nil {
+			t.Error(err)
+		}
+	})
+
 }
 
 func runAirsonicTests(client SubsonicClient, t *testing.T) {

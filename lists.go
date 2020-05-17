@@ -139,10 +139,33 @@ func (s *SubsonicClient) GetSongsByGenre(name string, parameters map[string]stri
 	return resp.SongsByGenre.Songs, nil
 }
 
+// GetNowPlaying returns what is currently being played by all users.
 func (s *SubsonicClient) GetNowPlaying() ([]*NowPlaying, error) {
 	resp, err := s.Get("getNowPlaying", nil)
 	if err != nil {
 		return nil, err
 	}
 	return resp.NowPlaying.Entries, nil
+}
+
+// GetStarred returns starred albums, artists, and songs.
+// Optional Parameters:
+// * musicFolderId:  Only return songs in the music folder with the given ID. See getMusicFolders.
+func (s *SubsonicClient) GetStarred(parameters map[string]string) (*Starred, error) {
+	resp, err := s.Get("getStarred", parameters)
+	if err != nil {
+		return nil, err
+	}
+	return resp.Starred, nil
+}
+
+// GetStarred2 returns starred albums, artists, and songs arranged by id3 tag.
+// Optional Parameters:
+// * musicFolderId:  Only return songs in the music folder with the given ID. See getMusicFolders.
+func (s *SubsonicClient) GetStarred2(parameters map[string]string) (*Starred, error) {
+	resp, err := s.Get("getStarred2", parameters)
+	if err != nil {
+		return nil, err
+	}
+	return resp.Starred2, nil
 }
