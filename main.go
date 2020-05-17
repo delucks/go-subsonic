@@ -17,7 +17,7 @@ import (
 
 const (
 	supportedApiVersion = "1.8.0"
-	libraryVersion      = "0.0.2"
+	libraryVersion      = "0.0.3"
 )
 
 type SubsonicClient struct {
