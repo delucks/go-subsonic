@@ -42,8 +42,14 @@ func generateSalt() string {
 func (s *SubsonicClient) Authenticate(password string) error {
 	salt := generateSalt()
 	h := md5.New()
-	io.WriteString(h, password)
-	io.WriteString(h, salt)
+	_, err := io.WriteString(h, password)
+	if err != nil {
+		return err
+	}
+	_, err = io.WriteString(h, salt)
+	if err != nil {
+		return err
+	}
 	s.salt = salt
 	s.token = fmt.Sprintf("%x", h.Sum(nil))
 	// Test authentication
