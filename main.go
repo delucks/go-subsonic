@@ -20,7 +20,7 @@ const (
 	libraryVersion      = "0.0.3"
 )
 
-type SubsonicClient struct {
+type Client struct {
 	Client     *http.Client
 	BaseUrl    string
 	User       string
@@ -39,7 +39,7 @@ func generateSalt() string {
 	return string(b)
 }
 
-func (s *SubsonicClient) Authenticate(password string) error {
+func (s *Client) Authenticate(password string) error {
 	salt := generateSalt()
 	h := md5.New()
 	_, err := io.WriteString(h, password)
@@ -59,7 +59,7 @@ func (s *SubsonicClient) Authenticate(password string) error {
 	return nil
 }
 
-func (s *SubsonicClient) Request(method string, endpoint string, params map[string]string) (*http.Response, error) {
+func (s *Client) Request(method string, endpoint string, params map[string]string) (*http.Response, error) {
 	baseUrl, err := url.Parse(s.BaseUrl)
 	if err != nil {
 		return nil, err
@@ -90,7 +90,7 @@ func (s *SubsonicClient) Request(method string, endpoint string, params map[stri
 }
 
 // Get is a convenience interface to issue a GET request and parse the response body (99% of Subsonic API calls)
-func (s *SubsonicClient) Get(endpoint string, params map[string]string) (*subsonicResponse, error) {
+func (s *Client) Get(endpoint string, params map[string]string) (*subsonicResponse, error) {
 	response, err := s.Request("GET", endpoint, params)
 	if err != nil {
 		return nil, err
@@ -112,7 +112,7 @@ func (s *SubsonicClient) Get(endpoint string, params map[string]string) (*subson
 	return resp, nil
 }
 
-func (s *SubsonicClient) Ping() bool {
+func (s *Client) Ping() bool {
 	_, err := s.Request("GET", "ping", nil)
 	if err != nil {
 		log.Println(err)
@@ -121,7 +121,7 @@ func (s *SubsonicClient) Ping() bool {
 	return true
 }
 
-func (s *SubsonicClient) GetLicense() (*License, error) {
+func (s *Client) GetLicense() (*License, error) {
 	resp, err := s.Get("getLicense", nil)
 	if err != nil {
 		return nil, err

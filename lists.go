@@ -33,7 +33,7 @@ func validateListType(input string) bool {
 // genre         Yes (if type is         The name of the genre, e.g., "Rock".
 //               byGenre)
 // musicFolderId No                      (Since 1.11.0) Only return albums in the music folder with the given ID. See getMusicFolders.
-func (s *SubsonicClient) GetAlbumList(listType string, parameters map[string]string) ([]*Album, error) {
+func (s *Client) GetAlbumList(listType string, parameters map[string]string) ([]*Album, error) {
 	if !validateListType(listType) {
 		return nil, fmt.Errorf("List type %s is invalid, see http://www.subsonic.org/pages/api.jsp#getAlbumList", listType)
 	}
@@ -75,7 +75,7 @@ func (s *SubsonicClient) GetAlbumList(listType string, parameters map[string]str
 // genre         Yes (if type is         The name of the genre, e.g., "Rock".
 //               byGenre)
 // musicFolderId No                      (Since 1.11.0) Only return albums in the music folder with the given ID. See getMusicFolders.
-func (s *SubsonicClient) GetAlbumList2(listType string, parameters map[string]string) ([]*Album, error) {
+func (s *Client) GetAlbumList2(listType string, parameters map[string]string) ([]*Album, error) {
 	if !validateListType(listType) {
 		return nil, fmt.Errorf("List type %s is invalid, see http://www.subsonic.org/pages/api.jsp#getAlbumList", listType)
 	}
@@ -113,7 +113,7 @@ func (s *SubsonicClient) GetAlbumList2(listType string, parameters map[string]st
 // * fromYear:       Only return songs published after or in this year.
 // * toYear:         Only return songs published before or in this year.
 // * musicFolderId:  Only return songs in the music folder with the given ID. See getMusicFolders.
-func (s *SubsonicClient) GetRandomSongs(parameters map[string]string) ([]*Song, error) {
+func (s *Client) GetRandomSongs(parameters map[string]string) ([]*Song, error) {
 	resp, err := s.Get("getRandomSongs", parameters)
 	if err != nil {
 		return nil, err
@@ -126,7 +126,7 @@ func (s *SubsonicClient) GetRandomSongs(parameters map[string]string) ([]*Song, 
 // * count:          The maximum number of songs to return. Max 500, default 10.
 // * offset:         The offset. Useful if you want to page through the songs in a genre.
 // * musicFolderId:  Only return songs in the music folder with the given ID. See getMusicFolders.
-func (s *SubsonicClient) GetSongsByGenre(name string, parameters map[string]string) ([]*Song, error) {
+func (s *Client) GetSongsByGenre(name string, parameters map[string]string) ([]*Song, error) {
 	params := make(map[string]string)
 	params["genre"] = name
 	for k, v := range parameters {
@@ -140,7 +140,7 @@ func (s *SubsonicClient) GetSongsByGenre(name string, parameters map[string]stri
 }
 
 // GetNowPlaying returns what is currently being played by all users.
-func (s *SubsonicClient) GetNowPlaying() ([]*NowPlaying, error) {
+func (s *Client) GetNowPlaying() ([]*NowPlaying, error) {
 	resp, err := s.Get("getNowPlaying", nil)
 	if err != nil {
 		return nil, err
@@ -151,7 +151,7 @@ func (s *SubsonicClient) GetNowPlaying() ([]*NowPlaying, error) {
 // GetStarred returns starred albums, artists, and songs.
 // Optional Parameters:
 // * musicFolderId:  Only return songs in the music folder with the given ID. See getMusicFolders.
-func (s *SubsonicClient) GetStarred(parameters map[string]string) (*Starred, error) {
+func (s *Client) GetStarred(parameters map[string]string) (*Starred, error) {
 	resp, err := s.Get("getStarred", parameters)
 	if err != nil {
 		return nil, err
@@ -162,7 +162,7 @@ func (s *SubsonicClient) GetStarred(parameters map[string]string) (*Starred, err
 // GetStarred2 returns starred albums, artists, and songs arranged by id3 tag.
 // Optional Parameters:
 // * musicFolderId:  Only return songs in the music folder with the given ID. See getMusicFolders.
-func (s *SubsonicClient) GetStarred2(parameters map[string]string) (*Starred, error) {
+func (s *Client) GetStarred2(parameters map[string]string) (*Starred, error) {
 	resp, err := s.Get("getStarred2", parameters)
 	if err != nil {
 		return nil, err

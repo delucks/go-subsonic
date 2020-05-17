@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func getRandomGenre(client SubsonicClient) *Genre {
+func getRandomGenre(client Client) *Genre {
 	rand.Seed(time.Now().Unix())
 	genres, err := client.GetGenres()
 	if err != nil {
@@ -24,7 +24,7 @@ func getRandomGenre(client SubsonicClient) *Genre {
 	return selection
 }
 
-func getSampleArtist(client SubsonicClient) *Artist {
+func getSampleArtist(client Client) *Artist {
 	artists, err := client.GetArtists(nil)
 	if err != nil {
 		return nil
@@ -32,7 +32,7 @@ func getSampleArtist(client SubsonicClient) *Artist {
 	return artists.Indexes[len(artists.Indexes)-1].Artists[0]
 }
 
-func runCommonTests(client SubsonicClient, t *testing.T) {
+func runCommonTests(client Client, t *testing.T) {
 	sampleArtist := getSampleArtist(client)
 	sampleGenre := getRandomGenre(client)
 	// These test the library's ability to unmarshal server responses
@@ -296,7 +296,7 @@ func runCommonTests(client SubsonicClient, t *testing.T) {
 	})
 }
 
-func runAirsonicTests(client SubsonicClient, t *testing.T) {
+func runAirsonicTests(client Client, t *testing.T) {
 	// Subsonic/Airsonic uses numeric IDs
 	t.Run("GetMusicDirectory", func(t *testing.T) {
 		// TODO replace this magic number with a song ID when search2 is ready
@@ -404,7 +404,7 @@ func runAirsonicTests(client SubsonicClient, t *testing.T) {
 
 /*
 func TestNavidrome(t *testing.T) {
-	client := SubsonicClient{
+	client := Client{
 		Client:     &http.Client{},
 		BaseUrl:    "http://192.168.1.7:4040/",
 		User:       "test",
@@ -439,7 +439,7 @@ func TestNavidrome(t *testing.T) {
 */
 
 func TestAirsonic(t *testing.T) {
-	client := SubsonicClient{
+	client := Client{
 		Client:     &http.Client{},
 		BaseUrl:    "http://127.0.0.1:8080/",
 		User:       "admin",
@@ -454,7 +454,7 @@ func TestAirsonic(t *testing.T) {
 }
 
 func TestSubsonic(t *testing.T) {
-	client := SubsonicClient{
+	client := Client{
 		Client:     &http.Client{},
 		BaseUrl:    "http://demo.subsonic.org/",
 		User:       "guest5",

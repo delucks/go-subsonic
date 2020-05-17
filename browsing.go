@@ -1,6 +1,6 @@
 package subsonic
 
-func (s *SubsonicClient) GetMusicFolders() ([]*MusicFolder, error) {
+func (s *Client) GetMusicFolders() ([]*MusicFolder, error) {
 	resp, err := s.Get("getMusicFolders", nil)
 	if err != nil {
 		return nil, err
@@ -12,7 +12,7 @@ func (s *SubsonicClient) GetMusicFolders() ([]*MusicFolder, error) {
 // Optional Parameters:
 // * musicFolderId:    Only return songs in the music folder with the given ID. See getMusicFolders.
 // * ifModifiedSince:  If specified, only return a result if the artist collection has changed since the given time (in milliseconds since 1 Jan 1970).
-func (s *SubsonicClient) GetIndexes(parameters map[string]string) (*IndexContainer, error) {
+func (s *Client) GetIndexes(parameters map[string]string) (*IndexContainer, error) {
 	resp, err := s.Get("getIndexes", parameters)
 	if err != nil {
 		return nil, err
@@ -21,7 +21,7 @@ func (s *SubsonicClient) GetIndexes(parameters map[string]string) (*IndexContain
 }
 
 // GetMusicDirectory returns the context around an object ID from the database.
-func (s *SubsonicClient) GetMusicDirectory(id string) (*Directory, error) {
+func (s *Client) GetMusicDirectory(id string) (*Directory, error) {
 	resp, err := s.Get("getMusicDirectory", map[string]string{"id": id})
 	if err != nil {
 		return nil, err
@@ -30,7 +30,7 @@ func (s *SubsonicClient) GetMusicDirectory(id string) (*Directory, error) {
 }
 
 // GetGenres returns all genres in the server.
-func (s *SubsonicClient) GetGenres() ([]*Genre, error) {
+func (s *Client) GetGenres() ([]*Genre, error) {
 	resp, err := s.Get("getGenres", nil)
 	if err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func (s *SubsonicClient) GetGenres() ([]*Genre, error) {
 // GetArtists returns all artists in the server.
 // Optional Parameters:
 // * musicFolderId:  Only return songs in the music folder with the given ID. See getMusicFolders.
-func (s *SubsonicClient) GetArtists(parameters map[string]string) (*ArtistsContainer, error) {
+func (s *Client) GetArtists(parameters map[string]string) (*ArtistsContainer, error) {
 	resp, err := s.Get("getArtists", parameters)
 	if err != nil {
 		return nil, err
@@ -50,7 +50,7 @@ func (s *SubsonicClient) GetArtists(parameters map[string]string) (*ArtistsConta
 }
 
 // GetAlbum returns an Artist by ID.
-func (s *SubsonicClient) GetArtist(id string) (*Artist, error) {
+func (s *Client) GetArtist(id string) (*Artist, error) {
 	resp, err := s.Get("getArtist", map[string]string{"id": id})
 	if err != nil {
 		return nil, err
@@ -59,7 +59,7 @@ func (s *SubsonicClient) GetArtist(id string) (*Artist, error) {
 }
 
 // GetAlbum returns an Album by ID.
-func (s *SubsonicClient) GetAlbum(id string) (*Album, error) {
+func (s *Client) GetAlbum(id string) (*Album, error) {
 	resp, err := s.Get("getAlbum", map[string]string{"id": id})
 	if err != nil {
 		return nil, err
@@ -68,7 +68,7 @@ func (s *SubsonicClient) GetAlbum(id string) (*Album, error) {
 }
 
 // GetSong returns a Song by ID.
-func (s *SubsonicClient) GetSong(id string) (*Song, error) {
+func (s *Client) GetSong(id string) (*Song, error) {
 	resp, err := s.Get("getSong", map[string]string{"id": id})
 	if err != nil {
 		return nil, err
@@ -80,7 +80,7 @@ func (s *SubsonicClient) GetSong(id string) (*Song, error) {
 // Optional Parameters:
 // * count:             Max number of similar artists to return.
 // * includeNotPresent: Whether to return artists that are not present in the media library.
-func (s *SubsonicClient) GetArtistInfo(id string, parameters map[string]string) (*ArtistInfo, error) {
+func (s *Client) GetArtistInfo(id string, parameters map[string]string) (*ArtistInfo, error) {
 	params := make(map[string]string)
 	params["id"] = id
 	for k, v := range parameters {
@@ -97,7 +97,7 @@ func (s *SubsonicClient) GetArtistInfo(id string, parameters map[string]string) 
 // Optional Parameters:
 // * count:             Max number of similar artists to return.
 // * includeNotPresent: Whether to return artists that are not present in the media library.
-func (s *SubsonicClient) GetArtistInfo2(id string, parameters map[string]string) (*ArtistInfo, error) {
+func (s *Client) GetArtistInfo2(id string, parameters map[string]string) (*ArtistInfo, error) {
 	params := make(map[string]string)
 	params["id"] = id
 	for k, v := range parameters {
@@ -112,7 +112,7 @@ func (s *SubsonicClient) GetArtistInfo2(id string, parameters map[string]string)
 
 // GetAlbumInfo returns album notes, image data, etc using data from last.fm.
 // This accepts both album and song IDs.
-func (s *SubsonicClient) GetAlbumInfo(id string) (*AlbumInfo, error) {
+func (s *Client) GetAlbumInfo(id string) (*AlbumInfo, error) {
 	resp, err := s.Get("getAlbumInfo", map[string]string{"id": id})
 	if err != nil {
 		return nil, err
@@ -122,7 +122,7 @@ func (s *SubsonicClient) GetAlbumInfo(id string) (*AlbumInfo, error) {
 
 // GetAlbumInfo2 returns the same data as GetAlbumInfo, but organized by id3 tag.
 // It only accepts album IDs.
-func (s *SubsonicClient) GetAlbumInfo2(id string) (*AlbumInfo, error) {
+func (s *Client) GetAlbumInfo2(id string) (*AlbumInfo, error) {
 	resp, err := s.Get("getAlbumInfo2", map[string]string{"id": id})
 	if err != nil {
 		return nil, err
@@ -134,7 +134,7 @@ func (s *SubsonicClient) GetAlbumInfo2(id string) (*AlbumInfo, error) {
 // This is mostly used for radio features. This accepts artist, album, or song IDs.
 // Optional Parameters:
 // * count: Number of songs to return
-func (s *SubsonicClient) GetSimilarSongs(id string, parameters map[string]string) ([]*Song, error) {
+func (s *Client) GetSimilarSongs(id string, parameters map[string]string) ([]*Song, error) {
 	params := make(map[string]string)
 	params["id"] = id
 	for k, v := range parameters {
@@ -150,7 +150,7 @@ func (s *SubsonicClient) GetSimilarSongs(id string, parameters map[string]string
 // GetSimilarSongs2 finds similar songs like GetSimilarSongs, but using id3 tags.
 // Optional Parameters:
 // * count: Number of songs to return
-func (s *SubsonicClient) GetSimilarSongs2(id string, parameters map[string]string) ([]*Song, error) {
+func (s *Client) GetSimilarSongs2(id string, parameters map[string]string) ([]*Song, error) {
 	params := make(map[string]string)
 	params["id"] = id
 	for k, v := range parameters {
@@ -166,7 +166,7 @@ func (s *SubsonicClient) GetSimilarSongs2(id string, parameters map[string]strin
 // GetTopSongs returns the top songs for a given artist by name.
 // Optional Parameters:
 // * count: Number of songs to return
-func (s *SubsonicClient) GetTopSongs(name string, parameters map[string]string) ([]*Song, error) {
+func (s *Client) GetTopSongs(name string, parameters map[string]string) ([]*Song, error) {
 	params := make(map[string]string)
 	params["artist"] = name
 	for k, v := range parameters {
