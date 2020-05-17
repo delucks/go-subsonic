@@ -20,47 +20,6 @@ const (
 	libraryVersion      = "0.0.2"
 )
 
-type ErrorResponse struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
-}
-
-type LicenseValidity struct {
-	Valid        bool   `json:"valid"`        // standard
-	Email        string `json:"email"`        // subsonic
-	TrialExpires string `json:"trialExpires"` // subsonic
-}
-
-// type SubsonicResponse is the main target for unmarshalling JSON data from the API - everything within the "subsonic-response" key
-type SubsonicResponse struct {
-	Status        string `json:"status"`        // standard
-	Version       string `json:"version"`       // standard
-	Type          string `json:"type"`          // navidrome
-	ServerVersion string `json:"serverVersion"` // navidrome
-	Error         *ErrorResponse
-	License       *LicenseValidity      // getLicense
-	MusicFolders  *MusicFolderContainer // getMusicFolders
-	Indexes       *IndexContainer       // getIndexes
-	Directory     *Directory            // getMusicDirectory
-	Genres        *GenreContainer       // getGenres
-	Artists       *ArtistsContainer     // getArtists
-	Artist        *Artist               // getArtist
-	Album         *Album                // getAlbum
-	Song          *Song                 // getSong
-	ArtistInfo    *ArtistInfo           // getArtistInfo
-	ArtistInfo2   *ArtistInfo           // getArtistInfo2
-	AlbumInfo     *AlbumInfo            // getAlbumInfo
-	SimilarSongs  *SongList             // getSimilarSongs
-	SimilarSongs2 *SongList             // getSimilarSongs2
-	TopSongs      *SongList             // getTopSongs
-	AlbumList     *AlbumList            // getAlbumList
-	AlbumList2    *AlbumList            // getAlbumList2
-}
-
-type APIResponse struct {
-	Response *SubsonicResponse `json:"subsonic-response"`
-}
-
 type SubsonicClient struct {
 	client     *http.Client
 	BaseUrl    string

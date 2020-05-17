@@ -5,10 +5,6 @@ import (
 	"fmt"
 )
 
-type AlbumList struct {
-	Albums []*Album `json:"album"`
-}
-
 func validateListType(input string) bool {
 	validTypes := map[string]bool{
 		"random":               true,
