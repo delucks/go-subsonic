@@ -218,38 +218,6 @@ func runCommonTests(client Client, t *testing.T) {
 			t.Errorf("Limiting songs returned by getRandomSongs failed: expected 1, length actual %d", len(songs))
 		}
 	})
-	t.Run("GetTopSongs", func(t *testing.T) {
-		songs, err := client.GetTopSongs(sampleArtist.Name, nil)
-		if err != nil {
-			t.Error(err)
-		}
-		if songs == nil {
-			t.Errorf("No top songs returned for known artist %s", sampleArtist.Name)
-		}
-		songs, err = client.GetTopSongs(sampleArtist.Name, map[string]string{"count": "1"})
-		if err != nil {
-			t.Error(err)
-		}
-		if len(songs) != 1 {
-			t.Errorf("Incorrect song count returned from call to getTopSongs, %d actual 1 expected", len(songs))
-		}
-	})
-	t.Run("GetSongsByGenre", func(t *testing.T) {
-		songs, err := client.GetSongsByGenre(sampleGenre.Value, nil)
-		if err != nil {
-			t.Error(err)
-		}
-		if songs == nil {
-			t.Errorf("No songs returned for genre %v", sampleGenre)
-		}
-		songs, err = client.GetSongsByGenre(sampleGenre.Value, map[string]string{"count": "1"})
-		if err != nil {
-			t.Error(err)
-		}
-		if len(songs) != 1 {
-			t.Errorf("Limiting songs returned by GetSongsByGenre failed: expected 1, length actual %d", len(songs))
-		}
-	})
 	t.Run("GetNowPlaying", func(t *testing.T) {
 		// This test is essentially a no-op because we can't depend on the state of playing something in a test environment
 		entries, err := client.GetNowPlaying()
@@ -302,20 +270,6 @@ func runCommonTests(client Client, t *testing.T) {
 			t.Errorf("Improperly limited results of search for %s: %#v", sampleArtist.Name, results)
 		}
 	})
-	t.Run("Stream", func(t *testing.T) {
-		// Purposefully choose an ID that returns an error
-		_, err := client.Stream("1", nil)
-		if err == nil {
-			t.Error("An error was not returned on ID 1")
-		}
-		contents, err := client.Stream("33", nil)
-		if err != nil {
-			t.Error(err)
-		}
-		if contents == nil {
-			t.Error("No content returned")
-		}
-	})
 	t.Run("GetPlaylists", func(t *testing.T) {
 		playlists, err := client.GetPlaylists(nil)
 		if err != nil {
@@ -343,7 +297,10 @@ func runCommonTests(client Client, t *testing.T) {
 }
 
 func runAirsonicTests(client Client, t *testing.T) {
-	// Subsonic/Airsonic uses numeric IDs
+	sampleGenre := getRandomGenre(client)
+	sampleArtist := getSampleArtist(client)
+	// Most of these tests are separated out because Navidrome uses string IDs and other string fields.
+	// Subsonic/Airsonic uses numeric IDs, so they are tested with those numeric IDs here.
 	t.Run("GetMusicDirectory", func(t *testing.T) {
 		// TODO replace this magic number with a song ID when search2 is ready
 		dir, err := client.GetMusicDirectory("5")
@@ -446,9 +403,55 @@ func runAirsonicTests(client Client, t *testing.T) {
 			t.Errorf("Count argument did not work properly: got %d songs in response to a request for one", len(songs))
 		}
 	})
+	t.Run("Stream", func(t *testing.T) {
+		// Purposefully choose an ID that returns an error
+		_, err := client.Stream("1", nil)
+		if err == nil {
+			t.Error("An error was not returned on ID 1")
+		}
+		contents, err := client.Stream("33", nil)
+		if err != nil {
+			t.Error(err)
+		}
+		if contents == nil {
+			t.Error("No content returned")
+		}
+	})
+	// Next 2 are not implemented in Navidrome yet
+	t.Run("GetTopSongs", func(t *testing.T) {
+		songs, err := client.GetTopSongs(sampleArtist.Name, nil)
+		if err != nil {
+			t.Error(err)
+		}
+		if songs == nil {
+			t.Errorf("No top songs returned for known artist %s", sampleArtist.Name)
+		}
+		songs, err = client.GetTopSongs(sampleArtist.Name, map[string]string{"count": "1"})
+		if err != nil {
+			t.Error(err)
+		}
+		if len(songs) != 1 {
+			t.Errorf("Incorrect song count returned from call to getTopSongs, %d actual 1 expected", len(songs))
+		}
+	})
+	t.Run("GetSongsByGenre", func(t *testing.T) {
+		songs, err := client.GetSongsByGenre(sampleGenre.Value, nil)
+		if err != nil {
+			t.Error(err)
+		}
+		if songs == nil {
+			t.Errorf("No songs returned for genre %v", sampleGenre)
+		}
+		songs, err = client.GetSongsByGenre(sampleGenre.Value, map[string]string{"count": "1"})
+		if err != nil {
+			t.Error(err)
+		}
+		if len(songs) != 1 {
+			t.Errorf("Limiting songs returned by GetSongsByGenre failed: expected 1, length actual %d", len(songs))
+		}
+	})
 }
 
-/*
 func TestNavidrome(t *testing.T) {
 	client := Client{
 		Client:     &http.Client{},
