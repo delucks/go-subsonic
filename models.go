@@ -34,6 +34,7 @@ type subsonicResponse struct {
 	SearchResult2 *SearchResult         // search2
 	SearchResult3 *SearchResult         // search3
 	Playlists     *playlistList         // getPlaylists
+	Playlist      *Playlist             // getPlaylist
 }
 
 type apiResponse struct {
@@ -260,16 +261,17 @@ type SearchResult struct {
 }
 
 type Playlist struct {
-	Changed   string `json:"changed"`
-	Comment   string `json:"comment"`
-	CoverArt  string `json:"coverArt"`
-	Created   string `json:"created"`
-	Duration  int64  `json:"duration"`
-	ID        string `json:"id"`
-	Name      string `json:"name"`
-	Owner     string `json:"owner"`
-	Public    bool   `json:"public"`
-	SongCount int    `json:"songCount"`
+	Changed   string  `json:"changed"`
+	Comment   string  `json:"comment"`
+	CoverArt  string  `json:"coverArt"`
+	Created   string  `json:"created"`
+	Duration  int64   `json:"duration"`
+	ID        string  `json:"id"`
+	Name      string  `json:"name"`
+	Owner     string  `json:"owner"`
+	Public    bool    `json:"public"`
+	SongCount int     `json:"songCount"`
+	Entries   []*Song `json:"entry"` // getPlaylist only
 }
 
 type playlistList struct {

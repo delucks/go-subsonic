@@ -32,6 +32,14 @@ func getSampleArtist(client Client) *Artist {
 	return artists.Indexes[len(artists.Indexes)-1].Artists[0]
 }
 
+func getSamplePlaylist(client Client) *Playlist {
+	playlists, err := client.GetPlaylists(nil)
+	if err != nil {
+		return nil
+	}
+	return playlists[rand.Intn(len(playlists))]
+}
+
 func runCommonTests(client Client, t *testing.T) {
 	sampleArtist := getSampleArtist(client)
 	sampleGenre := getRandomGenre(client)
@@ -303,6 +311,19 @@ func runCommonTests(client Client, t *testing.T) {
 			if p.ID == "" {
 				t.Errorf("Invalid playlist returned %#v", p)
 			}
+		}
+	})
+	t.Run("GetPlaylist", func(t *testing.T) {
+		sample := getSamplePlaylist(client)
+		if sample == nil {
+			t.Error("Failed to get sample playlist")
+		}
+		playlist, err := client.GetPlaylist(sample.ID)
+		if err != nil {
+			t.Error(err)
+		}
+		if playlist.ID == "" {
+			t.Errorf("Invalid playlist returned %#v", playlist)
 		}
 	})
 }
