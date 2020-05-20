@@ -485,7 +485,6 @@ func TestNavidrome(t *testing.T) {
 		}
 	})
 }
-*/
 
 func TestAirsonic(t *testing.T) {
 	client := Client{

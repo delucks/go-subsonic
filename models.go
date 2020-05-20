@@ -55,8 +55,9 @@ type License struct {
 
 // MusicFolder is a representation of a source of music files added to the server. It is identified primarily by the numeric ID.
 type MusicFolder struct {
-	Id   int    `json:"id"` // subsonic returns an int, navidrome a string
+	Id   int    `json:"id"`
 	Name string `json:"name"`
+	//Id   string `json:"id"` // XXX navidrome
 }
 
 type musicFolderContainer struct {
@@ -80,7 +81,6 @@ type Song struct {
 	Parent        string    `json:"parent"`
 	Path          string    `json:"path"`
 	PlayCount     int       `json:"playCount"`
-	Size          int       `json:"size"`
 	Suffix        string    `json:"suffix"`
 	Title         string    `json:"title"`
 	Track         int       `json:"track"`
@@ -88,6 +88,8 @@ type Song struct {
 	Year          int       `json:"year"`
 	AverageRating float32   `json:"averageRating,omitempty"` // subsonic only
 	CoverArt      string    `json:"coverArt"`                // subsonic only
+	Size          int       `json:"size"`
+	//Size          string  `json:"size"` // XXX navidrome
 }
 
 // Album is all metadata about an album from the server, including songs if fetched from getAlbum.
@@ -130,10 +132,11 @@ type ArtistIndex struct {
 
 // Index holds every artist or single track in the database alphabetically sorted.
 type Index struct {
-	LastModified    int64          `json:"lastModified"` // subsonic returns an int64, navidrome a string
 	IgnoredArticles string         `json:"ignoredArticles"`
 	Indexes         []*ArtistIndex `json:"index"`
 	Children        []*Child       `json:"child"`
+	LastModified    int64          `json:"lastModified"`
+	//LastModified    string         `json:"lastModified"` // XXX navidrome
 }
 
 // Child is a single item from the database, from either Index or Directory representations.
@@ -150,7 +153,6 @@ type Child struct {
 	IsVideo       bool      `json:"isVideo"`
 	Parent        string    `json:"parent"`
 	Path          string    `json:"path"`
-	Size          int64     `json:"size"` // string in navidrome
 	Suffix        string    `json:"suffix"`
 	Title         string    `json:"title"`
 	Type          string    `json:"type"`
@@ -164,6 +166,8 @@ type Child struct {
 	DiscNumber    int       `json:"discNumber"`
 	AlbumID       string    `json:"albumId"`
 	ArtistID      string    `json:"artistId"`
+	Size          int64     `json:"size"`
+	//Size          string  `json:"size"` // XXX navidrome
 }
 
 // Directory is an entry in the Subsonic directory hierarchy, returned by calls to GetMusicDirectory.
