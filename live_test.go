@@ -33,14 +33,6 @@ func getSampleArtist(client Client) *Artist {
 	return artists.Indexes[len(artists.Indexes)-1].Artists[0]
 }
 
-func getSamplePlaylist(client Client) *Playlist {
-	playlists, err := client.GetPlaylists(nil)
-	if err != nil {
-		return nil
-	}
-	return playlists[rand.Intn(len(playlists))]
-}
-
 func findPlaylistByName(client Client, name string) (*Playlist, error) {
 	playlists, err := client.GetPlaylists(nil)
 	if err != nil {
@@ -281,17 +273,44 @@ func runCommonTests(client Client, t *testing.T) {
 			}
 		}
 	})
-	t.Run("GetPlaylist", func(t *testing.T) {
-		sample := getSamplePlaylist(client)
-		if sample == nil {
-			t.Error("Failed to get sample playlist")
-		}
-		playlist, err := client.GetPlaylist(sample.ID)
+}
+
+func runPlaylistTests(client Client, t *testing.T) {
+	// State-heavy test for playlist CRUD
+	testPlaylistName := fmt.Sprintf("Test playlist %v", time.Now().Unix())
+	t.Run("CreatePlaylist", func(t *testing.T) {
+		err := client.CreatePlaylist(map[string]string{
+			"name": testPlaylistName,
+		})
 		if err != nil {
 			t.Error(err)
 		}
-		if playlist.ID == "" {
+	})
+	testPlaylist, err := findPlaylistByName(client, testPlaylistName)
+	if err != nil {
+		t.Log(err)
+	}
+	t.Run("GetPlaylist", func(t *testing.T) {
+		playlist, err := client.GetPlaylist(testPlaylist.ID)
+		if err != nil {
+			t.Error(err)
+		}
+		if playlist.ID == "" || playlist.ID != testPlaylist.ID {
 			t.Errorf("Invalid playlist returned %#v", playlist)
+		}
+	})
+	t.Run("UpdatePlaylist", func(t *testing.T) {
+		err = client.UpdatePlaylist(testPlaylist.ID, map[string]string{
+			"comment": "Whee there buddy",
+		})
+		if err != nil {
+			t.Error(err)
+		}
+	})
+	t.Run("DeletePlaylist", func(t *testing.T) {
+		err = client.DeletePlaylist(testPlaylist.ID)
+		if err != nil {
+			t.Error(err)
 		}
 	})
 }
@@ -464,6 +483,7 @@ func TestNavidrome(t *testing.T) {
 		t.Error(err)
 	}
 	runCommonTests(client, t)
+	runPlaylistTests(client, t)
 	// Navidrome uses UUIDs (strings)
 	t.Run("GetMusicDirectory", func(t *testing.T) {
 		// TODO replace this magic uuid with a real one when search2 is ready
@@ -498,35 +518,8 @@ func TestAirsonic(t *testing.T) {
 		t.Error(err)
 	}
 	runCommonTests(client, t)
+	runPlaylistTests(client, t)
 	runAirsonicTests(client, t)
-	// State-heavy test for playlist CRUD
-	testPlaylistName := fmt.Sprintf("Test playlist %v", time.Now().Unix())
-	t.Run("CreatePlaylist", func(t *testing.T) {
-		err := client.CreatePlaylist(map[string]string{
-			"name": testPlaylistName,
-		})
-		if err != nil {
-			t.Error(err)
-		}
-	})
-	testPlaylist, err := findPlaylistByName(client, testPlaylistName)
-	if err != nil {
-		t.Error(err)
-	}
-	t.Run("UpdatePlaylist", func(t *testing.T) {
-		err = client.UpdatePlaylist(testPlaylist.ID, map[string]string{
-			"comment": "Whee there buddy",
-		})
-		if err != nil {
-			t.Error(err)
-		}
-	})
-	t.Run("DeletePlaylist", func(t *testing.T) {
-		err = client.DeletePlaylist(testPlaylist.ID)
-		if err != nil {
-			t.Error(err)
-		}
-	})
 }
 
 func TestSubsonic(t *testing.T) {
@@ -541,5 +534,6 @@ func TestSubsonic(t *testing.T) {
 		t.Error(err)
 	}
 	runCommonTests(client, t)
+	runPlaylistTests(client, t)
 	runAirsonicTests(client, t)
 }
