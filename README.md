@@ -53,7 +53,7 @@ Video endpoints are currently out of scope- please file an issue if you would li
 
 ## Playlists
 
-- [ ] getPlaylists (1.0.0)
+- [x] getPlaylists (1.0.0)
 - [ ] getPlaylist (1.0.0)
 - [ ] createPlaylist (1.2.0)
 - [ ] updatePlaylist (1.8.0)

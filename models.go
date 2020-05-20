@@ -11,7 +11,7 @@ type subsonicResponse struct {
 	Error         *errorResponse
 	License       *License              // getLicense
 	MusicFolders  *musicFolderContainer // getMusicFolders
-	Indexes       *IndexContainer       // getIndexes
+	Indexes       *Index                // getIndexes
 	Directory     *Directory            // getMusicDirectory
 	Genres        *genreContainer       // getGenres
 	Artists       *ArtistsContainer     // getArtists
@@ -33,6 +33,7 @@ type subsonicResponse struct {
 	Starred2      *Starred              // getStarred2
 	SearchResult2 *SearchResult         // search2
 	SearchResult3 *SearchResult         // search3
+	Playlists     *playlistList         // getPlaylists
 }
 
 type apiResponse struct {
@@ -120,18 +121,18 @@ type Artist struct {
 	Albums         []*Album `json:"album"`          // only filled by getArtist
 }
 
-// Index is a by-letter representation of every artist on the server.
-type Index struct {
+// ArtistIndex is a by-letter representation of every artist on the server.
+type ArtistIndex struct {
 	Name    string    `json:"name"`
 	Artists []*Artist `json:"artist"`
 }
 
-// IndexContainer holds every artist or single track in the database alphabetically sorted.
-type IndexContainer struct {
-	LastModified    int64    `json:"lastModified"` // subsonic returns an int64, navidrome a string
-	IgnoredArticles string   `json:"ignoredArticles"`
-	Indexes         []*Index `json:"index"`
-	Children        []*Child `json:"child"`
+// Index holds every artist or single track in the database alphabetically sorted.
+type Index struct {
+	LastModified    int64          `json:"lastModified"` // subsonic returns an int64, navidrome a string
+	IgnoredArticles string         `json:"ignoredArticles"`
+	Indexes         []*ArtistIndex `json:"index"`
+	Children        []*Child       `json:"child"`
 }
 
 type Child struct {
@@ -183,8 +184,8 @@ type genreContainer struct {
 }
 
 type ArtistsContainer struct {
-	IgnoredArticles string   `json:"ignoredArticles"`
-	Indexes         []*Index `json:"index"`
+	IgnoredArticles string         `json:"ignoredArticles"`
+	Indexes         []*ArtistIndex `json:"index"`
 }
 
 // ArtistInfo is all auxillary information about an artist from GetArtistInfo/GetArtistInfo2
@@ -221,17 +222,17 @@ type albumList struct {
 type NowPlaying struct {
 	ID          string `json:"id"`
 	Album       string `json:"album"`
-	BitRate     int64  `json:"bitRate"`
+	BitRate     int    `json:"bitRate"`
 	ContentType string `json:"contentType"`
 	CoverArt    string `json:"coverArt"`
 	Created     string `json:"created"`
 	Duration    int64  `json:"duration"`
 	IsDir       bool   `json:"isDir"`
 	IsVideo     bool   `json:"isVideo"`
-	MinutesAgo  int64  `json:"minutesAgo"`
+	MinutesAgo  int    `json:"minutesAgo"`
 	Parent      string `json:"parent"`
 	Path        string `json:"path"`
-	PlayCount   int64  `json:"playCount"`
+	PlayCount   int    `json:"playCount"`
 	PlayerID    int64  `json:"playerId"`
 	Size        int64  `json:"size"`
 	Suffix      string `json:"suffix"`
@@ -256,4 +257,21 @@ type SearchResult struct {
 	Songs   []*Song   `json:"song"`
 	Albums  []*Album  `json:"album"`
 	Artists []*Artist `json:"artist"`
+}
+
+type Playlist struct {
+	Changed   string `json:"changed"`
+	Comment   string `json:"comment"`
+	CoverArt  string `json:"coverArt"`
+	Created   string `json:"created"`
+	Duration  int64  `json:"duration"`
+	ID        string `json:"id"`
+	Name      string `json:"name"`
+	Owner     string `json:"owner"`
+	Public    bool   `json:"public"`
+	SongCount int    `json:"songCount"`
+}
+
+type playlistList struct {
+	Entries []*Playlist `json:"playlist"`
 }

@@ -12,7 +12,7 @@ func (s *Client) GetMusicFolders() ([]*MusicFolder, error) {
 // Optional Parameters:
 // * musicFolderId:    Only return songs in the music folder with the given ID. See getMusicFolders.
 // * ifModifiedSince:  If specified, only return a result if the artist collection has changed since the given time (in milliseconds since 1 Jan 1970).
-func (s *Client) GetIndexes(parameters map[string]string) (*IndexContainer, error) {
+func (s *Client) GetIndexes(parameters map[string]string) (*Index, error) {
 	resp, err := s.Get("getIndexes", parameters)
 	if err != nil {
 		return nil, err

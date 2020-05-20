@@ -294,6 +294,17 @@ func runCommonTests(client Client, t *testing.T) {
 			t.Error("No content returned")
 		}
 	})
+	t.Run("GetPlaylists", func(t *testing.T) {
+		playlists, err := client.GetPlaylists(nil)
+		if err != nil {
+			t.Error(err)
+		}
+		for _, p := range playlists {
+			if p.ID == "" {
+				t.Errorf("Invalid playlist returned %#v", p)
+			}
+		}
+	})
 }
 
 func runAirsonicTests(client Client, t *testing.T) {
