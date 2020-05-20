@@ -57,7 +57,6 @@ type License struct {
 type MusicFolder struct {
 	Id   int    `json:"id"`
 	Name string `json:"name"`
-	//Id   string `json:"id"` // XXX navidrome
 }
 
 type musicFolderContainer struct {
@@ -89,7 +88,6 @@ type Song struct {
 	AverageRating float32   `json:"averageRating,omitempty"` // subsonic only
 	CoverArt      string    `json:"coverArt"`                // subsonic only
 	Size          int       `json:"size"`
-	//Size          string  `json:"size"` // XXX navidrome
 }
 
 // Album is all metadata about an album from the server, including songs if fetched from getAlbum.
@@ -136,7 +134,6 @@ type Index struct {
 	Indexes         []*ArtistIndex `json:"index"`
 	Children        []*Child       `json:"child"`
 	LastModified    int64          `json:"lastModified"`
-	//LastModified    string         `json:"lastModified"` // XXX navidrome
 }
 
 // Child is a single item from the database, from either Index or Directory representations.
@@ -167,7 +164,6 @@ type Child struct {
 	AlbumID       string    `json:"albumId"`
 	ArtistID      string    `json:"artistId"`
 	Size          int64     `json:"size"`
-	//Size          string  `json:"size"` // XXX navidrome
 }
 
 // Directory is an entry in the Subsonic directory hierarchy, returned by calls to GetMusicDirectory.
