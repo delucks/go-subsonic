@@ -1,5 +1,7 @@
 # go-subsonic
 
+[![GoDoc](https://godoc.org/github.com/delucks/go-subsonic?status.svg)](https://godoc.org/github.com/delucks/go-subsonic)
+
 This is an API client library for Subsonic and Subsonic-compatible music servers. It has been tested on Subsonic, Airsonic, and Navidrome.
 
 # API Support
@@ -8,6 +10,7 @@ This is an API client library for Subsonic and Subsonic-compatible music servers
 
 Video endpoints are currently out of scope- please file an issue if you would like support for them. The deprecated "search" endpoint is unimplemented.
 
+- [ ] hls.m3u8 (1.8.0)
 - [ ] getVideos (1.8.0)
 - [ ] getVideoInfo (1.14.0)
 - [ ] getCaptions (1.14.0)
@@ -63,7 +66,6 @@ Video endpoints are currently out of scope- please file an issue if you would li
 
 - [x] stream (1.0.0)
 - [ ] download (1.0.0)
-- [ ] hls.m3u8 (1.8.0)
 - [ ] getCoverArt (1.0.0)
 - [ ] getLyrics (1.2.0)
 - [ ] getAvatar (1.8.0)
