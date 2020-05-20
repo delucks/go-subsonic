@@ -1,4 +1,7 @@
-// Package subsonic implements an API client library for Subsonic-compatible music streaming servers
+// Package subsonic implements an API client library for Subsonic-compatible music streaming servers.
+//
+// This project handles communication with a remote *sonic server, but does not handle playback of media. The library user should be prepared to do something with the stream of audio in bytes, like decoding and playing that audio on a sound card.
+// The list of API endpoints implemented is available on the project's github page.
 package subsonic
 
 import (
