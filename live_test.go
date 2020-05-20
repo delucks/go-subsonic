@@ -1,6 +1,7 @@
 package subsonic
 
 import (
+	"fmt"
 	"math/rand"
 	"net/http"
 	"testing"
@@ -483,6 +484,14 @@ func TestAirsonic(t *testing.T) {
 	}
 	runCommonTests(client, t)
 	runAirsonicTests(client, t)
+	t.Run("CreatePlaylist", func(t *testing.T) {
+		err := client.CreatePlaylist(map[string]string{
+			"name": fmt.Sprintf("Test playlist %v", time.Now().Unix()),
+		})
+		if err != nil {
+			t.Error(err)
+		}
+	})
 }
 
 func TestSubsonic(t *testing.T) {
