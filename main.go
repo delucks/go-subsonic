@@ -39,6 +39,7 @@ func generateSalt() string {
 	return string(b)
 }
 
+// Authenticate authenticates the current user with a provided password. The password is salted before transmission and requires Subsonic > 1.13.0.
 func (s *Client) Authenticate(password string) error {
 	salt := generateSalt()
 	h := md5.New()
@@ -59,6 +60,7 @@ func (s *Client) Authenticate(password string) error {
 	return nil
 }
 
+// Request performs a HTTP request against the Subsonic server as the current user.
 func (s *Client) Request(method string, endpoint string, params map[string]string) (*http.Response, error) {
 	baseUrl, err := url.Parse(s.BaseUrl)
 	if err != nil {
@@ -112,6 +114,7 @@ func (s *Client) Get(endpoint string, params map[string]string) (*subsonicRespon
 	return resp, nil
 }
 
+// Ping is used to test connectivity with the server. It returns true if the server is up.
 func (s *Client) Ping() bool {
 	_, err := s.Request("GET", "ping", nil)
 	if err != nil {
@@ -121,6 +124,7 @@ func (s *Client) Ping() bool {
 	return true
 }
 
+// GetLicense retrieves details about the software license. Subsonic requires a license after a 30-day trial, compatible applications have a perpetually valid license.
 func (s *Client) GetLicense() (*License, error) {
 	resp, err := s.Get("getLicense", nil)
 	if err != nil {
