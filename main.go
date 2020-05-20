@@ -17,7 +17,7 @@ import (
 
 const (
 	supportedApiVersion = "1.8.0"
-	libraryVersion      = "0.0.3"
+	libraryVersion      = "0.0.4"
 )
 
 type Client struct {
