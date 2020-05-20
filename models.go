@@ -136,6 +136,8 @@ type Index struct {
 	Children        []*Child       `json:"child"`
 }
 
+// Child is a single item from the database, from either Index or Directory representations.
+// It is essentially a giant mash-up of Artist/Album/Song fields because Subsonic is great like that.
 type Child struct {
 	ID            string    `json:"id"`
 	Album         string    `json:"album"`
@@ -164,6 +166,7 @@ type Child struct {
 	ArtistID      string    `json:"artistId"`
 }
 
+// Directory is an entry in the Subsonic directory hierarchy, returned by calls to GetMusicDirectory.
 type Directory struct {
 	Children   []*Child `json:"child"`
 	ID         string   `json:"id"`
@@ -184,6 +187,7 @@ type genreContainer struct {
 	Genre []*Genre `json:"genre"`
 }
 
+// ArtistsContainer is an index of all artists in the DB organized by id3 tags. It is similar to Index but uses id3 tags.
 type ArtistsContainer struct {
 	IgnoredArticles string         `json:"ignoredArticles"`
 	Indexes         []*ArtistIndex `json:"index"`
@@ -260,6 +264,7 @@ type SearchResult struct {
 	Artists []*Artist `json:"artist"`
 }
 
+// Playlist is a collection of songs with metadata like a name, comment, and information about the total duration of the playlist.
 type Playlist struct {
 	Changed   string  `json:"changed"`
 	Comment   string  `json:"comment"`

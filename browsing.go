@@ -1,5 +1,6 @@
 package subsonic
 
+// GetMusicFolders returns all configured top-level music folders.
 func (s *Client) GetMusicFolders() ([]*MusicFolder, error) {
 	resp, err := s.Get("getMusicFolders", nil)
 	if err != nil {
@@ -21,7 +22,8 @@ func (s *Client) GetIndexes(parameters map[string]string) (*Index, error) {
 	return resp.Indexes, nil
 }
 
-// GetMusicDirectory returns the context around an object ID from the database.
+// GetMusicDirectory returns a listing of all files in a music directory. Typically used to get list of albums for an artist, or list of songs for an album.
+// The ID can be an album, song, or artist - anything considered within the directory hierarchy of Subsonic.
 func (s *Client) GetMusicDirectory(id string) (*Directory, error) {
 	resp, err := s.Get("getMusicDirectory", map[string]string{"id": id})
 	if err != nil {
