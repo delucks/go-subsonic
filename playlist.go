@@ -41,3 +41,32 @@ func (s *Client) CreatePlaylist(parameters map[string]string) error {
 	}
 	return nil
 }
+
+// UpdatePlaylist updates a playlist. Only the owner of a playlist is allowed to update it.
+// Optional Parameters:
+// * name              The human-readable name of the playlist.
+// * comment           The playlist comment.
+// * public            true if the playlist should be visible to all users, false otherwise.
+// * songIdToAdd       Add this song with this ID to the playlist. Multiple parameters allowed.
+// * songIndexToRemove Remove the song at this position in the playlist. Multiple parameters allowed.
+func (s *Client) UpdatePlaylist(playlistId string, parameters map[string]string) error {
+	params := make(map[string]string)
+	for k, v := range parameters {
+		params[k] = v
+	}
+	params["playlistId"] = playlistId
+	_, err := s.Get("updatePlaylist", params)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// DeletePlaylist deletes a saved playlist.
+func (s *Client) DeletePlaylist(playlistId string) error {
+	_, err := s.Get("deletePlaylist", map[string]string{"id": playlistId})
+	if err != nil {
+		return err
+	}
+	return nil
+}

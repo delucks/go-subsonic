@@ -41,6 +41,19 @@ func getSamplePlaylist(client Client) *Playlist {
 	return playlists[rand.Intn(len(playlists))]
 }
 
+func findPlaylistByName(client Client, name string) (*Playlist, error) {
+	playlists, err := client.GetPlaylists(nil)
+	if err != nil {
+		return nil, err
+	}
+	for _, p := range playlists {
+		if p.Name == name {
+			return p, nil
+		}
+	}
+	return nil, fmt.Errorf("Could not find playlist %s", name)
+}
+
 func runCommonTests(client Client, t *testing.T) {
 	sampleArtist := getSampleArtist(client)
 	sampleGenre := getRandomGenre(client)
@@ -484,10 +497,30 @@ func TestAirsonic(t *testing.T) {
 	}
 	runCommonTests(client, t)
 	runAirsonicTests(client, t)
+	// State-heavy test for playlist CRUD
+	testPlaylistName := fmt.Sprintf("Test playlist %v", time.Now().Unix())
 	t.Run("CreatePlaylist", func(t *testing.T) {
 		err := client.CreatePlaylist(map[string]string{
-			"name": fmt.Sprintf("Test playlist %v", time.Now().Unix()),
+			"name": testPlaylistName,
 		})
+		if err != nil {
+			t.Error(err)
+		}
+	})
+	testPlaylist, err := findPlaylistByName(client, testPlaylistName)
+	if err != nil {
+		t.Error(err)
+	}
+	t.Run("UpdatePlaylist", func(t *testing.T) {
+		err = client.UpdatePlaylist(testPlaylist.ID, map[string]string{
+			"comment": "Whee there buddy",
+		})
+		if err != nil {
+			t.Error(err)
+		}
+	})
+	t.Run("DeletePlaylist", func(t *testing.T) {
+		err = client.DeletePlaylist(testPlaylist.ID)
 		if err != nil {
 			t.Error(err)
 		}
