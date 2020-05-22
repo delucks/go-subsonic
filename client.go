@@ -6,7 +6,7 @@ package subsonic
 
 import (
 	"crypto/md5"
-	"encoding/json"
+	"encoding/xml"
 	"errors"
 	"fmt"
 	"io"
@@ -76,7 +76,7 @@ func (s *Client) Request(method string, endpoint string, params map[string]strin
 	}
 
 	q := req.URL.Query()
-	q.Add("f", "json")
+	q.Add("f", "xml")
 	q.Add("v", supportedApiVersion)
 	q.Add("c", s.ClientName)
 	q.Add("u", s.User)
@@ -95,7 +95,7 @@ func (s *Client) Request(method string, endpoint string, params map[string]strin
 }
 
 // Get is a convenience interface to issue a GET request and parse the response body (99% of Subsonic API calls)
-func (s *Client) Get(endpoint string, params map[string]string) (*subsonicResponse, error) {
+func (s *Client) Get(endpoint string, params map[string]string) (*Response, error) {
 	response, err := s.Request("GET", endpoint, params)
 	if err != nil {
 		return nil, err
@@ -104,17 +104,16 @@ func (s *Client) Get(endpoint string, params map[string]string) (*subsonicRespon
 	if err != nil {
 		return nil, err
 	}
-	//log.Printf("%s: %s\n", endpoint, contents)
-	parsed := apiResponse{}
-	err = json.Unmarshal(responseBody, &parsed)
+	parsed := Response{}
+	err = xml.Unmarshal(responseBody, &parsed)
 	if err != nil {
 		return nil, err
 	}
-	resp := parsed.Response
-	if resp.Error != nil {
-		return nil, fmt.Errorf("Error #%d: %s\n", resp.Error.Code, resp.Error.Message)
+	if parsed.Error != nil {
+		return nil, fmt.Errorf("Error #%d: %s\n", parsed.Error.Code, parsed.Error.Message)
 	}
-	return resp, nil
+	//log.Printf("%s: %s\n", endpoint, string(responseBody))
+	return &parsed, nil
 }
 
 // Ping is used to test connectivity with the server. It returns true if the server is up.

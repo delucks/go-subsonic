@@ -33,7 +33,7 @@ func validateListType(input string) bool {
 //   musicFolderId:  (Since 1.11.0) Only return albums in the music folder with the given ID. See getMusicFolders.
 //
 // toYear and fromYear are required parameters when type == "byYear". genre is a required parameter when type == "byGenre".
-func (s *Client) GetAlbumList(listType string, parameters map[string]string) ([]*Album, error) {
+func (s *Client) GetAlbumList(listType string, parameters map[string]string) ([]*Child, error) {
 	if !validateListType(listType) {
 		return nil, fmt.Errorf("List type %s is invalid, see http://www.subsonic.org/pages/api.jsp#getAlbumList", listType)
 	}
@@ -61,7 +61,7 @@ func (s *Client) GetAlbumList(listType string, parameters map[string]string) ([]
 	if err != nil {
 		return nil, err
 	}
-	return resp.AlbumList.Albums, nil
+	return resp.AlbumList.Album, nil
 }
 
 // GetAlbumList2 returns a list of albums like GetAlbumList, but organized according to id3 tags.
@@ -75,7 +75,7 @@ func (s *Client) GetAlbumList(listType string, parameters map[string]string) ([]
 //   musicFolderId:  (Since 1.11.0) Only return albums in the music folder with the given ID. See getMusicFolders.
 //
 // toYear and fromYear are required parameters when type == "byYear". genre is a required parameter when type == "byGenre".
-func (s *Client) GetAlbumList2(listType string, parameters map[string]string) ([]*Album, error) {
+func (s *Client) GetAlbumList2(listType string, parameters map[string]string) ([]*AlbumID3, error) {
 	if !validateListType(listType) {
 		return nil, fmt.Errorf("List type %s is invalid, see http://www.subsonic.org/pages/api.jsp#getAlbumList", listType)
 	}
@@ -103,7 +103,7 @@ func (s *Client) GetAlbumList2(listType string, parameters map[string]string) ([
 	if err != nil {
 		return nil, err
 	}
-	return resp.AlbumList2.Albums, nil
+	return resp.AlbumList2.Album, nil
 }
 
 // GetRandomSongs returns a randomly selected set of songs limited by the optional parameters.
@@ -114,12 +114,12 @@ func (s *Client) GetAlbumList2(listType string, parameters map[string]string) ([
 //   fromYear:       Only return songs published after or in this year.
 //   toYear:         Only return songs published before or in this year.
 //   musicFolderId:  Only return songs in the music folder with the given ID. See getMusicFolders.
-func (s *Client) GetRandomSongs(parameters map[string]string) ([]*Song, error) {
+func (s *Client) GetRandomSongs(parameters map[string]string) ([]*Child, error) {
 	resp, err := s.Get("getRandomSongs", parameters)
 	if err != nil {
 		return nil, err
 	}
-	return resp.RandomSongs.Songs, nil
+	return resp.RandomSongs.Song, nil
 }
 
 // GetSongsByGenre returns songs in a given genre name.
@@ -128,7 +128,7 @@ func (s *Client) GetRandomSongs(parameters map[string]string) ([]*Song, error) {
 //   count:          The maximum number of songs to return. Max 500, default 10.
 //   offset:         The offset. Useful if you want to page through the songs in a genre.
 //   musicFolderId:  Only return songs in the music folder with the given ID. See getMusicFolders.
-func (s *Client) GetSongsByGenre(name string, parameters map[string]string) ([]*Song, error) {
+func (s *Client) GetSongsByGenre(name string, parameters map[string]string) ([]*Child, error) {
 	params := make(map[string]string)
 	params["genre"] = name
 	for k, v := range parameters {
@@ -138,16 +138,16 @@ func (s *Client) GetSongsByGenre(name string, parameters map[string]string) ([]*
 	if err != nil {
 		return nil, err
 	}
-	return resp.SongsByGenre.Songs, nil
+	return resp.SongsByGenre.Song, nil
 }
 
 // GetNowPlaying returns what is currently being played by all users.
-func (s *Client) GetNowPlaying() ([]*NowPlaying, error) {
+func (s *Client) GetNowPlaying() ([]*NowPlayingEntry, error) {
 	resp, err := s.Get("getNowPlaying", nil)
 	if err != nil {
 		return nil, err
 	}
-	return resp.NowPlaying.Entries, nil
+	return resp.NowPlaying.Entry, nil
 }
 
 // GetStarred returns starred albums, artists, and songs.
@@ -166,7 +166,7 @@ func (s *Client) GetStarred(parameters map[string]string) (*Starred, error) {
 //
 // Optional Parameters:
 //   musicFolderId:  Only return songs in the music folder with the given ID. See getMusicFolders.
-func (s *Client) GetStarred2(parameters map[string]string) (*Starred, error) {
+func (s *Client) GetStarred2(parameters map[string]string) (*Starred2, error) {
 	resp, err := s.Get("getStarred2", parameters)
 	if err != nil {
 		return nil, err

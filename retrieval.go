@@ -1,7 +1,7 @@
 package subsonic
 
 import (
-	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"io/ioutil"
 	"strings"
@@ -31,14 +31,13 @@ func (s *Client) Stream(id string, parameters map[string]string) ([]byte, error)
 	if err != nil {
 		return nil, err
 	}
-	if strings.HasPrefix(contentType, "application/json") {
+	if strings.HasPrefix(contentType, "text/xml") {
 		// An error was returned
-		parsed := apiResponse{}
-		err = json.Unmarshal(responseBody, &parsed)
+		resp := Response{}
+		err = xml.Unmarshal(responseBody, &resp)
 		if err != nil {
 			return nil, err
 		}
-		resp := parsed.Response
 		if resp.Error != nil {
 			err = fmt.Errorf("Error #%d: %s\n", resp.Error.Code, resp.Error.Message)
 		} else {

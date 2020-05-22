@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func getRandomGenre(client Client) *Genre {
+func getSampleGenre(client Client) *Genre {
 	rand.Seed(time.Now().Unix())
 	genres, err := client.GetGenres()
 	if err != nil {
@@ -25,12 +25,12 @@ func getRandomGenre(client Client) *Genre {
 	return selection
 }
 
-func getSampleArtist(client Client) *Artist {
+func getSampleArtist(client Client) *ArtistID3 {
 	artists, err := client.GetArtists(nil)
 	if err != nil {
 		return nil
 	}
-	return artists.Indexes[len(artists.Indexes)-1].Artists[0]
+	return artists.Index[len(artists.Index)-1].Artist[0]
 }
 
 func findPlaylistByName(client Client, name string) (*Playlist, error) {
@@ -48,7 +48,7 @@ func findPlaylistByName(client Client, name string) (*Playlist, error) {
 
 func runCommonTests(client Client, t *testing.T) {
 	sampleArtist := getSampleArtist(client)
-	sampleGenre := getRandomGenre(client)
+	sampleGenre := getSampleGenre(client)
 	// These test the library's ability to unmarshal server responses
 	t.Run("Ping", func(t *testing.T) {
 		if !client.Ping() {
@@ -92,9 +92,9 @@ func runCommonTests(client Client, t *testing.T) {
 		if idx.IgnoredArticles != specified.IgnoredArticles {
 			t.Errorf("IgnoredArticles differs: %s -> %s (specified)", idx.IgnoredArticles, specified.IgnoredArticles)
 		}
-		for position, index := range idx.Indexes {
-			if index.Name != specified.Indexes[position].Name {
-				t.Errorf("Names differ: %s -> %s (specified)", index.Name, specified.Indexes[position].Name)
+		for position, index := range idx.Index {
+			if index.Name != specified.Index[position].Name {
+				t.Errorf("Names differ: %s -> %s (specified)", index.Name, specified.Index[position].Name)
 			}
 		}
 	})
@@ -104,11 +104,11 @@ func runCommonTests(client Client, t *testing.T) {
 			t.Error(err)
 		}
 		for _, g := range genres {
-			if g.Value == "" {
+			if g.Name == "" {
 				t.Error("Empty genre present")
 			}
 			if g.SongCount == 0 {
-				t.Errorf("Genre %s has no songs", g.Value)
+				t.Errorf("Genre %s has no songs", g.Name)
 			}
 		}
 	})
@@ -124,9 +124,9 @@ func runCommonTests(client Client, t *testing.T) {
 		if idx.IgnoredArticles != specified.IgnoredArticles {
 			t.Errorf("IgnoredArticles differs: %s -> %s (specified)", idx.IgnoredArticles, specified.IgnoredArticles)
 		}
-		for position, index := range idx.Indexes {
-			if index.Name != specified.Indexes[position].Name {
-				t.Errorf("Names differ: %s -> %s (specified)", index.Name, specified.Indexes[position].Name)
+		for position, index := range idx.Index {
+			if index.Name != specified.Index[position].Name {
+				t.Errorf("Names differ: %s -> %s (specified)", index.Name, specified.Index[position].Name)
 			}
 		}
 	})
@@ -160,7 +160,7 @@ func runCommonTests(client Client, t *testing.T) {
 			}
 		}
 		// Work out genre matching
-		albums, err = client.GetAlbumList("byGenre", map[string]string{"genre": sampleGenre.Value})
+		albums, err = client.GetAlbumList("byGenre", map[string]string{"genre": sampleGenre.Name})
 		if err != nil {
 			t.Error(err)
 		}
@@ -237,7 +237,7 @@ func runCommonTests(client Client, t *testing.T) {
 			t.Error(err)
 		}
 		// The non-id3 matching does not consistently return an artist, but it does erturn that artist's albums
-		if len(results.Albums) == 0 {
+		if len(results.Album) == 0 {
 			t.Errorf("Could not find any albums for a known artist %s", sampleArtist.Name)
 		}
 	})
@@ -246,7 +246,7 @@ func runCommonTests(client Client, t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		if len(results.Artists) == 0 {
+		if len(results.Artist) == 0 {
 			t.Errorf("Could not find a known artist %s", sampleArtist.Name)
 		}
 		returnOneArtist := map[string]string{
@@ -258,7 +258,7 @@ func runCommonTests(client Client, t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		if len(results.Artists) != 1 || len(results.Songs) != 0 || len(results.Albums) != 0 {
+		if len(results.Artist) != 1 || len(results.Song) != 0 || len(results.Album) != 0 {
 			t.Errorf("Improperly limited results of search for %s: %#v", sampleArtist.Name, results)
 		}
 	})
@@ -316,7 +316,7 @@ func runPlaylistTests(client Client, t *testing.T) {
 }
 
 func runAirsonicTests(client Client, t *testing.T) {
-	sampleGenre := getRandomGenre(client)
+	sampleGenre := getSampleGenre(client)
 	sampleArtist := getSampleArtist(client)
 	// Most of these tests are separated out because Navidrome uses string IDs and other string fields.
 	// Subsonic/Airsonic uses numeric IDs, so they are tested with those numeric IDs here.
@@ -332,7 +332,7 @@ func runAirsonicTests(client Client, t *testing.T) {
 		if dir.Name == "" {
 			t.Error("Directory has an empty Name")
 		}
-		for _, child := range dir.Children {
+		for _, child := range dir.Child {
 			if child.ID == "" {
 				t.Log(child.Title)
 				t.Errorf("Child %s has an empty ID", child.Title)
@@ -344,8 +344,8 @@ func runAirsonicTests(client Client, t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		if len(artist.Albums) != artist.AlbumCount {
-			t.Errorf("Artist %s has %d albums in the 'album' key, but an AlbumCount of %d", artist.Name, len(artist.Albums), artist.AlbumCount)
+		if len(artist.Album) != artist.AlbumCount {
+			t.Errorf("Artist %s has %d albums in the 'album' key, but an AlbumCount of %d", artist.Name, len(artist.Album), artist.AlbumCount)
 		}
 	})
 	t.Run("GetAlbum", func(t *testing.T) {
@@ -353,8 +353,8 @@ func runAirsonicTests(client Client, t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		if len(album.Songs) != album.SongCount {
-			t.Errorf("Album %s has %d songs in the 'song' key, but an songCount of %d", album.Name, len(album.Songs), album.SongCount)
+		if len(album.Song) != album.SongCount {
+			t.Errorf("Album %s has %d songs in the 'song' key, but an songCount of %d", album.Name, len(album.Song), album.SongCount)
 		}
 	})
 	t.Run("GetSong", func(t *testing.T) {
@@ -374,11 +374,11 @@ func runAirsonicTests(client Client, t *testing.T) {
 		if ai.Biography == "" {
 			t.Error("Empty biography, invalid response")
 		}
-		ai, err = client.GetArtistInfo2("1", nil)
+		ai2, err := client.GetArtistInfo2("1", nil)
 		if err != nil {
 			t.Error(err)
 		}
-		if ai.Biography == "" {
+		if ai2.Biography == "" {
 			t.Error("Empty biography, invalid response")
 		}
 	})
@@ -454,14 +454,14 @@ func runAirsonicTests(client Client, t *testing.T) {
 		}
 	})
 	t.Run("GetSongsByGenre", func(t *testing.T) {
-		songs, err := client.GetSongsByGenre(sampleGenre.Value, nil)
+		songs, err := client.GetSongsByGenre(sampleGenre.Name, nil)
 		if err != nil {
 			t.Error(err)
 		}
 		if songs == nil {
 			t.Errorf("No songs returned for genre %v", sampleGenre)
 		}
-		songs, err = client.GetSongsByGenre(sampleGenre.Value, map[string]string{"count": "1"})
+		songs, err = client.GetSongsByGenre(sampleGenre.Name, map[string]string{"count": "1"})
 		if err != nil {
 			t.Error(err)
 		}
@@ -497,7 +497,7 @@ func TestNavidrome(t *testing.T) {
 		if dir.Name == "" {
 			t.Error("Directory has an empty Name")
 		}
-		for _, child := range dir.Children {
+		for _, child := range dir.Child {
 			t.Log(child.Title)
 			if child.ID == "" {
 				t.Errorf("Child %s has an empty ID", child.Title)

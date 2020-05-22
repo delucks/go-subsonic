@@ -10,7 +10,7 @@ package subsonic
 //   songCount:       Maximum number of songs to return. (Default 20)
 //   songOffset:      Search result offset for songs. Used for paging.
 //   musicFolderId:   (Since 1.12.0) Only return results from the music folder with the given ID. See getMusicFolders.
-func (s *Client) Search2(query string, parameters map[string]string) (*SearchResult, error) {
+func (s *Client) Search2(query string, parameters map[string]string) (*SearchResult2, error) {
 	params := make(map[string]string)
 	params["query"] = query
 	for k, v := range parameters {
@@ -32,7 +32,7 @@ func (s *Client) Search2(query string, parameters map[string]string) (*SearchRes
 //   songCount:       Maximum number of songs to return. (Default 20)
 //   songOffset:      Search result offset for songs. Used for paging.
 //   musicFolderId:   (Since 1.12.0) Only return results from the music folder with the given ID. See getMusicFolders.
-func (s *Client) Search3(query string, parameters map[string]string) (*SearchResult, error) {
+func (s *Client) Search3(query string, parameters map[string]string) (*SearchResult3, error) {
 	params := make(map[string]string)
 	params["query"] = query
 	for k, v := range parameters {

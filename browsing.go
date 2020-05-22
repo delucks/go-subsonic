@@ -6,7 +6,7 @@ func (s *Client) GetMusicFolders() ([]*MusicFolder, error) {
 	if err != nil {
 		return nil, err
 	}
-	return resp.MusicFolders.Folders, nil
+	return resp.MusicFolders.MusicFolder, nil
 }
 
 // GetIndexes returns the index of entries by letter/number.
@@ -14,7 +14,7 @@ func (s *Client) GetMusicFolders() ([]*MusicFolder, error) {
 // Optional Parameters:
 //   musicFolderId:    Only return songs in the music folder with the given ID. See getMusicFolders.
 //   ifModifiedSince:  If specified, only return a result if the artist collection has changed since the given time (in milliseconds since 1 Jan 1970).
-func (s *Client) GetIndexes(parameters map[string]string) (*Index, error) {
+func (s *Client) GetIndexes(parameters map[string]string) (*Indexes, error) {
 	resp, err := s.Get("getIndexes", parameters)
 	if err != nil {
 		return nil, err
@@ -45,7 +45,7 @@ func (s *Client) GetGenres() ([]*Genre, error) {
 //
 // Optional Parameters:
 //   musicFolderId:  Only return songs in the music folder with the given ID. See getMusicFolders.
-func (s *Client) GetArtists(parameters map[string]string) (*ArtistsContainer, error) {
+func (s *Client) GetArtists(parameters map[string]string) (*ArtistsID3, error) {
 	resp, err := s.Get("getArtists", parameters)
 	if err != nil {
 		return nil, err
@@ -54,7 +54,7 @@ func (s *Client) GetArtists(parameters map[string]string) (*ArtistsContainer, er
 }
 
 // GetAlbum returns an Artist by ID.
-func (s *Client) GetArtist(id string) (*Artist, error) {
+func (s *Client) GetArtist(id string) (*ArtistWithAlbumsID3, error) {
 	resp, err := s.Get("getArtist", map[string]string{"id": id})
 	if err != nil {
 		return nil, err
@@ -63,7 +63,7 @@ func (s *Client) GetArtist(id string) (*Artist, error) {
 }
 
 // GetAlbum returns an Album by ID.
-func (s *Client) GetAlbum(id string) (*Album, error) {
+func (s *Client) GetAlbum(id string) (*AlbumWithSongsID3, error) {
 	resp, err := s.Get("getAlbum", map[string]string{"id": id})
 	if err != nil {
 		return nil, err
@@ -72,7 +72,7 @@ func (s *Client) GetAlbum(id string) (*Album, error) {
 }
 
 // GetSong returns a Song by ID.
-func (s *Client) GetSong(id string) (*Song, error) {
+func (s *Client) GetSong(id string) (*Child, error) {
 	resp, err := s.Get("getSong", map[string]string{"id": id})
 	if err != nil {
 		return nil, err
@@ -103,7 +103,7 @@ func (s *Client) GetArtistInfo(id string, parameters map[string]string) (*Artist
 // Optional Parameters:
 //   count:             Max number of similar artists to return.
 //   includeNotPresent: Whether to return artists that are not present in the media library.
-func (s *Client) GetArtistInfo2(id string, parameters map[string]string) (*ArtistInfo, error) {
+func (s *Client) GetArtistInfo2(id string, parameters map[string]string) (*ArtistInfo2, error) {
 	params := make(map[string]string)
 	params["id"] = id
 	for k, v := range parameters {
@@ -141,7 +141,7 @@ func (s *Client) GetAlbumInfo2(id string) (*AlbumInfo, error) {
 //
 // Optional Parameters:
 //   count: Number of songs to return
-func (s *Client) GetSimilarSongs(id string, parameters map[string]string) ([]*Song, error) {
+func (s *Client) GetSimilarSongs(id string, parameters map[string]string) ([]*Child, error) {
 	params := make(map[string]string)
 	params["id"] = id
 	for k, v := range parameters {
@@ -151,14 +151,14 @@ func (s *Client) GetSimilarSongs(id string, parameters map[string]string) ([]*So
 	if err != nil {
 		return nil, err
 	}
-	return resp.SimilarSongs.Songs, nil
+	return resp.SimilarSongs.Song, nil
 }
 
 // GetSimilarSongs2 finds similar songs like GetSimilarSongs, but using id3 tags.
 //
 // Optional Parameters:
 //   count: Number of songs to return
-func (s *Client) GetSimilarSongs2(id string, parameters map[string]string) ([]*Song, error) {
+func (s *Client) GetSimilarSongs2(id string, parameters map[string]string) ([]*Child, error) {
 	params := make(map[string]string)
 	params["id"] = id
 	for k, v := range parameters {
@@ -168,14 +168,14 @@ func (s *Client) GetSimilarSongs2(id string, parameters map[string]string) ([]*S
 	if err != nil {
 		return nil, err
 	}
-	return resp.SimilarSongs2.Songs, nil
+	return resp.SimilarSongs2.Song, nil
 }
 
 // GetTopSongs returns the top songs for a given artist by name.
 //
 // Optional Parameters:
 //   count: Number of songs to return
-func (s *Client) GetTopSongs(name string, parameters map[string]string) ([]*Song, error) {
+func (s *Client) GetTopSongs(name string, parameters map[string]string) ([]*Child, error) {
 	params := make(map[string]string)
 	params["artist"] = name
 	for k, v := range parameters {
@@ -185,5 +185,5 @@ func (s *Client) GetTopSongs(name string, parameters map[string]string) ([]*Song
 	if err != nil {
 		return nil, err
 	}
-	return resp.TopSongs.Songs, nil
+	return resp.TopSongs.Song, nil
 }

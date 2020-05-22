@@ -1,284 +1,1009 @@
 package subsonic
 
-import "time"
+/* This file was automatically generated from the xsd schema provided by Subsonic, then manually modified.
+ *   xsdgen -o xml.go -pkg subsonic -ns "http://subsonic.org/restapi" subsonic-rest-api-1.16.1.xsd
+ * Changes from the original include:
+ * - Adding missing name (value of xml element) for each genre
+ * - Capitalize "ID" in struct names
+ */
 
-// Type subsonicResponse is the main target for unmarshalling JSON data from the API - everything within the "subsonic-response" key
-type subsonicResponse struct {
-	Status        string `json:"status"`        // standard
-	Version       string `json:"version"`       // standard
-	Type          string `json:"type"`          // navidrome
-	ServerVersion string `json:"serverVersion"` // navidrome
-	Error         *errorResponse
-	License       *License              // getLicense
-	MusicFolders  *musicFolderContainer // getMusicFolders
-	Indexes       *Index                // getIndexes
-	Directory     *Directory            // getMusicDirectory
-	Genres        *genreContainer       // getGenres
-	Artists       *ArtistsContainer     // getArtists
-	Artist        *Artist               // getArtist
-	Album         *Album                // getAlbum
-	Song          *Song                 // getSong
-	ArtistInfo    *ArtistInfo           // getArtistInfo
-	ArtistInfo2   *ArtistInfo           // getArtistInfo2
-	AlbumInfo     *AlbumInfo            // getAlbumInfo
-	SimilarSongs  *songList             // getSimilarSongs
-	SimilarSongs2 *songList             // getSimilarSongs2
-	TopSongs      *songList             // getTopSongs
-	AlbumList     *albumList            // getAlbumList
-	AlbumList2    *albumList            // getAlbumList2
-	RandomSongs   *songList             // getRandomSongs
-	SongsByGenre  *songList             // getSongsByGenre
-	NowPlaying    *nowPlayingList       // getNowPlaying
-	Starred       *Starred              // getStarred
-	Starred2      *Starred              // getStarred2
-	SearchResult2 *SearchResult         // search2
-	SearchResult3 *SearchResult         // search3
-	Playlists     *playlistList         // getPlaylists
-	Playlist      *Playlist             // getPlaylist
+import (
+	"bytes"
+	"encoding/xml"
+	"time"
+)
+
+// AlbumID3 is an album that's organized by ID3 tags.
+type AlbumID3 struct {
+	Name      string    `xml:"name,attr"`
+	Artist    string    `xml:"artist,attr,omitempty"`
+	ArtistID  string    `xml:"artistId,attr,omitempty"`
+	CoverArt  string    `xml:"coverArt,attr,omitempty"`
+	SongCount int       `xml:"songCount,attr"`
+	Duration  int       `xml:"duration,attr"`
+	PlayCount int64     `xml:"playCount,attr,omitempty"`
+	Created   time.Time `xml:"created,attr"`
+	Starred   time.Time `xml:"starred,attr,omitempty"`
+	Year      int       `xml:"year,attr,omitempty"`
+	Genre     string    `xml:"genre,attr,omitempty"`
 }
 
-type apiResponse struct {
-	Response *subsonicResponse `json:"subsonic-response"`
+func (t *AlbumID3) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	type T AlbumID3
+	var layout struct {
+		*T
+		Created *xsdDateTime `xml:"created,attr"`
+		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
+	}
+	layout.T = (*T)(t)
+	layout.Created = (*xsdDateTime)(&layout.T.Created)
+	layout.Starred = (*xsdDateTime)(&layout.T.Starred)
+	return e.EncodeElement(layout, start)
+}
+func (t *AlbumID3) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	type T AlbumID3
+	var overlay struct {
+		*T
+		Created *xsdDateTime `xml:"created,attr"`
+		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
+	}
+	overlay.T = (*T)(t)
+	overlay.Created = (*xsdDateTime)(&overlay.T.Created)
+	overlay.Starred = (*xsdDateTime)(&overlay.T.Starred)
+	return d.DecodeElement(&overlay, &start)
 }
 
-type errorResponse struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
+// AlbumInfo is a collection of notes and links describing an album.
+type AlbumInfo struct {
+	Notes          string `xml:"http://subsonic.org/restapi notes,omitempty"`
+	MusicBrainzID  string `xml:"http://subsonic.org/restapi musicBrainzId,omitempty"`
+	LastFmUrl      string `xml:"http://subsonic.org/restapi lastFmUrl,omitempty"`
+	SmallImageUrl  string `xml:"http://subsonic.org/restapi smallImageUrl,omitempty"`
+	MediumImageUrl string `xml:"http://subsonic.org/restapi mediumImageUrl,omitempty"`
+	LargeImageUrl  string `xml:"http://subsonic.org/restapi largeImageUrl,omitempty"`
 }
 
-// License contains information about the Subsonic server's license validity and contact information in the case of a trial subscription.
-type License struct {
-	Valid        bool   `json:"valid"`        // standard
-	Email        string `json:"email"`        // subsonic
-	TrialExpires string `json:"trialExpires"` // subsonic
+type AlbumList struct {
+	Album []*Child `xml:"http://subsonic.org/restapi album,omitempty"`
 }
 
-// MusicFolder is a representation of a source of music files added to the server. It is identified primarily by the numeric ID.
-type MusicFolder struct {
-	Id   int    `json:"id"`
-	Name string `json:"name"`
+type AlbumList2 struct {
+	Album []*AlbumID3 `xml:"http://subsonic.org/restapi album,omitempty"`
 }
 
-type musicFolderContainer struct {
-	Folders []*MusicFolder `json:"musicFolder"`
+// AlbumWithSongsID3 is an Album organized by ID3 tags with songs, obtained by a call to getAlbum.
+type AlbumWithSongsID3 struct {
+	Song      []*Child  `xml:"http://subsonic.org/restapi song,omitempty"`
+	Name      string    `xml:"name,attr"`
+	Artist    string    `xml:"artist,attr,omitempty"`
+	ArtistID  string    `xml:"artistId,attr,omitempty"`
+	CoverArt  string    `xml:"coverArt,attr,omitempty"`
+	SongCount int       `xml:"songCount,attr"`
+	Duration  int       `xml:"duration,attr"`
+	PlayCount int64     `xml:"playCount,attr,omitempty"`
+	Created   time.Time `xml:"created,attr"`
+	Starred   time.Time `xml:"starred,attr,omitempty"`
+	Year      int       `xml:"year,attr,omitempty"`
+	Genre     string    `xml:"genre,attr,omitempty"`
 }
 
-// Song is all metadata about a single song from the server.
-type Song struct {
-	ID            string    `json:"id"`
-	AlbumID       string    `json:"albumId"`
-	Album         string    `json:"album"`
-	ArtistID      string    `json:"artistId"`
-	Artist        string    `json:"artist"`
-	BitRate       int       `json:"bitRate"`
-	ContentType   string    `json:"contentType"`
-	Created       time.Time `json:"created"`
-	Starred       time.Time `json:"starred,omitempty"` // getStarred only
-	Duration      int       `json:"duration"`
-	Genre         string    `json:"genre"`
-	IsDir         bool      `json:"isDir"`
-	Parent        string    `json:"parent"`
-	Path          string    `json:"path"`
-	PlayCount     int       `json:"playCount"`
-	Suffix        string    `json:"suffix"`
-	Title         string    `json:"title"`
-	Track         int       `json:"track"`
-	Type          string    `json:"type"`
-	Year          int       `json:"year"`
-	AverageRating float32   `json:"averageRating,omitempty"` // subsonic only
-	CoverArt      string    `json:"coverArt"`                // subsonic only
-	Size          int       `json:"size"`
+func (t *AlbumWithSongsID3) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	type T AlbumWithSongsID3
+	var layout struct {
+		*T
+		Created *xsdDateTime `xml:"created,attr"`
+		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
+	}
+	layout.T = (*T)(t)
+	layout.Created = (*xsdDateTime)(&layout.T.Created)
+	layout.Starred = (*xsdDateTime)(&layout.T.Starred)
+	return e.EncodeElement(layout, start)
+}
+func (t *AlbumWithSongsID3) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	type T AlbumWithSongsID3
+	var overlay struct {
+		*T
+		Created *xsdDateTime `xml:"created,attr"`
+		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
+	}
+	overlay.T = (*T)(t)
+	overlay.Created = (*xsdDateTime)(&overlay.T.Created)
+	overlay.Starred = (*xsdDateTime)(&overlay.T.Starred)
+	return d.DecodeElement(&overlay, &start)
 }
 
-// Album is all metadata about an album from the server, including songs if fetched from getAlbum.
-type Album struct {
-	ID        string    `json:"id"`
-	Name      string    `json:"name"`
-	Title     string    `json:"title"` // getAlbumList & getStarred returns each album with a "title" key rather than a "name" key
-	Artist    string    `json:"artist"`
-	ArtistID  string    `json:"artistId,omitempty"`
-	SongCount int       `json:"songCount"`
-	Duration  int       `json:"duration"`
-	Created   time.Time `json:"created"`
-	Starred   time.Time `json:"starred,omitempty"` // getStarred only
-	Year      int       `json:"year"`
-	Genre     string    `json:"genre"`
-	PlayCount int       `json:"playCount"`
-	CoverArt  string    `json:"coverArt"`
-	IsDir     bool      `json:"isDir"`
-	Songs     []*Song   `json:"song,omitempty"`
-	IsVideo   bool      `json:"isVideo,omitempty"` // navidrome only
-	Size      string    `json:"size,omitempty"`    // navidrome only
-}
-
-// Artist is a representation of one artist from the server.
-// Many calls return Artists with few fields, but getArtist will give more data.
+// Artist is a single artist from the database.
 type Artist struct {
-	ID             string   `json:"id"`
-	Name           string   `json:"name"`
-	AlbumCount     int      `json:"albumCount"`
-	ArtistImageURL string   `json:"artistImageUrl"` // subsonic only
-	CoverArt       string   `json:"coverArt"`       // subsonic only
-	Albums         []*Album `json:"album"`          // only filled by getArtist
+	Name           string    `xml:"name,attr"`
+	ArtistImageUrl string    `xml:"artistImageUrl,attr,omitempty"`
+	Starred        time.Time `xml:"starred,attr,omitempty"`
+	UserRating     int       `xml:"userRating,attr,omitempty"`
+	AverageRating  float64   `xml:"averageRating,attr,omitempty"`
 }
 
-// ArtistIndex is a by-letter representation of every artist on the server.
-type ArtistIndex struct {
-	Name    string    `json:"name"`
-	Artists []*Artist `json:"artist"`
+func (t *Artist) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	type T Artist
+	var layout struct {
+		*T
+		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
+	}
+	layout.T = (*T)(t)
+	layout.Starred = (*xsdDateTime)(&layout.T.Starred)
+	return e.EncodeElement(layout, start)
+}
+func (t *Artist) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	type T Artist
+	var overlay struct {
+		*T
+		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
+	}
+	overlay.T = (*T)(t)
+	overlay.Starred = (*xsdDateTime)(&overlay.T.Starred)
+	return d.DecodeElement(&overlay, &start)
 }
 
-// Index holds every artist or single track in the database alphabetically sorted.
-type Index struct {
-	IgnoredArticles string         `json:"ignoredArticles"`
-	Indexes         []*ArtistIndex `json:"index"`
-	Children        []*Child       `json:"child"`
-	LastModified    int64          `json:"lastModified"`
+// ArtistID3 is a single artist from the database, organized by ID3 tag.
+type ArtistID3 struct {
+	Name           string    `xml:"name,attr"`
+	CoverArt       string    `xml:"coverArt,attr,omitempty"`
+	ArtistImageUrl string    `xml:"artistImageUrl,attr,omitempty"`
+	AlbumCount     int       `xml:"albumCount,attr"`
+	Starred        time.Time `xml:"starred,attr,omitempty"`
 }
 
-// Child is a single item from the database, from either Index or Directory representations.
-// It is essentially a giant mash-up of Artist/Album/Song fields because Subsonic is great like that.
-type Child struct {
-	ID            string    `json:"id"`
-	Album         string    `json:"album"`
-	BitRate       int       `json:"bitRate"`
-	ContentType   string    `json:"contentType"`
-	CoverArt      string    `json:"coverArt"`
-	Created       time.Time `json:"created"`
-	Duration      int       `json:"duration"`
-	IsDir         bool      `json:"isDir"`
-	IsVideo       bool      `json:"isVideo"`
-	Parent        string    `json:"parent"`
-	Path          string    `json:"path"`
-	Suffix        string    `json:"suffix"`
-	Title         string    `json:"title"`
-	Type          string    `json:"type"`
-	PlayCount     int       `json:"playCount"`               // subsonic / airsonic
-	UserRating    int       `json:"userRating"`              // subsonic only
-	AverageRating float32   `json:"averageRating,omitempty"` // subsonic only
-	Artist        string    `json:"artist"`                  // this and all following fields are navidrome only
-	Track         int       `json:"track"`
-	Year          int       `json:"year"`
-	Genre         string    `json:"genre"`
-	DiscNumber    int       `json:"discNumber"`
-	AlbumID       string    `json:"albumId"`
-	ArtistID      string    `json:"artistId"`
-	Size          int64     `json:"size"`
+func (t *ArtistID3) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	type T ArtistID3
+	var layout struct {
+		*T
+		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
+	}
+	layout.T = (*T)(t)
+	layout.Starred = (*xsdDateTime)(&layout.T.Starred)
+	return e.EncodeElement(layout, start)
 }
-
-// Directory is an entry in the Subsonic directory hierarchy, returned by calls to GetMusicDirectory.
-type Directory struct {
-	Children   []*Child `json:"child"`
-	ID         string   `json:"id"`
-	Name       string   `json:"name"`
-	PlayCount  int      `json:"playCount"`  // airsonic only
-	AlbumCount int      `json:"albumCount"` // navidrome only
-	Parent     string   `json:"parent"`     // navidrome only
-}
-
-// Genre is a generic tag describing the style of a song or album. The Value property of this struct is the name of the genre.
-type Genre struct {
-	SongCount  int    `json:"songCount"`
-	AlbumCount int    `json:"albumCount"`
-	Value      string `json:"value"`
-}
-
-type genreContainer struct {
-	Genre []*Genre `json:"genre"`
-}
-
-// ArtistsContainer is an index of all artists in the DB organized by id3 tags. It is similar to Index but uses id3 tags.
-type ArtistsContainer struct {
-	IgnoredArticles string         `json:"ignoredArticles"`
-	Indexes         []*ArtistIndex `json:"index"`
+func (t *ArtistID3) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	type T ArtistID3
+	var overlay struct {
+		*T
+		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
+	}
+	overlay.T = (*T)(t)
+	overlay.Starred = (*xsdDateTime)(&overlay.T.Starred)
+	return d.DecodeElement(&overlay, &start)
 }
 
 // ArtistInfo is all auxillary information about an artist from GetArtistInfo/GetArtistInfo2
 type ArtistInfo struct {
-	Biography      string    `json:"biography"`
-	MusicBrainzID  string    `json:"musicBrainzId"`
-	LastFmURL      string    `json:"lastFmUrl"`
-	SmallImageURL  string    `json:"smallImageUrl"`
-	MediumImageURL string    `json:"mediumImageUrl"`
-	LargeImageURL  string    `json:"largeImageUrl"`
-	SimilarArtist  []*Artist `json:"similarArtist"`
+	SimilarArtist  []*Artist `xml:"http://subsonic.org/restapi similarArtist,omitempty"`
+	Biography      string    `xml:"http://subsonic.org/restapi biography,omitempty"`
+	MusicBrainzID  string    `xml:"http://subsonic.org/restapi musicBrainzId,omitempty"`
+	LastFmUrl      string    `xml:"http://subsonic.org/restapi lastFmUrl,omitempty"`
+	SmallImageUrl  string    `xml:"http://subsonic.org/restapi smallImageUrl,omitempty"`
+	MediumImageUrl string    `xml:"http://subsonic.org/restapi mediumImageUrl,omitempty"`
+	LargeImageUrl  string    `xml:"http://subsonic.org/restapi largeImageUrl,omitempty"`
 }
 
-// AlbumInfo is a collection of notes and links describing an album.
-// Fetch one by ID with GetAlbumInfo/GetAlbumInfo2.
-type AlbumInfo struct {
-	Notes          string `json:"notes"`
-	MusicBrainzID  string `json:"musicBrainzId"`
-	LastFmURL      string `json:"lastFmUrl"`
-	SmallImageURL  string `json:"smallImageUrl"`
-	MediumImageURL string `json:"mediumImageUrl"`
-	LargeImageURL  string `json:"largeImageUrl"`
+// ArtistInfo is all auxillary information about an artist from GetArtistInfo/GetArtistInfo2
+type ArtistInfo2 struct {
+	SimilarArtist  []*ArtistID3 `xml:"http://subsonic.org/restapi similarArtist,omitempty"`
+	Biography      string       `xml:"http://subsonic.org/restapi biography,omitempty"`
+	MusicBrainzID  string       `xml:"http://subsonic.org/restapi musicBrainzId,omitempty"`
+	LastFmUrl      string       `xml:"http://subsonic.org/restapi lastFmUrl,omitempty"`
+	SmallImageUrl  string       `xml:"http://subsonic.org/restapi smallImageUrl,omitempty"`
+	MediumImageUrl string       `xml:"http://subsonic.org/restapi mediumImageUrl,omitempty"`
+	LargeImageUrl  string       `xml:"http://subsonic.org/restapi largeImageUrl,omitempty"`
 }
 
-type songList struct {
-	Songs []*Song `json:"song"`
+// TODO is this type necessary?
+type ArtistInfoBase struct {
+	Biography      string `xml:"http://subsonic.org/restapi biography,omitempty"`
+	MusicBrainzID  string `xml:"http://subsonic.org/restapi musicBrainzId,omitempty"`
+	LastFmUrl      string `xml:"http://subsonic.org/restapi lastFmUrl,omitempty"`
+	SmallImageUrl  string `xml:"http://subsonic.org/restapi smallImageUrl,omitempty"`
+	MediumImageUrl string `xml:"http://subsonic.org/restapi mediumImageUrl,omitempty"`
+	LargeImageUrl  string `xml:"http://subsonic.org/restapi largeImageUrl,omitempty"`
 }
 
-type albumList struct {
-	Albums []*Album `json:"album"`
+type ArtistWithAlbumsID3 struct {
+	Album          []*AlbumID3 `xml:"http://subsonic.org/restapi album,omitempty"`
+	Name           string      `xml:"name,attr"`
+	CoverArt       string      `xml:"coverArt,attr,omitempty"`
+	ArtistImageUrl string      `xml:"artistImageUrl,attr,omitempty"`
+	AlbumCount     int         `xml:"albumCount,attr"`
+	Starred        time.Time   `xml:"starred,attr,omitempty"`
 }
 
-// NowPlaying is a data about a recently played song from a user, including recent plays (MinutesAgo).
+func (t *ArtistWithAlbumsID3) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	type T ArtistWithAlbumsID3
+	var layout struct {
+		*T
+		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
+	}
+	layout.T = (*T)(t)
+	layout.Starred = (*xsdDateTime)(&layout.T.Starred)
+	return e.EncodeElement(layout, start)
+}
+func (t *ArtistWithAlbumsID3) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	type T ArtistWithAlbumsID3
+	var overlay struct {
+		*T
+		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
+	}
+	overlay.T = (*T)(t)
+	overlay.Starred = (*xsdDateTime)(&overlay.T.Starred)
+	return d.DecodeElement(&overlay, &start)
+}
+
+type ArtistsID3 struct {
+	Index           []*IndexID3 `xml:"http://subsonic.org/restapi index,omitempty"`
+	IgnoredArticles string      `xml:"ignoredArticles,attr"`
+}
+
+type AudioTrack struct {
+	Name         string `xml:"name,attr,omitempty"`
+	LanguageCode string `xml:"languageCode,attr,omitempty"`
+}
+
+type Bookmark struct {
+	Entry    *Child    `xml:"http://subsonic.org/restapi entry"`
+	Position int64     `xml:"position,attr"`
+	Username string    `xml:"username,attr"`
+	Comment  string    `xml:"comment,attr,omitempty"`
+	Created  time.Time `xml:"created,attr"`
+	Changed  time.Time `xml:"changed,attr"`
+}
+
+func (t *Bookmark) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	type T Bookmark
+	var layout struct {
+		*T
+		Created *xsdDateTime `xml:"created,attr"`
+		Changed *xsdDateTime `xml:"changed,attr"`
+	}
+	layout.T = (*T)(t)
+	layout.Created = (*xsdDateTime)(&layout.T.Created)
+	layout.Changed = (*xsdDateTime)(&layout.T.Changed)
+	return e.EncodeElement(layout, start)
+}
+func (t *Bookmark) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	type T Bookmark
+	var overlay struct {
+		*T
+		Created *xsdDateTime `xml:"created,attr"`
+		Changed *xsdDateTime `xml:"changed,attr"`
+	}
+	overlay.T = (*T)(t)
+	overlay.Created = (*xsdDateTime)(&overlay.T.Created)
+	overlay.Changed = (*xsdDateTime)(&overlay.T.Changed)
+	return d.DecodeElement(&overlay, &start)
+}
+
+type Bookmarks struct {
+	Bookmark []*Bookmark `xml:"http://subsonic.org/restapi bookmark,omitempty"`
+}
+
+type Captions struct {
+	Name string `xml:"name,attr,omitempty"`
+}
+
+type ChatMessage struct {
+	Username string `xml:"username,attr"`
+	Time     int64  `xml:"time,attr"`
+	Message  string `xml:"message,attr"`
+}
+
+type ChatMessages struct {
+	ChatMessage []*ChatMessage `xml:"http://subsonic.org/restapi chatMessage,omitempty"`
+}
+
+type Child struct {
+	ID                    string    `xml:"id,attr"` // Manually added
+	Parent                string    `xml:"parent,attr,omitempty"`
+	IsDir                 bool      `xml:"isDir,attr"`
+	Title                 string    `xml:"title,attr"`
+	Album                 string    `xml:"album,attr,omitempty"`
+	Artist                string    `xml:"artist,attr,omitempty"`
+	Track                 int       `xml:"track,attr,omitempty"`
+	Year                  int       `xml:"year,attr,omitempty"`
+	Genre                 string    `xml:"genre,attr,omitempty"`
+	CoverArt              string    `xml:"coverArt,attr,omitempty"`
+	Size                  int64     `xml:"size,attr,omitempty"`
+	ContentType           string    `xml:"contentType,attr,omitempty"`
+	Suffix                string    `xml:"suffix,attr,omitempty"`
+	TranscodedContentType string    `xml:"transcodedContentType,attr,omitempty"`
+	TranscodedSuffix      string    `xml:"transcodedSuffix,attr,omitempty"`
+	Duration              int       `xml:"duration,attr,omitempty"`
+	BitRate               int       `xml:"bitRate,attr,omitempty"`
+	Path                  string    `xml:"path,attr,omitempty"`
+	IsVideo               bool      `xml:"isVideo,attr,omitempty"`
+	UserRating            int       `xml:"userRating,attr,omitempty"`
+	AverageRating         float64   `xml:"averageRating,attr,omitempty"`
+	PlayCount             int64     `xml:"playCount,attr,omitempty"`
+	DiscNumber            int       `xml:"discNumber,attr,omitempty"`
+	Created               time.Time `xml:"created,attr,omitempty"`
+	Starred               time.Time `xml:"starred,attr,omitempty"`
+	AlbumID               string    `xml:"albumId,attr,omitempty"`
+	ArtistID              string    `xml:"artistId,attr,omitempty"`
+	Type                  MediaType `xml:"type,attr,omitempty"`
+	BookmarkPosition      int64     `xml:"bookmarkPosition,attr,omitempty"`
+	OriginalWidth         int       `xml:"originalWidth,attr,omitempty"`
+	OriginalHeight        int       `xml:"originalHeight,attr,omitempty"`
+}
+
+func (t *Child) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	type T Child
+	var layout struct {
+		*T
+		Created *xsdDateTime `xml:"created,attr,omitempty"`
+		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
+	}
+	layout.T = (*T)(t)
+	layout.Created = (*xsdDateTime)(&layout.T.Created)
+	layout.Starred = (*xsdDateTime)(&layout.T.Starred)
+	return e.EncodeElement(layout, start)
+}
+func (t *Child) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	type T Child
+	var overlay struct {
+		*T
+		Created *xsdDateTime `xml:"created,attr,omitempty"`
+		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
+	}
+	overlay.T = (*T)(t)
+	overlay.Created = (*xsdDateTime)(&overlay.T.Created)
+	overlay.Starred = (*xsdDateTime)(&overlay.T.Starred)
+	return d.DecodeElement(&overlay, &start)
+}
+
+type Directory struct {
+	ID            string    `xml:"id,attr"` // Manually added
+	Child         []*Child  `xml:"http://subsonic.org/restapi child,omitempty"`
+	Parent        string    `xml:"parent,attr,omitempty"`
+	Name          string    `xml:"name,attr"`
+	Starred       time.Time `xml:"starred,attr,omitempty"`
+	UserRating    int       `xml:"userRating,attr,omitempty"`
+	AverageRating float64   `xml:"averageRating,attr,omitempty"`
+	PlayCount     int64     `xml:"playCount,attr,omitempty"`
+}
+
+func (t *Directory) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	type T Directory
+	var layout struct {
+		*T
+		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
+	}
+	layout.T = (*T)(t)
+	layout.Starred = (*xsdDateTime)(&layout.T.Starred)
+	return e.EncodeElement(layout, start)
+}
+func (t *Directory) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	type T Directory
+	var overlay struct {
+		*T
+		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
+	}
+	overlay.T = (*T)(t)
+	overlay.Starred = (*xsdDateTime)(&overlay.T.Starred)
+	return d.DecodeElement(&overlay, &start)
+}
+
+type Error struct {
+	Code    int    `xml:"code,attr"`
+	Message string `xml:"message,attr,omitempty"`
+}
+
+type Genre struct {
+	Name       string `xml:",chardata"` // Added manually
+	SongCount  int    `xml:"songCount,attr"`
+	AlbumCount int    `xml:"albumCount,attr"`
+}
+
+type Genres struct {
+	Genre []*Genre `xml:"http://subsonic.org/restapi genre,omitempty"`
+}
+
+type Index struct {
+	Artist []*Artist `xml:"http://subsonic.org/restapi artist,omitempty"`
+	Name   string    `xml:"name,attr"`
+}
+
+type IndexID3 struct {
+	Artist []*ArtistID3 `xml:"http://subsonic.org/restapi artist,omitempty"`
+	Name   string       `xml:"name,attr"`
+}
+
+type Indexes struct {
+	Shortcut        []*Artist `xml:"http://subsonic.org/restapi shortcut,omitempty"`
+	Index           []*Index  `xml:"http://subsonic.org/restapi index,omitempty"`
+	Child           []*Child  `xml:"http://subsonic.org/restapi child,omitempty"`
+	LastModified    int64     `xml:"lastModified,attr"`
+	IgnoredArticles string    `xml:"ignoredArticles,attr"`
+}
+
+type InternetRadioStation struct {
+	Name        string `xml:"name,attr"`
+	StreamUrl   string `xml:"streamUrl,attr"`
+	HomePageUrl string `xml:"homePageUrl,attr,omitempty"`
+}
+
+type InternetRadioStations struct {
+	InternetRadioStation []*InternetRadioStation `xml:"http://subsonic.org/restapi internetRadioStation,omitempty"`
+}
+
+type JukeboxPlaylist struct {
+	Entry        []*Child `xml:"http://subsonic.org/restapi entry,omitempty"`
+	CurrentIndex int      `xml:"currentIndex,attr"`
+	Playing      bool     `xml:"playing,attr"`
+	Gain         float32  `xml:"gain,attr"`
+	Position     int      `xml:"position,attr,omitempty"`
+}
+
+type JukeboxStatus struct {
+	CurrentIndex int     `xml:"currentIndex,attr"`
+	Playing      bool    `xml:"playing,attr"`
+	Gain         float32 `xml:"gain,attr"`
+	Position     int     `xml:"position,attr,omitempty"`
+}
+
+// License contains information about the Subsonic server's license validity and contact information in the case of a trial subscription.
+type License struct {
+	Valid          bool      `xml:"valid,attr"`
+	Email          string    `xml:"email,attr,omitempty"`
+	LicenseExpires time.Time `xml:"licenseExpires,attr,omitempty"`
+	TrialExpires   time.Time `xml:"trialExpires,attr,omitempty"`
+}
+
+func (t *License) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	type T License
+	var layout struct {
+		*T
+		LicenseExpires *xsdDateTime `xml:"licenseExpires,attr,omitempty"`
+		TrialExpires   *xsdDateTime `xml:"trialExpires,attr,omitempty"`
+	}
+	layout.T = (*T)(t)
+	layout.LicenseExpires = (*xsdDateTime)(&layout.T.LicenseExpires)
+	layout.TrialExpires = (*xsdDateTime)(&layout.T.TrialExpires)
+	return e.EncodeElement(layout, start)
+}
+func (t *License) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	type T License
+	var overlay struct {
+		*T
+		LicenseExpires *xsdDateTime `xml:"licenseExpires,attr,omitempty"`
+		TrialExpires   *xsdDateTime `xml:"trialExpires,attr,omitempty"`
+	}
+	overlay.T = (*T)(t)
+	overlay.LicenseExpires = (*xsdDateTime)(&overlay.T.LicenseExpires)
+	overlay.TrialExpires = (*xsdDateTime)(&overlay.T.TrialExpires)
+	return d.DecodeElement(&overlay, &start)
+}
+
+type Lyrics struct {
+	Artist string `xml:"artist,attr,omitempty"`
+	Title  string `xml:"title,attr,omitempty"`
+}
+
+// May be one of music, podcast, audiobook, video
+type MediaType string
+
+// MusicFolder is a representation of a source of music files added to the server. It is identified primarily by the numeric ID.
+type MusicFolder struct {
+	ID   string `xml:"id,attr"`
+	Name string `xml:"name,attr,omitempty"`
+}
+
+type MusicFolders struct {
+	MusicFolder []*MusicFolder `xml:"http://subsonic.org/restapi musicFolder,omitempty"`
+}
+
+type NewestPodcasts struct {
+	Episode []*PodcastEpisode `xml:"http://subsonic.org/restapi episode,omitempty"`
+}
+
 type NowPlaying struct {
-	ID          string `json:"id"`
-	Album       string `json:"album"`
-	BitRate     int    `json:"bitRate"`
-	ContentType string `json:"contentType"`
-	CoverArt    string `json:"coverArt"`
-	Created     string `json:"created"`
-	Duration    int64  `json:"duration"`
-	IsDir       bool   `json:"isDir"`
-	IsVideo     bool   `json:"isVideo"`
-	MinutesAgo  int    `json:"minutesAgo"`
-	Parent      string `json:"parent"`
-	Path        string `json:"path"`
-	PlayCount   int    `json:"playCount"`
-	PlayerID    int64  `json:"playerId"`
-	Size        int64  `json:"size"`
-	Suffix      string `json:"suffix"`
-	Title       string `json:"title"`
-	Type        string `json:"type"`
-	Username    string `json:"username"`
+	Entry []*NowPlayingEntry `xml:"http://subsonic.org/restapi entry,omitempty"`
 }
 
-type nowPlayingList struct {
-	Entries []*NowPlaying `json:"entry"`
+type NowPlayingEntry struct {
+	Username              string     `xml:"username,attr"`
+	MinutesAgo            int        `xml:"minutesAgo,attr"`
+	PlayerID              int        `xml:"playerId,attr"`
+	PlayerName            string     `xml:"playerName,attr,omitempty"`
+	Parent                string     `xml:"parent,attr,omitempty"`
+	IsDir                 bool       `xml:"isDir,attr"`
+	Title                 string     `xml:"title,attr"`
+	Album                 string     `xml:"album,attr,omitempty"`
+	Artist                string     `xml:"artist,attr,omitempty"`
+	Track                 int        `xml:"track,attr,omitempty"`
+	Year                  int        `xml:"year,attr,omitempty"`
+	Genre                 string     `xml:"genre,attr,omitempty"`
+	CoverArt              string     `xml:"coverArt,attr,omitempty"`
+	Size                  int64      `xml:"size,attr,omitempty"`
+	ContentType           string     `xml:"contentType,attr,omitempty"`
+	Suffix                string     `xml:"suffix,attr,omitempty"`
+	TranscodedContentType string     `xml:"transcodedContentType,attr,omitempty"`
+	TranscodedSuffix      string     `xml:"transcodedSuffix,attr,omitempty"`
+	Duration              int        `xml:"duration,attr,omitempty"`
+	BitRate               int        `xml:"bitRate,attr,omitempty"`
+	Path                  string     `xml:"path,attr,omitempty"`
+	IsVideo               bool       `xml:"isVideo,attr,omitempty"`
+	UserRating            int        `xml:"userRating,attr,omitempty"`
+	AverageRating         float64    `xml:"averageRating,attr,omitempty"`
+	PlayCount             int64      `xml:"playCount,attr,omitempty"`
+	DiscNumber            int        `xml:"discNumber,attr,omitempty"`
+	Created               time.Time  `xml:"created,attr,omitempty"`
+	Starred               time.Time  `xml:"starred,attr,omitempty"`
+	AlbumID               string     `xml:"albumId,attr,omitempty"`
+	ArtistID              string     `xml:"artistId,attr,omitempty"`
+	Type                  *MediaType `xml:"type,attr,omitempty"`
+	BookmarkPosition      int64      `xml:"bookmarkPosition,attr,omitempty"`
+	OriginalWidth         int        `xml:"originalWidth,attr,omitempty"`
+	OriginalHeight        int        `xml:"originalHeight,attr,omitempty"`
 }
 
-// Starred is a collection of songs, albums, and artists flagged by a user as starred.
-type Starred struct {
-	Songs   []*Song   `json:"song"`
-	Albums  []*Album  `json:"album"`
-	Artists []*Artist `json:"artist"`
+func (t *NowPlayingEntry) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	type T NowPlayingEntry
+	var layout struct {
+		*T
+		Created *xsdDateTime `xml:"created,attr,omitempty"`
+		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
+	}
+	layout.T = (*T)(t)
+	layout.Created = (*xsdDateTime)(&layout.T.Created)
+	layout.Starred = (*xsdDateTime)(&layout.T.Starred)
+	return e.EncodeElement(layout, start)
+}
+func (t *NowPlayingEntry) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	type T NowPlayingEntry
+	var overlay struct {
+		*T
+		Created *xsdDateTime `xml:"created,attr,omitempty"`
+		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
+	}
+	overlay.T = (*T)(t)
+	overlay.Created = (*xsdDateTime)(&overlay.T.Created)
+	overlay.Starred = (*xsdDateTime)(&overlay.T.Starred)
+	return d.DecodeElement(&overlay, &start)
 }
 
-// SearchResult is a collection of songs, albums, and artists returned by a call to Search2 or Search3.
-type SearchResult struct {
-	Songs   []*Song   `json:"song"`
-	Albums  []*Album  `json:"album"`
-	Artists []*Artist `json:"artist"`
+type PlayQueue struct {
+	Entry     []*Child  `xml:"http://subsonic.org/restapi entry,omitempty"`
+	Current   int       `xml:"current,attr,omitempty"`
+	Position  int64     `xml:"position,attr,omitempty"`
+	Username  string    `xml:"username,attr"`
+	Changed   time.Time `xml:"changed,attr"`
+	ChangedBy string    `xml:"changedBy,attr"`
 }
 
-// Playlist is a collection of songs with metadata like a name, comment, and information about the total duration of the playlist.
+func (t *PlayQueue) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	type T PlayQueue
+	var layout struct {
+		*T
+		Changed *xsdDateTime `xml:"changed,attr"`
+	}
+	layout.T = (*T)(t)
+	layout.Changed = (*xsdDateTime)(&layout.T.Changed)
+	return e.EncodeElement(layout, start)
+}
+func (t *PlayQueue) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	type T PlayQueue
+	var overlay struct {
+		*T
+		Changed *xsdDateTime `xml:"changed,attr"`
+	}
+	overlay.T = (*T)(t)
+	overlay.Changed = (*xsdDateTime)(&overlay.T.Changed)
+	return d.DecodeElement(&overlay, &start)
+}
+
 type Playlist struct {
-	Changed   string  `json:"changed"`
-	Comment   string  `json:"comment"`
-	CoverArt  string  `json:"coverArt"`
-	Created   string  `json:"created"`
-	Duration  int64   `json:"duration"`
-	ID        string  `json:"id"`
-	Name      string  `json:"name"`
-	Owner     string  `json:"owner"`
-	Public    bool    `json:"public"`
-	SongCount int     `json:"songCount"`
-	Entries   []*Song `json:"entry"` // getPlaylist only
+	ID          string    `xml:"id,attr"` // Added manually
+	AllowedUser []string  `xml:"http://subsonic.org/restapi allowedUser,omitempty"`
+	Name        string    `xml:"name,attr"`
+	Comment     string    `xml:"comment,attr,omitempty"`
+	Owner       string    `xml:"owner,attr,omitempty"`
+	Public      bool      `xml:"public,attr,omitempty"`
+	SongCount   int       `xml:"songCount,attr"`
+	Duration    int       `xml:"duration,attr"`
+	Created     time.Time `xml:"created,attr"`
+	Changed     time.Time `xml:"changed,attr"`
+	CoverArt    string    `xml:"coverArt,attr,omitempty"`
 }
 
-type playlistList struct {
-	Entries []*Playlist `json:"playlist"`
+func (t *Playlist) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	type T Playlist
+	var layout struct {
+		*T
+		Created *xsdDateTime `xml:"created,attr"`
+		Changed *xsdDateTime `xml:"changed,attr"`
+	}
+	layout.T = (*T)(t)
+	layout.Created = (*xsdDateTime)(&layout.T.Created)
+	layout.Changed = (*xsdDateTime)(&layout.T.Changed)
+	return e.EncodeElement(layout, start)
+}
+func (t *Playlist) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	type T Playlist
+	var overlay struct {
+		*T
+		Created *xsdDateTime `xml:"created,attr"`
+		Changed *xsdDateTime `xml:"changed,attr"`
+	}
+	overlay.T = (*T)(t)
+	overlay.Created = (*xsdDateTime)(&overlay.T.Created)
+	overlay.Changed = (*xsdDateTime)(&overlay.T.Changed)
+	return d.DecodeElement(&overlay, &start)
+}
+
+type PlaylistWithSongs struct {
+	ID          string    `xml:"id,attr"` // Manually added
+	Entry       []*Child  `xml:"http://subsonic.org/restapi entry,omitempty"`
+	AllowedUser []string  `xml:"http://subsonic.org/restapi allowedUser,omitempty"`
+	Name        string    `xml:"name,attr"`
+	Comment     string    `xml:"comment,attr,omitempty"`
+	Owner       string    `xml:"owner,attr,omitempty"`
+	Public      bool      `xml:"public,attr,omitempty"`
+	SongCount   int       `xml:"songCount,attr"`
+	Duration    int       `xml:"duration,attr"`
+	Created     time.Time `xml:"created,attr"`
+	Changed     time.Time `xml:"changed,attr"`
+	CoverArt    string    `xml:"coverArt,attr,omitempty"`
+}
+
+func (t *PlaylistWithSongs) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	type T PlaylistWithSongs
+	var layout struct {
+		*T
+		Created *xsdDateTime `xml:"created,attr"`
+		Changed *xsdDateTime `xml:"changed,attr"`
+	}
+	layout.T = (*T)(t)
+	layout.Created = (*xsdDateTime)(&layout.T.Created)
+	layout.Changed = (*xsdDateTime)(&layout.T.Changed)
+	return e.EncodeElement(layout, start)
+}
+func (t *PlaylistWithSongs) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	type T PlaylistWithSongs
+	var overlay struct {
+		*T
+		Created *xsdDateTime `xml:"created,attr"`
+		Changed *xsdDateTime `xml:"changed,attr"`
+	}
+	overlay.T = (*T)(t)
+	overlay.Created = (*xsdDateTime)(&overlay.T.Created)
+	overlay.Changed = (*xsdDateTime)(&overlay.T.Changed)
+	return d.DecodeElement(&overlay, &start)
+}
+
+type Playlists struct {
+	Playlist []*Playlist `xml:"http://subsonic.org/restapi playlist,omitempty"`
+}
+
+type PodcastChannel struct {
+	Episode          []*PodcastEpisode `xml:"http://subsonic.org/restapi episode,omitempty"`
+	Url              string            `xml:"url,attr"`
+	Title            string            `xml:"title,attr,omitempty"`
+	Description      string            `xml:"description,attr,omitempty"`
+	CoverArt         string            `xml:"coverArt,attr,omitempty"`
+	OriginalImageUrl string            `xml:"originalImageUrl,attr,omitempty"`
+	Status           *PodcastStatus    `xml:"status,attr"`
+	ErrorMessage     string            `xml:"errorMessage,attr,omitempty"`
+}
+
+type PodcastEpisode struct {
+	StreamID              string         `xml:"streamId,attr,omitempty"`
+	ChannelID             string         `xml:"channelId,attr"`
+	Description           string         `xml:"description,attr,omitempty"`
+	Status                *PodcastStatus `xml:"status,attr"`
+	PublishDate           time.Time      `xml:"publishDate,attr,omitempty"`
+	Parent                string         `xml:"parent,attr,omitempty"`
+	IsDir                 bool           `xml:"isDir,attr"`
+	Title                 string         `xml:"title,attr"`
+	Album                 string         `xml:"album,attr,omitempty"`
+	Artist                string         `xml:"artist,attr,omitempty"`
+	Track                 int            `xml:"track,attr,omitempty"`
+	Year                  int            `xml:"year,attr,omitempty"`
+	Genre                 string         `xml:"genre,attr,omitempty"`
+	CoverArt              string         `xml:"coverArt,attr,omitempty"`
+	Size                  int64          `xml:"size,attr,omitempty"`
+	ContentType           string         `xml:"contentType,attr,omitempty"`
+	Suffix                string         `xml:"suffix,attr,omitempty"`
+	TranscodedContentType string         `xml:"transcodedContentType,attr,omitempty"`
+	TranscodedSuffix      string         `xml:"transcodedSuffix,attr,omitempty"`
+	Duration              int            `xml:"duration,attr,omitempty"`
+	BitRate               int            `xml:"bitRate,attr,omitempty"`
+	Path                  string         `xml:"path,attr,omitempty"`
+	IsVideo               bool           `xml:"isVideo,attr,omitempty"`
+	UserRating            int            `xml:"userRating,attr,omitempty"`
+	AverageRating         float64        `xml:"averageRating,attr,omitempty"`
+	PlayCount             int64          `xml:"playCount,attr,omitempty"`
+	DiscNumber            int            `xml:"discNumber,attr,omitempty"`
+	Created               time.Time      `xml:"created,attr,omitempty"`
+	Starred               time.Time      `xml:"starred,attr,omitempty"`
+	AlbumID               string         `xml:"albumId,attr,omitempty"`
+	ArtistID              string         `xml:"artistId,attr,omitempty"`
+	Type                  *MediaType     `xml:"type,attr,omitempty"`
+	BookmarkPosition      int64          `xml:"bookmarkPosition,attr,omitempty"`
+	OriginalWidth         int            `xml:"originalWidth,attr,omitempty"`
+	OriginalHeight        int            `xml:"originalHeight,attr,omitempty"`
+}
+
+func (t *PodcastEpisode) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	type T PodcastEpisode
+	var layout struct {
+		*T
+		PublishDate *xsdDateTime `xml:"publishDate,attr,omitempty"`
+		Created     *xsdDateTime `xml:"created,attr,omitempty"`
+		Starred     *xsdDateTime `xml:"starred,attr,omitempty"`
+	}
+	layout.T = (*T)(t)
+	layout.PublishDate = (*xsdDateTime)(&layout.T.PublishDate)
+	layout.Created = (*xsdDateTime)(&layout.T.Created)
+	layout.Starred = (*xsdDateTime)(&layout.T.Starred)
+	return e.EncodeElement(layout, start)
+}
+func (t *PodcastEpisode) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	type T PodcastEpisode
+	var overlay struct {
+		*T
+		PublishDate *xsdDateTime `xml:"publishDate,attr,omitempty"`
+		Created     *xsdDateTime `xml:"created,attr,omitempty"`
+		Starred     *xsdDateTime `xml:"starred,attr,omitempty"`
+	}
+	overlay.T = (*T)(t)
+	overlay.PublishDate = (*xsdDateTime)(&overlay.T.PublishDate)
+	overlay.Created = (*xsdDateTime)(&overlay.T.Created)
+	overlay.Starred = (*xsdDateTime)(&overlay.T.Starred)
+	return d.DecodeElement(&overlay, &start)
+}
+
+// May be one of new, downloading, completed, error, deleted, skipped
+type PodcastStatus string
+
+type Podcasts struct {
+	Channel []*PodcastChannel `xml:"http://subsonic.org/restapi channel,omitempty"`
+}
+
+// Response is the main target for unmarshalling JSON data from the API - everything within the "subsonic-response" key
+type Response struct {
+	MusicFolders          *MusicFolders          `xml:"http://subsonic.org/restapi musicFolders"`
+	Indexes               *Indexes               `xml:"http://subsonic.org/restapi indexes"`
+	Directory             *Directory             `xml:"http://subsonic.org/restapi directory"`
+	Genres                *Genres                `xml:"http://subsonic.org/restapi genres"`
+	Artists               *ArtistsID3            `xml:"http://subsonic.org/restapi artists"`
+	Artist                *ArtistWithAlbumsID3   `xml:"http://subsonic.org/restapi artist"`
+	Album                 *AlbumWithSongsID3     `xml:"http://subsonic.org/restapi album"`
+	Song                  *Child                 `xml:"http://subsonic.org/restapi song"`
+	Videos                *Videos                `xml:"http://subsonic.org/restapi videos"`
+	VideoInfo             *VideoInfo             `xml:"http://subsonic.org/restapi videoInfo"`
+	NowPlaying            *NowPlaying            `xml:"http://subsonic.org/restapi nowPlaying"`
+	SearchResult          *SearchResult          `xml:"http://subsonic.org/restapi searchResult"`
+	SearchResult2         *SearchResult2         `xml:"http://subsonic.org/restapi searchResult2"`
+	SearchResult3         *SearchResult3         `xml:"http://subsonic.org/restapi searchResult3"`
+	Playlists             *Playlists             `xml:"http://subsonic.org/restapi playlists"`
+	Playlist              *PlaylistWithSongs     `xml:"http://subsonic.org/restapi playlist"`
+	JukeboxStatus         *JukeboxStatus         `xml:"http://subsonic.org/restapi jukeboxStatus"`
+	JukeboxPlaylist       *JukeboxPlaylist       `xml:"http://subsonic.org/restapi jukeboxPlaylist"`
+	License               *License               `xml:"http://subsonic.org/restapi license"`
+	Users                 *Users                 `xml:"http://subsonic.org/restapi users"`
+	User                  *User                  `xml:"http://subsonic.org/restapi user"`
+	ChatMessages          *ChatMessages          `xml:"http://subsonic.org/restapi chatMessages"`
+	AlbumList             *AlbumList             `xml:"http://subsonic.org/restapi albumList"`
+	AlbumList2            *AlbumList2            `xml:"http://subsonic.org/restapi albumList2"`
+	RandomSongs           *Songs                 `xml:"http://subsonic.org/restapi randomSongs"`
+	SongsByGenre          *Songs                 `xml:"http://subsonic.org/restapi songsByGenre"`
+	Lyrics                *Lyrics                `xml:"http://subsonic.org/restapi lyrics"`
+	Podcasts              *Podcasts              `xml:"http://subsonic.org/restapi podcasts"`
+	NewestPodcasts        *NewestPodcasts        `xml:"http://subsonic.org/restapi newestPodcasts"`
+	InternetRadioStations *InternetRadioStations `xml:"http://subsonic.org/restapi internetRadioStations"`
+	Bookmarks             *Bookmarks             `xml:"http://subsonic.org/restapi bookmarks"`
+	PlayQueue             *PlayQueue             `xml:"http://subsonic.org/restapi playQueue"`
+	Shares                *Shares                `xml:"http://subsonic.org/restapi shares"`
+	Starred               *Starred               `xml:"http://subsonic.org/restapi starred"`
+	Starred2              *Starred2              `xml:"http://subsonic.org/restapi starred2"`
+	AlbumInfo             *AlbumInfo             `xml:"http://subsonic.org/restapi albumInfo"`
+	ArtistInfo            *ArtistInfo            `xml:"http://subsonic.org/restapi artistInfo"`
+	ArtistInfo2           *ArtistInfo2           `xml:"http://subsonic.org/restapi artistInfo2"`
+	SimilarSongs          *SimilarSongs          `xml:"http://subsonic.org/restapi similarSongs"`
+	SimilarSongs2         *SimilarSongs2         `xml:"http://subsonic.org/restapi similarSongs2"`
+	TopSongs              *TopSongs              `xml:"http://subsonic.org/restapi topSongs"`
+	ScanStatus            *ScanStatus            `xml:"http://subsonic.org/restapi scanStatus"`
+	Error                 *Error                 `xml:"http://subsonic.org/restapi error"`
+	Status                ResponseStatus         `xml:"status,attr"`
+	Version               Version                `xml:"version,attr"`
+}
+
+// May be one of ok, failed
+type ResponseStatus string
+
+type ScanStatus struct {
+	Scanning bool  `xml:"scanning,attr"`
+	Count    int64 `xml:"count,attr,omitempty"`
+}
+
+type SearchResult struct {
+	Match     []*Child `xml:"http://subsonic.org/restapi match,omitempty"`
+	TotalHits int      `xml:"totalHits,attr"`
+}
+
+type SearchResult2 struct {
+	Artist []*Artist `xml:"http://subsonic.org/restapi artist,omitempty"`
+	Album  []*Child  `xml:"http://subsonic.org/restapi album,omitempty"`
+	Song   []*Child  `xml:"http://subsonic.org/restapi song,omitempty"`
+}
+
+type SearchResult3 struct {
+	Artist []*ArtistID3 `xml:"http://subsonic.org/restapi artist,omitempty"`
+	Album  []*AlbumID3  `xml:"http://subsonic.org/restapi album,omitempty"`
+	Song   []*Child     `xml:"http://subsonic.org/restapi song,omitempty"`
+}
+
+type Share struct {
+	Entry       []*Child  `xml:"http://subsonic.org/restapi entry,omitempty"`
+	Url         string    `xml:"url,attr"`
+	Description string    `xml:"description,attr,omitempty"`
+	Username    string    `xml:"username,attr"`
+	Created     time.Time `xml:"created,attr"`
+	Expires     time.Time `xml:"expires,attr,omitempty"`
+	LastVisited time.Time `xml:"lastVisited,attr,omitempty"`
+	VisitCount  int       `xml:"visitCount,attr"`
+}
+
+func (t *Share) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	type T Share
+	var layout struct {
+		*T
+		Created     *xsdDateTime `xml:"created,attr"`
+		Expires     *xsdDateTime `xml:"expires,attr,omitempty"`
+		LastVisited *xsdDateTime `xml:"lastVisited,attr,omitempty"`
+	}
+	layout.T = (*T)(t)
+	layout.Created = (*xsdDateTime)(&layout.T.Created)
+	layout.Expires = (*xsdDateTime)(&layout.T.Expires)
+	layout.LastVisited = (*xsdDateTime)(&layout.T.LastVisited)
+	return e.EncodeElement(layout, start)
+}
+func (t *Share) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	type T Share
+	var overlay struct {
+		*T
+		Created     *xsdDateTime `xml:"created,attr"`
+		Expires     *xsdDateTime `xml:"expires,attr,omitempty"`
+		LastVisited *xsdDateTime `xml:"lastVisited,attr,omitempty"`
+	}
+	overlay.T = (*T)(t)
+	overlay.Created = (*xsdDateTime)(&overlay.T.Created)
+	overlay.Expires = (*xsdDateTime)(&overlay.T.Expires)
+	overlay.LastVisited = (*xsdDateTime)(&overlay.T.LastVisited)
+	return d.DecodeElement(&overlay, &start)
+}
+
+type Shares struct {
+	Share []*Share `xml:"http://subsonic.org/restapi share,omitempty"`
+}
+
+type SimilarSongs struct {
+	Song []*Child `xml:"http://subsonic.org/restapi song,omitempty"`
+}
+
+type SimilarSongs2 struct {
+	Song []*Child `xml:"http://subsonic.org/restapi song,omitempty"`
+}
+
+type Songs struct {
+	Song []*Child `xml:"http://subsonic.org/restapi song,omitempty"`
+}
+
+type Starred struct {
+	Artist []*Artist `xml:"http://subsonic.org/restapi artist,omitempty"`
+	Album  []*Child  `xml:"http://subsonic.org/restapi album,omitempty"`
+	Song   []*Child  `xml:"http://subsonic.org/restapi song,omitempty"`
+}
+
+type Starred2 struct {
+	Artist []*ArtistID3 `xml:"http://subsonic.org/restapi artist,omitempty"`
+	Album  []*AlbumID3  `xml:"http://subsonic.org/restapi album,omitempty"`
+	Song   []*Child     `xml:"http://subsonic.org/restapi song,omitempty"`
+}
+
+type TopSongs struct {
+	Song []*Child `xml:"http://subsonic.org/restapi song,omitempty"`
+}
+
+type User struct {
+	Folder              []int     `xml:"http://subsonic.org/restapi folder,omitempty"`
+	Username            string    `xml:"username,attr"`
+	Email               string    `xml:"email,attr,omitempty"`
+	ScrobblingEnabled   bool      `xml:"scrobblingEnabled,attr"`
+	MaxBitRate          int       `xml:"maxBitRate,attr,omitempty"`
+	AdminRole           bool      `xml:"adminRole,attr"`
+	SettingsRole        bool      `xml:"settingsRole,attr"`
+	DownloadRole        bool      `xml:"downloadRole,attr"`
+	UploadRole          bool      `xml:"uploadRole,attr"`
+	PlaylistRole        bool      `xml:"playlistRole,attr"`
+	CoverArtRole        bool      `xml:"coverArtRole,attr"`
+	CommentRole         bool      `xml:"commentRole,attr"`
+	PodcastRole         bool      `xml:"podcastRole,attr"`
+	StreamRole          bool      `xml:"streamRole,attr"`
+	JukeboxRole         bool      `xml:"jukeboxRole,attr"`
+	ShareRole           bool      `xml:"shareRole,attr"`
+	VideoConversionRole bool      `xml:"videoConversionRole,attr"`
+	AvatarLastChanged   time.Time `xml:"avatarLastChanged,attr,omitempty"`
+}
+
+func (t *User) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	type T User
+	var layout struct {
+		*T
+		AvatarLastChanged *xsdDateTime `xml:"avatarLastChanged,attr,omitempty"`
+	}
+	layout.T = (*T)(t)
+	layout.AvatarLastChanged = (*xsdDateTime)(&layout.T.AvatarLastChanged)
+	return e.EncodeElement(layout, start)
+}
+func (t *User) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	type T User
+	var overlay struct {
+		*T
+		AvatarLastChanged *xsdDateTime `xml:"avatarLastChanged,attr,omitempty"`
+	}
+	overlay.T = (*T)(t)
+	overlay.AvatarLastChanged = (*xsdDateTime)(&overlay.T.AvatarLastChanged)
+	return d.DecodeElement(&overlay, &start)
+}
+
+type Users struct {
+	User []*User `xml:"http://subsonic.org/restapi user,omitempty"`
+}
+
+// Must match the pattern \d+\.\d+\.\d+
+type Version string
+
+type VideoConversion struct {
+	BitRate      int `xml:"bitRate,attr,omitempty"`
+	AudioTrackID int `xml:"audioTrackId,attr,omitempty"`
+}
+
+type VideoInfo struct {
+	Captions   []*Captions        `xml:"http://subsonic.org/restapi captions,omitempty"`
+	AudioTrack []*AudioTrack      `xml:"http://subsonic.org/restapi audioTrack,omitempty"`
+	Conversion []*VideoConversion `xml:"http://subsonic.org/restapi conversion,omitempty"`
+}
+
+type Videos struct {
+	Video []*Child `xml:"http://subsonic.org/restapi video,omitempty"`
+}
+
+type xsdDateTime time.Time
+
+func (t *xsdDateTime) UnmarshalText(text []byte) error {
+	return _unmarshalTime(text, (*time.Time)(t), "2006-01-02T15:04:05.999999999")
+}
+func (t xsdDateTime) MarshalText() ([]byte, error) {
+	return []byte((time.Time)(t).Format("2006-01-02T15:04:05.999999999")), nil
+}
+func (t xsdDateTime) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	if (time.Time)(t).IsZero() {
+		return nil
+	}
+	m, err := t.MarshalText()
+	if err != nil {
+		return err
+	}
+	return e.EncodeElement(m, start)
+}
+func (t xsdDateTime) MarshalXMLAttr(name xml.Name) (xml.Attr, error) {
+	if (time.Time)(t).IsZero() {
+		return xml.Attr{}, nil
+	}
+	m, err := t.MarshalText()
+	return xml.Attr{Name: name, Value: string(m)}, err
+}
+func _unmarshalTime(text []byte, t *time.Time, format string) (err error) {
+	s := string(bytes.TrimSpace(text))
+	*t, err = time.Parse(format, s)
+	if _, ok := err.(*time.ParseError); ok {
+		*t, err = time.Parse(format+"Z07:00", s)
+	}
+	return err
 }
