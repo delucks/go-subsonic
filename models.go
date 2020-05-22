@@ -15,6 +15,7 @@ import (
 
 // AlbumID3 is an album that's organized by ID3 tags.
 type AlbumID3 struct {
+	ID        string    `xml:"id,attr"` // Manually added
 	Name      string    `xml:"name,attr"`
 	Artist    string    `xml:"artist,attr,omitempty"`
 	ArtistID  string    `xml:"artistId,attr,omitempty"`
