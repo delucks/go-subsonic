@@ -144,6 +144,7 @@ func (t *Artist) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 
 // ArtistID3 is a single artist from the database, organized by ID3 tag.
 type ArtistID3 struct {
+	ID             string    `xml:"id,attr"` // Manually added
 	Name           string    `xml:"name,attr"`
 	CoverArt       string    `xml:"coverArt,attr,omitempty"`
 	ArtistImageUrl string    `xml:"artistImageUrl,attr,omitempty"`
@@ -205,6 +206,7 @@ type ArtistInfoBase struct {
 }
 
 type ArtistWithAlbumsID3 struct {
+	ID             string      `xml:"id,attr"` // Manually added
 	Album          []*AlbumID3 `xml:"http://subsonic.org/restapi album,omitempty"`
 	Name           string      `xml:"name,attr"`
 	CoverArt       string      `xml:"coverArt,attr,omitempty"`
