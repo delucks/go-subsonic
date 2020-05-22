@@ -76,6 +76,33 @@ func runCommonTests(client Client, t *testing.T) {
 			t.Log(f.Name)
 		}
 	})
+	t.Run("GetMusicDirectory", func(t *testing.T) {
+		dir, err := client.GetMusicDirectory(sampleArtist.ID)
+		if err != nil {
+			t.Error(err)
+		}
+		if dir.ID == "" {
+			t.Error("Directory has an empty ID")
+		}
+		if dir.Name == "" {
+			t.Error("Directory has an empty Name")
+		}
+		for _, child := range dir.Child {
+			if child.ID == "" {
+				t.Log(child.Title)
+				t.Errorf("Child %s has an empty ID", child.Title)
+			}
+		}
+	})
+	t.Run("GetArtist", func(t *testing.T) {
+		artist, err := client.GetArtist(sampleArtist.ID)
+		if err != nil {
+			t.Error(err)
+		}
+		if len(artist.Album) != artist.AlbumCount {
+			t.Errorf("Artist %s has %d albums in the 'album' key, but an AlbumCount of %d", artist.Name, len(artist.Album), artist.AlbumCount)
+		}
+	})
 	t.Run("GetIndexes", func(t *testing.T) {
 		// Compare no-args usage versus usage with the folder ID
 		idx, err := client.GetIndexes(nil)
@@ -320,34 +347,6 @@ func runAirsonicTests(client Client, t *testing.T) {
 	sampleArtist := getSampleArtist(client)
 	// Most of these tests are separated out because Navidrome uses string IDs and other string fields.
 	// Subsonic/Airsonic uses numeric IDs, so they are tested with those numeric IDs here.
-	t.Run("GetMusicDirectory", func(t *testing.T) {
-		// TODO replace this magic number with a song ID when search2 is ready
-		dir, err := client.GetMusicDirectory("5")
-		if err != nil {
-			t.Error(err)
-		}
-		if dir.ID == "" {
-			t.Error("Directory has an empty ID")
-		}
-		if dir.Name == "" {
-			t.Error("Directory has an empty Name")
-		}
-		for _, child := range dir.Child {
-			if child.ID == "" {
-				t.Log(child.Title)
-				t.Errorf("Child %s has an empty ID", child.Title)
-			}
-		}
-	})
-	t.Run("GetArtist", func(t *testing.T) {
-		artist, err := client.GetArtist("1") // the subsonic demo server does not have an artist 0
-		if err != nil {
-			t.Error(err)
-		}
-		if len(artist.Album) != artist.AlbumCount {
-			t.Errorf("Artist %s has %d albums in the 'album' key, but an AlbumCount of %d", artist.Name, len(artist.Album), artist.AlbumCount)
-		}
-	})
 	t.Run("GetAlbum", func(t *testing.T) {
 		album, err := client.GetAlbum("1")
 		if err != nil {
@@ -468,6 +467,12 @@ func runAirsonicTests(client Client, t *testing.T) {
 		if len(songs) != 1 {
 			t.Errorf("Limiting songs returned by GetSongsByGenre failed: expected 1, length actual %d", len(songs))
 		}
+		var empty time.Time
+		for _, song := range songs {
+			if song.Created == empty {
+				t.Errorf("Song %#v had an empty created", song)
+			}
+		}
 	})
 }
 
@@ -484,26 +489,6 @@ func TestNavidrome(t *testing.T) {
 	}
 	runCommonTests(client, t)
 	runPlaylistTests(client, t)
-	// Navidrome uses UUIDs (strings)
-	t.Run("GetMusicDirectory", func(t *testing.T) {
-		// TODO replace this magic uuid with a real one when search2 is ready
-		dir, err := client.GetMusicDirectory("6b59470bff90cf113faa72dc01f84995")
-		if err != nil {
-			t.Error(err)
-		}
-		if dir.ID == "" {
-			t.Error("Directory has an empty ID")
-		}
-		if dir.Name == "" {
-			t.Error("Directory has an empty Name")
-		}
-		for _, child := range dir.Child {
-			t.Log(child.Title)
-			if child.ID == "" {
-				t.Errorf("Child %s has an empty ID", child.Title)
-			}
-		}
-	})
 }
 
 func TestAirsonic(t *testing.T) {
