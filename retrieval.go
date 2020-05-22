@@ -31,7 +31,7 @@ func (s *Client) Stream(id string, parameters map[string]string) ([]byte, error)
 	if err != nil {
 		return nil, err
 	}
-	if strings.HasPrefix(contentType, "text/xml") {
+	if strings.HasPrefix(contentType, "text/xml") || strings.HasPrefix(contentType, "application/xml") {
 		// An error was returned
 		resp := Response{}
 		err = xml.Unmarshal(responseBody, &resp)
