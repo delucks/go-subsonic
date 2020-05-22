@@ -86,6 +86,7 @@ func (s *Client) Request(method string, endpoint string, params map[string]strin
 		q.Add(key, val)
 	}
 	req.URL.RawQuery = q.Encode()
+	//log.Printf("%s %s", method, req.URL.String())
 
 	resp, err := s.Client.Do(req)
 	if err != nil {
