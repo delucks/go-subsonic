@@ -174,7 +174,7 @@ func (t *ArtistID3) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return d.DecodeElement(&overlay, &start)
 }
 
-// ArtistInfo is all auxillary information about an artist from GetArtistInfo/GetArtistInfo2
+// ArtistInfo is all auxillary information about an artist from GetArtistInfo.
 type ArtistInfo struct {
 	SimilarArtist  []*Artist `xml:"http://subsonic.org/restapi similarArtist,omitempty"`
 	Biography      string    `xml:"http://subsonic.org/restapi biography,omitempty"`
@@ -185,7 +185,7 @@ type ArtistInfo struct {
 	LargeImageUrl  string    `xml:"http://subsonic.org/restapi largeImageUrl,omitempty"`
 }
 
-// ArtistInfo is all auxillary information about an artist from GetArtistInfo/GetArtistInfo2
+// ArtistInfo2 is all auxillary information about an artist from GetArtistInfo2, with similar artists organized by ID3 tags.
 type ArtistInfo2 struct {
 	SimilarArtist  []*ArtistID3 `xml:"http://subsonic.org/restapi similarArtist,omitempty"`
 	Biography      string       `xml:"http://subsonic.org/restapi biography,omitempty"`
@@ -194,16 +194,6 @@ type ArtistInfo2 struct {
 	SmallImageUrl  string       `xml:"http://subsonic.org/restapi smallImageUrl,omitempty"`
 	MediumImageUrl string       `xml:"http://subsonic.org/restapi mediumImageUrl,omitempty"`
 	LargeImageUrl  string       `xml:"http://subsonic.org/restapi largeImageUrl,omitempty"`
-}
-
-// TODO is this type necessary?
-type ArtistInfoBase struct {
-	Biography      string `xml:"http://subsonic.org/restapi biography,omitempty"`
-	MusicBrainzID  string `xml:"http://subsonic.org/restapi musicBrainzId,omitempty"`
-	LastFmUrl      string `xml:"http://subsonic.org/restapi lastFmUrl,omitempty"`
-	SmallImageUrl  string `xml:"http://subsonic.org/restapi smallImageUrl,omitempty"`
-	MediumImageUrl string `xml:"http://subsonic.org/restapi mediumImageUrl,omitempty"`
-	LargeImageUrl  string `xml:"http://subsonic.org/restapi largeImageUrl,omitempty"`
 }
 
 type ArtistWithAlbumsID3 struct {
@@ -813,18 +803,9 @@ type Response struct {
 	Version               string                 `xml:"version,attr"` // Must match the pattern \d+\.\d+\.\d+
 }
 
-//SearchResult          *SearchResult          `xml:"http://subsonic.org/restapi searchResult"`
-//Videos                *Videos                `xml:"http://subsonic.org/restapi videos"`
-//VideoInfo             *VideoInfo             `xml:"http://subsonic.org/restapi videoInfo"`
-
 type ScanStatus struct {
 	Scanning bool  `xml:"scanning,attr"`
 	Count    int64 `xml:"count,attr,omitempty"`
-}
-
-type SearchResult struct {
-	Match     []*Child `xml:"http://subsonic.org/restapi match,omitempty"`
-	TotalHits int      `xml:"totalHits,attr"`
 }
 
 type SearchResult2 struct {
@@ -955,21 +936,6 @@ func (t *User) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 
 type users struct {
 	User []*User `xml:"http://subsonic.org/restapi user,omitempty"`
-}
-
-type VideoConversion struct {
-	BitRate      int `xml:"bitRate,attr,omitempty"`
-	AudioTrackID int `xml:"audioTrackId,attr,omitempty"`
-}
-
-type VideoInfo struct {
-	Captions   []*Captions        `xml:"http://subsonic.org/restapi captions,omitempty"`
-	AudioTrack []*AudioTrack      `xml:"http://subsonic.org/restapi audioTrack,omitempty"`
-	Conversion []*VideoConversion `xml:"http://subsonic.org/restapi conversion,omitempty"`
-}
-
-type Videos struct {
-	Video []*Child `xml:"http://subsonic.org/restapi video,omitempty"`
 }
 
 type xsdDateTime time.Time
