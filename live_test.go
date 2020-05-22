@@ -582,7 +582,6 @@ func TestSubsonic(t *testing.T) {
 	runClientTests(client, t)
 	runBrowsingTests(client, t)
 	runListsTests(client, t)
-	runPlaylistTests(client, t)
 	runRetrievalTests(client, t)
 	runSearchTests(client, t)
 	runAirsonicTests(client, t)
