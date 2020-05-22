@@ -64,11 +64,11 @@ type AlbumInfo struct {
 	LargeImageUrl  string `xml:"http://subsonic.org/restapi largeImageUrl,omitempty"`
 }
 
-type AlbumList struct {
+type albumList struct {
 	Album []*Child `xml:"http://subsonic.org/restapi album,omitempty"`
 }
 
-type AlbumList2 struct {
+type albumList2 struct {
 	Album []*AlbumID3 `xml:"http://subsonic.org/restapi album,omitempty"`
 }
 
@@ -281,7 +281,7 @@ func (t *Bookmark) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return d.DecodeElement(&overlay, &start)
 }
 
-type Bookmarks struct {
+type bookmarks struct {
 	Bookmark []*Bookmark `xml:"http://subsonic.org/restapi bookmark,omitempty"`
 }
 
@@ -295,7 +295,7 @@ type ChatMessage struct {
 	Message  string `xml:"message,attr"`
 }
 
-type ChatMessages struct {
+type chatMessages struct {
 	ChatMessage []*ChatMessage `xml:"http://subsonic.org/restapi chatMessage,omitempty"`
 }
 
@@ -401,7 +401,7 @@ type Genre struct {
 	AlbumCount int    `xml:"albumCount,attr"`
 }
 
-type Genres struct {
+type genres struct {
 	Genre []*Genre `xml:"http://subsonic.org/restapi genre,omitempty"`
 }
 
@@ -429,7 +429,7 @@ type InternetRadioStation struct {
 	HomePageUrl string `xml:"homePageUrl,attr,omitempty"`
 }
 
-type InternetRadioStations struct {
+type internetRadioStations struct {
 	InternetRadioStation []*InternetRadioStation `xml:"http://subsonic.org/restapi internetRadioStation,omitempty"`
 }
 
@@ -495,15 +495,15 @@ type MusicFolder struct {
 	Name string `xml:"name,attr,omitempty"`
 }
 
-type MusicFolders struct {
+type musicFolders struct {
 	MusicFolder []*MusicFolder `xml:"http://subsonic.org/restapi musicFolder,omitempty"`
 }
 
-type NewestPodcasts struct {
+type newestPodcasts struct {
 	Episode []*PodcastEpisode `xml:"http://subsonic.org/restapi episode,omitempty"`
 }
 
-type NowPlaying struct {
+type nowPlaying struct {
 	Entry []*NowPlayingEntry `xml:"http://subsonic.org/restapi entry,omitempty"`
 }
 
@@ -678,7 +678,7 @@ func (t *PlaylistWithSongs) UnmarshalXML(d *xml.Decoder, start xml.StartElement)
 	return d.DecodeElement(&overlay, &start)
 }
 
-type Playlists struct {
+type playlists struct {
 	Playlist []*Playlist `xml:"http://subsonic.org/restapi playlist,omitempty"`
 }
 
@@ -763,61 +763,59 @@ func (t *PodcastEpisode) UnmarshalXML(d *xml.Decoder, start xml.StartElement) er
 // May be one of new, downloading, completed, error, deleted, skipped
 type PodcastStatus string
 
-type Podcasts struct {
+type podcasts struct {
 	Channel []*PodcastChannel `xml:"http://subsonic.org/restapi channel,omitempty"`
 }
 
-// Response is the main target for unmarshalling JSON data from the API - everything within the "subsonic-response" key
+// Response is the main target for unmarshalling data from the API - everything within the "subsonic-response" key
 type Response struct {
-	MusicFolders          *MusicFolders          `xml:"http://subsonic.org/restapi musicFolders"`
+	License               *License               `xml:"http://subsonic.org/restapi license"`
+	MusicFolders          *musicFolders          `xml:"http://subsonic.org/restapi musicFolders"`
 	Indexes               *Indexes               `xml:"http://subsonic.org/restapi indexes"`
 	Directory             *Directory             `xml:"http://subsonic.org/restapi directory"`
-	Genres                *Genres                `xml:"http://subsonic.org/restapi genres"`
+	Genres                *genres                `xml:"http://subsonic.org/restapi genres"`
 	Artists               *ArtistsID3            `xml:"http://subsonic.org/restapi artists"`
 	Artist                *ArtistWithAlbumsID3   `xml:"http://subsonic.org/restapi artist"`
 	Album                 *AlbumWithSongsID3     `xml:"http://subsonic.org/restapi album"`
 	Song                  *Child                 `xml:"http://subsonic.org/restapi song"`
-	Videos                *Videos                `xml:"http://subsonic.org/restapi videos"`
-	VideoInfo             *VideoInfo             `xml:"http://subsonic.org/restapi videoInfo"`
-	NowPlaying            *NowPlaying            `xml:"http://subsonic.org/restapi nowPlaying"`
-	SearchResult          *SearchResult          `xml:"http://subsonic.org/restapi searchResult"`
+	NowPlaying            *nowPlaying            `xml:"http://subsonic.org/restapi nowPlaying"`
 	SearchResult2         *SearchResult2         `xml:"http://subsonic.org/restapi searchResult2"`
 	SearchResult3         *SearchResult3         `xml:"http://subsonic.org/restapi searchResult3"`
-	Playlists             *Playlists             `xml:"http://subsonic.org/restapi playlists"`
+	Playlists             *playlists             `xml:"http://subsonic.org/restapi playlists"`
 	Playlist              *PlaylistWithSongs     `xml:"http://subsonic.org/restapi playlist"`
 	JukeboxStatus         *JukeboxStatus         `xml:"http://subsonic.org/restapi jukeboxStatus"`
 	JukeboxPlaylist       *JukeboxPlaylist       `xml:"http://subsonic.org/restapi jukeboxPlaylist"`
-	License               *License               `xml:"http://subsonic.org/restapi license"`
-	Users                 *Users                 `xml:"http://subsonic.org/restapi users"`
+	Users                 *users                 `xml:"http://subsonic.org/restapi users"`
 	User                  *User                  `xml:"http://subsonic.org/restapi user"`
-	ChatMessages          *ChatMessages          `xml:"http://subsonic.org/restapi chatMessages"`
-	AlbumList             *AlbumList             `xml:"http://subsonic.org/restapi albumList"`
-	AlbumList2            *AlbumList2            `xml:"http://subsonic.org/restapi albumList2"`
-	RandomSongs           *Songs                 `xml:"http://subsonic.org/restapi randomSongs"`
-	SongsByGenre          *Songs                 `xml:"http://subsonic.org/restapi songsByGenre"`
+	ChatMessages          *chatMessages          `xml:"http://subsonic.org/restapi chatMessages"`
+	AlbumList             *albumList             `xml:"http://subsonic.org/restapi albumList"`
+	AlbumList2            *albumList2            `xml:"http://subsonic.org/restapi albumList2"`
+	RandomSongs           *songs                 `xml:"http://subsonic.org/restapi randomSongs"`
+	SongsByGenre          *songs                 `xml:"http://subsonic.org/restapi songsByGenre"`
 	Lyrics                *Lyrics                `xml:"http://subsonic.org/restapi lyrics"`
-	Podcasts              *Podcasts              `xml:"http://subsonic.org/restapi podcasts"`
-	NewestPodcasts        *NewestPodcasts        `xml:"http://subsonic.org/restapi newestPodcasts"`
-	InternetRadioStations *InternetRadioStations `xml:"http://subsonic.org/restapi internetRadioStations"`
-	Bookmarks             *Bookmarks             `xml:"http://subsonic.org/restapi bookmarks"`
+	Podcasts              *podcasts              `xml:"http://subsonic.org/restapi podcasts"`
+	NewestPodcasts        *newestPodcasts        `xml:"http://subsonic.org/restapi newestPodcasts"`
+	InternetRadioStations *internetRadioStations `xml:"http://subsonic.org/restapi internetRadioStations"`
+	Bookmarks             *bookmarks             `xml:"http://subsonic.org/restapi bookmarks"`
 	PlayQueue             *PlayQueue             `xml:"http://subsonic.org/restapi playQueue"`
-	Shares                *Shares                `xml:"http://subsonic.org/restapi shares"`
+	Shares                *shares                `xml:"http://subsonic.org/restapi shares"`
 	Starred               *Starred               `xml:"http://subsonic.org/restapi starred"`
 	Starred2              *Starred2              `xml:"http://subsonic.org/restapi starred2"`
 	AlbumInfo             *AlbumInfo             `xml:"http://subsonic.org/restapi albumInfo"`
 	ArtistInfo            *ArtistInfo            `xml:"http://subsonic.org/restapi artistInfo"`
 	ArtistInfo2           *ArtistInfo2           `xml:"http://subsonic.org/restapi artistInfo2"`
-	SimilarSongs          *SimilarSongs          `xml:"http://subsonic.org/restapi similarSongs"`
-	SimilarSongs2         *SimilarSongs2         `xml:"http://subsonic.org/restapi similarSongs2"`
-	TopSongs              *TopSongs              `xml:"http://subsonic.org/restapi topSongs"`
+	SimilarSongs          *similarSongs          `xml:"http://subsonic.org/restapi similarSongs"`
+	SimilarSongs2         *similarSongs2         `xml:"http://subsonic.org/restapi similarSongs2"`
+	TopSongs              *topSongs              `xml:"http://subsonic.org/restapi topSongs"`
 	ScanStatus            *ScanStatus            `xml:"http://subsonic.org/restapi scanStatus"`
 	Error                 *Error                 `xml:"http://subsonic.org/restapi error"`
-	Status                ResponseStatus         `xml:"status,attr"`
-	Version               Version                `xml:"version,attr"`
+	Status                string                 `xml:"status,attr"`  // May be one of ok, failed
+	Version               string                 `xml:"version,attr"` // Must match the pattern \d+\.\d+\.\d+
 }
 
-// May be one of ok, failed
-type ResponseStatus string
+//SearchResult          *SearchResult          `xml:"http://subsonic.org/restapi searchResult"`
+//Videos                *Videos                `xml:"http://subsonic.org/restapi videos"`
+//VideoInfo             *VideoInfo             `xml:"http://subsonic.org/restapi videoInfo"`
 
 type ScanStatus struct {
 	Scanning bool  `xml:"scanning,attr"`
@@ -881,19 +879,19 @@ func (t *Share) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return d.DecodeElement(&overlay, &start)
 }
 
-type Shares struct {
+type shares struct {
 	Share []*Share `xml:"http://subsonic.org/restapi share,omitempty"`
 }
 
-type SimilarSongs struct {
+type similarSongs struct {
 	Song []*Child `xml:"http://subsonic.org/restapi song,omitempty"`
 }
 
-type SimilarSongs2 struct {
+type similarSongs2 struct {
 	Song []*Child `xml:"http://subsonic.org/restapi song,omitempty"`
 }
 
-type Songs struct {
+type songs struct {
 	Song []*Child `xml:"http://subsonic.org/restapi song,omitempty"`
 }
 
@@ -909,7 +907,7 @@ type Starred2 struct {
 	Song   []*Child     `xml:"http://subsonic.org/restapi song,omitempty"`
 }
 
-type TopSongs struct {
+type topSongs struct {
 	Song []*Child `xml:"http://subsonic.org/restapi song,omitempty"`
 }
 
@@ -955,12 +953,9 @@ func (t *User) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return d.DecodeElement(&overlay, &start)
 }
 
-type Users struct {
+type users struct {
 	User []*User `xml:"http://subsonic.org/restapi user,omitempty"`
 }
-
-// Must match the pattern \d+\.\d+\.\d+
-type Version string
 
 type VideoConversion struct {
 	BitRate      int `xml:"bitRate,attr,omitempty"`
