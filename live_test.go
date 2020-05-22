@@ -33,6 +33,22 @@ func getSampleArtist(client Client) *ArtistID3 {
 	return artists.Index[len(artists.Index)-1].Artist[0]
 }
 
+func getSampleSong(client Client) *Child {
+	songs, err := client.GetRandomSongs(nil)
+	if err != nil {
+		return nil
+	}
+	return songs[rand.Intn(len(songs))]
+}
+
+func getSampleAlbum(client Client) *AlbumID3 {
+	albums, err := client.GetAlbumList2("newest", nil)
+	if err != nil {
+		return nil
+	}
+	return albums[rand.Intn(len(albums))]
+}
+
 func findPlaylistByName(client Client, name string) (*Playlist, error) {
 	playlists, err := client.GetPlaylists(nil)
 	if err != nil {
@@ -46,10 +62,7 @@ func findPlaylistByName(client Client, name string) (*Playlist, error) {
 	return nil, fmt.Errorf("Could not find playlist %s", name)
 }
 
-func runCommonTests(client Client, t *testing.T) {
-	sampleArtist := getSampleArtist(client)
-	sampleGenre := getSampleGenre(client)
-	// These test the library's ability to unmarshal server responses
+func runClientTests(client Client, t *testing.T) {
 	t.Run("Ping", func(t *testing.T) {
 		if !client.Ping() {
 			t.Error("Ping failed (somehow)")
@@ -64,6 +77,14 @@ func runCommonTests(client Client, t *testing.T) {
 			t.Errorf("Invalid license returned- %#v\n", license)
 		}
 	})
+}
+
+func runBrowsingTests(client Client, t *testing.T) {
+	sampleArtist := getSampleArtist(client)
+	sampleSong := getSampleSong(client)
+	sampleAlbum := getSampleAlbum(client)
+
+	// These test the library's ability to unmarshal server responses
 	t.Run("GetMusicFolders", func(t *testing.T) {
 		folders, err := client.GetMusicFolders()
 		if err != nil {
@@ -76,33 +97,7 @@ func runCommonTests(client Client, t *testing.T) {
 			t.Log(f.Name)
 		}
 	})
-	t.Run("GetMusicDirectory", func(t *testing.T) {
-		dir, err := client.GetMusicDirectory(sampleArtist.ID)
-		if err != nil {
-			t.Error(err)
-		}
-		if dir.ID == "" {
-			t.Error("Directory has an empty ID")
-		}
-		if dir.Name == "" {
-			t.Error("Directory has an empty Name")
-		}
-		for _, child := range dir.Child {
-			if child.ID == "" {
-				t.Log(child.Title)
-				t.Errorf("Child %s has an empty ID", child.Title)
-			}
-		}
-	})
-	t.Run("GetArtist", func(t *testing.T) {
-		artist, err := client.GetArtist(sampleArtist.ID)
-		if err != nil {
-			t.Error(err)
-		}
-		if len(artist.Album) != artist.AlbumCount {
-			t.Errorf("Artist %s has %d albums in the 'album' key, but an AlbumCount of %d", artist.Name, len(artist.Album), artist.AlbumCount)
-		}
-	})
+
 	t.Run("GetIndexes", func(t *testing.T) {
 		// Compare no-args usage versus usage with the folder ID
 		idx, err := client.GetIndexes(nil)
@@ -125,6 +120,26 @@ func runCommonTests(client Client, t *testing.T) {
 			}
 		}
 	})
+
+	t.Run("GetMusicDirectory", func(t *testing.T) {
+		dir, err := client.GetMusicDirectory(sampleArtist.ID)
+		if err != nil {
+			t.Error(err)
+		}
+		if dir.ID == "" {
+			t.Error("Directory has an empty ID")
+		}
+		if dir.Name == "" {
+			t.Error("Directory has an empty Name")
+		}
+		for _, child := range dir.Child {
+			if child.ID == "" {
+				t.Log(child.Title)
+				t.Errorf("Child %s has an empty ID", child.Title)
+			}
+		}
+	})
+
 	t.Run("GetGenres", func(t *testing.T) {
 		genres, err := client.GetGenres()
 		if err != nil {
@@ -139,6 +154,7 @@ func runCommonTests(client Client, t *testing.T) {
 			}
 		}
 	})
+
 	t.Run("GetArtists", func(t *testing.T) {
 		idx, err := client.GetArtists(nil)
 		if err != nil {
@@ -157,6 +173,58 @@ func runCommonTests(client Client, t *testing.T) {
 			}
 		}
 	})
+
+	t.Run("GetArtist", func(t *testing.T) {
+		artist, err := client.GetArtist(sampleArtist.ID)
+		if err != nil {
+			t.Error(err)
+		}
+		if len(artist.Album) != artist.AlbumCount {
+			t.Errorf("Artist %s has %d albums in the 'album' key, but an AlbumCount of %d", artist.Name, len(artist.Album), artist.AlbumCount)
+		}
+	})
+
+	t.Run("GetAlbum", func(t *testing.T) {
+		album, err := client.GetAlbum(sampleAlbum.ID)
+		if err != nil {
+			t.Error(err)
+		}
+		if len(album.Song) != album.SongCount {
+			t.Errorf("Album %s has %d songs in the 'song' key, but an songCount of %d", album.Name, len(album.Song), album.SongCount)
+		}
+	})
+
+	t.Run("GetSong", func(t *testing.T) {
+		song, err := client.GetSong(sampleSong.ID)
+		if err != nil {
+			t.Error(err)
+		}
+		if song.ID == "" {
+			t.Errorf("Song was not returned properly, %#v\n", song)
+		}
+	})
+
+	t.Run("GetArtistInfo", func(t *testing.T) {
+		ai, err := client.GetArtistInfo(sampleArtist.ID, nil)
+		if err != nil {
+			t.Error(err)
+		}
+		if ai.Biography == "" {
+			t.Logf("Empty ArtistInfo returned for artist %s", sampleArtist.Name)
+		}
+		ai2, err := client.GetArtistInfo2(sampleArtist.ID, nil)
+		if err != nil {
+			t.Error(err)
+		}
+		if ai2.Biography == "" {
+			t.Logf("Empty ArtistInfo2 returned for artist %s", sampleArtist.Name)
+		}
+	})
+}
+
+func runListsTests(client Client, t *testing.T) {
+	sampleGenre := getSampleGenre(client)
+
 	t.Run("GetAlbumList", func(t *testing.T) {
 		_, err := client.GetAlbumList("foobar", nil)
 		if err == nil {
@@ -195,6 +263,7 @@ func runCommonTests(client Client, t *testing.T) {
 			t.Error("No albums were returned in a call to a byGenre getAlbumList")
 		}
 	})
+
 	t.Run("GetAlbumList2", func(t *testing.T) {
 		// Test incorrect parameters
 		_, err := client.GetAlbumList2("foobar", nil)
@@ -227,6 +296,7 @@ func runCommonTests(client Client, t *testing.T) {
 			}
 		}
 	})
+
 	t.Run("GetRandomSongs", func(t *testing.T) {
 		songs, err := client.GetRandomSongs(nil)
 		if err != nil || songs == nil {
@@ -237,6 +307,30 @@ func runCommonTests(client Client, t *testing.T) {
 			t.Errorf("Limiting songs returned by getRandomSongs failed: expected 1, length actual %d", len(songs))
 		}
 	})
+
+	t.Run("GetSongsByGenre", func(t *testing.T) {
+		songs, err := client.GetSongsByGenre(sampleGenre.Name, nil)
+		if err != nil {
+			t.Error(err)
+		}
+		if songs == nil {
+			t.Errorf("No songs returned for genre %v", sampleGenre)
+		}
+		songs, err = client.GetSongsByGenre(sampleGenre.Name, map[string]string{"count": "1"})
+		if err != nil {
+			t.Error(err)
+		}
+		if len(songs) != 1 {
+			t.Errorf("Limiting songs returned by GetSongsByGenre failed: expected 1, length actual %d", len(songs))
+		}
+		var empty time.Time
+		for _, song := range songs {
+			if song.Created == empty {
+				t.Errorf("Song %#v had an empty created", song)
+			}
+		}
+	})
+
 	t.Run("GetNowPlaying", func(t *testing.T) {
 		// This test is essentially a no-op because we can't depend on the state of playing something in a test environment
 		entries, err := client.GetNowPlaying()
@@ -247,6 +341,7 @@ func runCommonTests(client Client, t *testing.T) {
 			t.Logf("%#v", nowPlaying)
 		}
 	})
+
 	t.Run("GetStarred", func(t *testing.T) {
 		// State dependent test
 		_, err := client.GetStarred(nil)
@@ -258,6 +353,11 @@ func runCommonTests(client Client, t *testing.T) {
 			t.Error(err)
 		}
 	})
+}
+
+func runSearchTests(client Client, t *testing.T) {
+	sampleArtist := getSampleArtist(client)
+
 	t.Run("Search2", func(t *testing.T) {
 		results, err := client.Search2(sampleArtist.Name, nil)
 		if err != nil {
@@ -268,6 +368,7 @@ func runCommonTests(client Client, t *testing.T) {
 			t.Errorf("Could not find any albums for a known artist %s", sampleArtist.Name)
 		}
 	})
+
 	t.Run("Search3", func(t *testing.T) {
 		results, err := client.Search3(sampleArtist.Name, nil)
 		if err != nil {
@@ -289,6 +390,28 @@ func runCommonTests(client Client, t *testing.T) {
 			t.Errorf("Improperly limited results of search for %s: %#v", sampleArtist.Name, results)
 		}
 	})
+}
+
+func runRetrievalTests(client Client, t *testing.T) {
+	sampleSong := getSampleSong(client)
+
+	t.Run("Stream", func(t *testing.T) {
+		// Purposefully choose an ID that returns an error
+		_, err := client.Stream("1", nil)
+		if err == nil {
+			t.Error("An error was not returned on ID 1")
+		}
+		contents, err := client.Stream(sampleSong.ID, nil)
+		if err != nil {
+			t.Error(err)
+		}
+		if contents == nil {
+			t.Error("No content returned")
+		}
+	})
+}
+
+func runPlaylistTests(client Client, t *testing.T) {
 	t.Run("GetPlaylists", func(t *testing.T) {
 		playlists, err := client.GetPlaylists(nil)
 		if err != nil {
@@ -300,9 +423,6 @@ func runCommonTests(client Client, t *testing.T) {
 			}
 		}
 	})
-}
-
-func runPlaylistTests(client Client, t *testing.T) {
 	// State-heavy test for playlist CRUD
 	testPlaylistName := fmt.Sprintf("Test playlist %v", time.Now().Unix())
 	t.Run("CreatePlaylist", func(t *testing.T) {
@@ -343,62 +463,11 @@ func runPlaylistTests(client Client, t *testing.T) {
 }
 
 func runAirsonicTests(client Client, t *testing.T) {
-	sampleGenre := getSampleGenre(client)
+	// These are not implemented in Navidrome yet
 	sampleArtist := getSampleArtist(client)
-	// Most of these tests are separated out because Navidrome uses string IDs and other string fields.
-	// Subsonic/Airsonic uses numeric IDs, so they are tested with those numeric IDs here.
-	t.Run("GetAlbum", func(t *testing.T) {
-		album, err := client.GetAlbum("1")
-		if err != nil {
-			t.Error(err)
-		}
-		if len(album.Song) != album.SongCount {
-			t.Errorf("Album %s has %d songs in the 'song' key, but an songCount of %d", album.Name, len(album.Song), album.SongCount)
-		}
-	})
-	t.Run("GetSong", func(t *testing.T) {
-		song, err := client.GetSong("27")
-		if err != nil {
-			t.Error(err)
-		}
-		if song.ID == "" {
-			t.Errorf("Song was not returned properly, %#v\n", song)
-		}
-	})
-	t.Run("GetArtistInfo", func(t *testing.T) {
-		ai, err := client.GetArtistInfo("3", nil)
-		if err != nil {
-			t.Error(err)
-		}
-		if ai.Biography == "" {
-			t.Error("Empty biography, invalid response")
-		}
-		ai2, err := client.GetArtistInfo2("1", nil)
-		if err != nil {
-			t.Error(err)
-		}
-		if ai2.Biography == "" {
-			t.Error("Empty biography, invalid response")
-		}
-	})
-	t.Run("GetAlbumInfo", func(t *testing.T) {
-		ai, err := client.GetAlbumInfo("48")
-		if err != nil {
-			t.Error(err)
-		}
-		if ai.MusicBrainzID == "" {
-			t.Logf("%#v\n", ai)
-			t.Error("Empty MB id from GetAlbumInfo, invalid response")
-		}
-		ai, err = client.GetAlbumInfo2("1")
-		if err != nil {
-			t.Error(err)
-		}
-		if ai.MusicBrainzID == "" {
-			t.Logf("%#v\n", ai)
-			t.Error("Empty MB id from GetAlbumInfo2, invalid response")
-		}
-	})
+	sampleAlbum := getSampleAlbum(client)
+
+	// Browsing
 	t.Run("GetSimilarSongs", func(t *testing.T) {
 		_, err := client.GetSimilarSongs("48", nil)
 		if err != nil {
@@ -421,21 +490,27 @@ func runAirsonicTests(client Client, t *testing.T) {
 			t.Errorf("Count argument did not work properly: got %d songs in response to a request for one", len(songs))
 		}
 	})
-	t.Run("Stream", func(t *testing.T) {
-		// Purposefully choose an ID that returns an error
-		_, err := client.Stream("1", nil)
-		if err == nil {
-			t.Error("An error was not returned on ID 1")
-		}
-		contents, err := client.Stream("33", nil)
+
+	t.Run("GetAlbumInfo", func(t *testing.T) {
+		ai, err := client.GetAlbumInfo(sampleAlbum.ID)
 		if err != nil {
 			t.Error(err)
 		}
-		if contents == nil {
-			t.Error("No content returned")
+		empty := AlbumInfo{}
+		if *ai == empty {
+			// This can't fail the test even though it's anomalous because many albums
+			// do not have information available for them in the databases
+			t.Logf("Empty AlbumInfo returned for album %s by %s", sampleAlbum.Name, sampleAlbum.Artist)
+		}
+		ai, err = client.GetAlbumInfo2(sampleAlbum.ID)
+		if err != nil {
+			t.Error(err)
+		}
+		if *ai == empty {
+			t.Logf("Empty AlbumInfo2 returned for album %s by %s", sampleAlbum.Name, sampleAlbum.Artist)
 		}
 	})
-	// Next 2 are not implemented in Navidrome yet
+
 	t.Run("GetTopSongs", func(t *testing.T) {
 		songs, err := client.GetTopSongs(sampleArtist.Name, nil)
 		if err != nil {
@@ -452,28 +527,6 @@ func runAirsonicTests(client Client, t *testing.T) {
 			t.Errorf("Incorrect song count returned from call to getTopSongs, %d actual 1 expected", len(songs))
 		}
 	})
-	t.Run("GetSongsByGenre", func(t *testing.T) {
-		songs, err := client.GetSongsByGenre(sampleGenre.Name, nil)
-		if err != nil {
-			t.Error(err)
-		}
-		if songs == nil {
-			t.Errorf("No songs returned for genre %v", sampleGenre)
-		}
-		songs, err = client.GetSongsByGenre(sampleGenre.Name, map[string]string{"count": "1"})
-		if err != nil {
-			t.Error(err)
-		}
-		if len(songs) != 1 {
-			t.Errorf("Limiting songs returned by GetSongsByGenre failed: expected 1, length actual %d", len(songs))
-		}
-		var empty time.Time
-		for _, song := range songs {
-			if song.Created == empty {
-				t.Errorf("Song %#v had an empty created", song)
-			}
-		}
-	})
 }
 
 func TestNavidrome(t *testing.T) {
@@ -487,8 +540,12 @@ func TestNavidrome(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	runCommonTests(client, t)
+	runClientTests(client, t)
+	runBrowsingTests(client, t)
+	runListsTests(client, t)
 	runPlaylistTests(client, t)
+	runRetrievalTests(client, t)
+	runSearchTests(client, t)
 }
 
 func TestAirsonic(t *testing.T) {
@@ -502,8 +559,12 @@ func TestAirsonic(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	runCommonTests(client, t)
+	runClientTests(client, t)
+	runBrowsingTests(client, t)
+	runListsTests(client, t)
 	runPlaylistTests(client, t)
+	runRetrievalTests(client, t)
+	runSearchTests(client, t)
 	runAirsonicTests(client, t)
 }
 
@@ -518,7 +579,11 @@ func TestSubsonic(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	runCommonTests(client, t)
+	runClientTests(client, t)
+	runBrowsingTests(client, t)
+	runListsTests(client, t)
 	runPlaylistTests(client, t)
+	runRetrievalTests(client, t)
+	runSearchTests(client, t)
 	runAirsonicTests(client, t)
 }
