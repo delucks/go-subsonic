@@ -2,6 +2,11 @@
 //
 // This project handles communication with a remote *sonic server, but does not handle playback of media. The library user should be prepared to do something with the stream of audio in bytes, like decoding and playing that audio on a sound card.
 // The list of API endpoints implemented is available on the project's github page.
+//
+// The API is divided between functions with no suffix, and functions that have a "2" suffix (or "3" in the case of Search3).
+// Generally, things with "2" on the end are organized by file tags rather than folder structure. This is how you'd expect most music players to work and is recommended.
+// The variants without a suffix organize the library by directory structure; artists are a directory, albums are children of that directory, songs (subsonic.Child) are children of albums.
+// This has some disadvantages: possibly duplicating items with identical directory names, treating songs and albums in much the same fashion, and being more difficult to query consistently.
 package subsonic
 
 import (
