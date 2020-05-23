@@ -1,6 +1,10 @@
 package subsonic
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+	"time"
+)
 
 func runAnnotationTests(client Client, t *testing.T) {
 	sampleArtist := getSampleArtist(client)
@@ -48,6 +52,32 @@ func runAnnotationTests(client Client, t *testing.T) {
 			t.Error(err)
 		}
 		err = client.SetRating(sampleArtist.ID, 0)
+		if err != nil {
+			t.Error(err)
+		}
+	})
+
+	t.Run("Scrobble", func(t *testing.T) {
+		err := client.Scrobble(sampleSong.ID, map[string]string{
+			"time": "not-an-int",
+		})
+		if err == nil {
+			t.Error("Typecheck on time argument failed")
+		}
+		err = client.Scrobble(sampleSong.ID, map[string]string{
+			"submission": "not-a-bool",
+		})
+		if err == nil {
+			t.Error("Typecheck on submission argument failed")
+		}
+		err = client.Scrobble(sampleSong.ID, map[string]string{
+			"time":       fmt.Sprintf("%d", time.Now().Unix()),
+			"submission": "true",
+		})
+		if err != nil {
+			t.Error(err)
+		}
+		err = client.Scrobble(sampleSong.ID, nil)
 		if err != nil {
 			t.Error(err)
 		}

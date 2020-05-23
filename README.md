@@ -75,7 +75,7 @@ Video endpoints are currently out of scope- please file an issue if you would li
 - [x] star (1.8.0)
 - [x] unstar (1.8.0)
 - [x] setRating (1.6.0)
-- [ ] scrobble (1.5.0)
+- [x] scrobble (1.5.0)
 
 ## Sharing
 
