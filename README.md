@@ -6,16 +6,6 @@ This is an API client library for Subsonic and Subsonic-compatible music servers
 
 # API Support
 
-## Out of Scope
-
-Video endpoints are currently out of scope- please file an issue if you would like support for them. The deprecated "search" endpoint is unimplemented.
-
-- [ ] hls.m3u8 (1.8.0)
-- [ ] getVideos (1.8.0)
-- [ ] getVideoInfo (1.14.0)
-- [ ] getCaptions (1.14.0)
-- [ ] search (1.0.0)
-
 ## System
 
 - [x] ping (1.0.0)
@@ -29,7 +19,7 @@ Video endpoints are currently out of scope- please file an issue if you would li
 - [x] getGenres (1.9.0)
 - [x] getArtists (1.8.0)
 - [x] getArtist (1.8.0)
-- [x] getAlbum
+- [x] getAlbum (1.0.0)
 - [x] getSong (1.8.0)
 - [x] getArtistInfo (1.11.0)
 - [x] getArtistInfo2 (1.11.0)
@@ -77,6 +67,28 @@ Video endpoints are currently out of scope- please file an issue if you would li
 - [x] setRating (1.6.0)
 - [x] scrobble (1.5.0)
 
+## User management
+
+- [ ] getUser (1.3.0)
+- [ ] getUsers (1.8.0)
+- [ ] createUser (1.1.0)
+- [ ] updateUser (1.10.1)
+- [ ] deleteUser (1.3.0)
+- [ ] changePassword (1.1.0)
+
+## Media library scanning
+
+- [ ] getScanStatus (1.15.0)
+- [ ] startScan (1.15.0)
+
+## Bookmarks
+
+- [ ] getBookmarks (1.9.0)
+- [ ] createBookmark (1.9.0)
+- [ ] deleteBookmark (1.9.0)
+- [ ] getPlayQueue (1.12.0)
+- [ ] savePlayQueue (1.12.0)
+
 ## Sharing
 
 - [ ] getShares (1.6.0)
@@ -110,24 +122,12 @@ Video endpoints are currently out of scope- please file an issue if you would li
 - [ ] getChatMessages (1.2.0)
 - [ ] addChatMessage (1.2.0)
 
-## User management
+## Out of Scope
 
-- [ ] getUser (1.3.0)
-- [ ] getUsers (1.8.0)
-- [ ] createUser (1.1.0)
-- [ ] updateUser (1.10.1)
-- [ ] deleteUser (1.3.0)
-- [ ] changePassword (1.1.0)
+Video endpoints are currently out of scope- please file an issue if you would like support for them. The deprecated "search" endpoint is unimplemented.
 
-## Bookmarks
-
-- [ ] getBookmarks (1.9.0)
-- [ ] createBookmark (1.9.0)
-- [ ] deleteBookmark (1.9.0)
-- [ ] getPlayQueue (1.12.0)
-- [ ] savePlayQueue (1.12.0)
-
-## Media library scanning
-
-- [ ] getScanStatus (1.15.0)
-- [ ] startScan (1.15.0)
+- [ ] hls.m3u8 (1.8.0)
+- [ ] getVideos (1.8.0)
+- [ ] getVideoInfo (1.14.0)
+- [ ] getCaptions (1.14.0)
+- [ ] search (1.0.0)
