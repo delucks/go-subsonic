@@ -1,6 +1,9 @@
 package subsonic
 
-import "testing"
+import (
+	"image"
+	"testing"
+)
 
 func runRetrievalTests(client Client, t *testing.T) {
 	sampleSong := getSampleSong(client)
@@ -33,7 +36,7 @@ func runRetrievalTests(client Client, t *testing.T) {
 		}
 		contents, err := client.Download(sampleSong.ID)
 		if err != nil {
-			t.Error(err)
+			t.Fatal(err)
 		}
 		if contents == nil {
 			t.Fatal("No content returned")
@@ -42,6 +45,17 @@ func runRetrievalTests(client Client, t *testing.T) {
 		_, err = contents.Read(sample)
 		if err != nil {
 			t.Errorf("Error reading sample %v: %v", sample, err)
+		}
+	})
+
+	t.Run("GetCoverArt", func(t *testing.T) {
+		img, err := client.GetCoverArt(sampleSong.ID, nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		var empty image.Rectangle
+		if img.Bounds() == empty {
+			t.Fatalf("Image %#v has empty bounds", img)
 		}
 	})
 }

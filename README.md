@@ -66,7 +66,7 @@ Video endpoints are currently out of scope- please file an issue if you would li
 
 - [x] stream (1.0.0)
 - [x] download (1.0.0)
-- [ ] getCoverArt (1.0.0)
+- [x] getCoverArt (1.0.0)
 - [ ] getLyrics (1.2.0)
 - [ ] getAvatar (1.8.0)
 

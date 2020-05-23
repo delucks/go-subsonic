@@ -3,10 +3,15 @@ package subsonic
 import (
 	"encoding/xml"
 	"fmt"
+	"image"
 	"io"
 	"io/ioutil"
 	"net/url"
 	"strings"
+
+	_ "image/gif"
+	_ "image/jpeg"
+	_ "image/png"
 )
 
 // Stream returns the contents of a song, optionally transcoded, from the server.
@@ -78,4 +83,44 @@ func (s *Client) Download(id string) (io.Reader, error) {
 		return nil, err
 	}
 	return response.Body, nil
+}
+
+// GetCoverArt returns a cover art image for a song, album, or artist.
+//
+// Optional Parameters:
+//   size:            If specified, scale image to this size.
+func (s *Client) GetCoverArt(id string, parameters map[string]string) (image.Image, error) {
+	params := url.Values{}
+	params.Add("id", id)
+	if size, ok := parameters["size"]; ok {
+		params.Add("size", size)
+	}
+	response, err := s.Request("GET", "getCoverArt", params)
+	if err != nil {
+		return nil, err
+	}
+	contentType := response.Header.Get("Content-Type")
+	if strings.HasPrefix(contentType, "text/xml") || strings.HasPrefix(contentType, "application/xml") {
+		// An error was returned
+		responseBody, err := ioutil.ReadAll(response.Body)
+		if err != nil {
+			return nil, err
+		}
+		resp := Response{}
+		err = xml.Unmarshal(responseBody, &resp)
+		if err != nil {
+			return nil, err
+		}
+		if resp.Error != nil {
+			err = fmt.Errorf("Error #%d: %s\n", resp.Error.Code, resp.Error.Message)
+		} else {
+			err = fmt.Errorf("An error occurred: %#v\n", resp)
+		}
+		return nil, err
+	}
+	image, _, err := image.Decode(response.Body)
+	if err != nil {
+		return nil, err
+	}
+	return image, nil
 }
