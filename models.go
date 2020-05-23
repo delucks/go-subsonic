@@ -381,46 +381,46 @@ type PodcastChannel struct {
 	Description      string            `xml:"description,attr,omitempty"`
 	CoverArt         string            `xml:"coverArt,attr,omitempty"`
 	OriginalImageUrl string            `xml:"originalImageUrl,attr,omitempty"`
-	Status           *PodcastStatus    `xml:"status,attr"`
+	Status           string            `xml:"status,attr"` // May be one of new, downloading, completed, error, deleted, skipped
 	ErrorMessage     string            `xml:"errorMessage,attr,omitempty"`
 }
 
 type PodcastEpisode struct {
-	StreamID              string         `xml:"streamId,attr,omitempty"`
-	ChannelID             string         `xml:"channelId,attr"`
-	Description           string         `xml:"description,attr,omitempty"`
-	Status                *PodcastStatus `xml:"status,attr"`
-	PublishDate           time.Time      `xml:"publishDate,attr,omitempty"`
-	Parent                string         `xml:"parent,attr,omitempty"`
-	IsDir                 bool           `xml:"isDir,attr"`
-	Title                 string         `xml:"title,attr"`
-	Album                 string         `xml:"album,attr,omitempty"`
-	Artist                string         `xml:"artist,attr,omitempty"`
-	Track                 int            `xml:"track,attr,omitempty"`
-	Year                  int            `xml:"year,attr,omitempty"`
-	Genre                 string         `xml:"genre,attr,omitempty"`
-	CoverArt              string         `xml:"coverArt,attr,omitempty"`
-	Size                  int64          `xml:"size,attr,omitempty"`
-	ContentType           string         `xml:"contentType,attr,omitempty"`
-	Suffix                string         `xml:"suffix,attr,omitempty"`
-	TranscodedContentType string         `xml:"transcodedContentType,attr,omitempty"`
-	TranscodedSuffix      string         `xml:"transcodedSuffix,attr,omitempty"`
-	Duration              int            `xml:"duration,attr,omitempty"`
-	BitRate               int            `xml:"bitRate,attr,omitempty"`
-	Path                  string         `xml:"path,attr,omitempty"`
-	IsVideo               bool           `xml:"isVideo,attr,omitempty"`
-	UserRating            int            `xml:"userRating,attr,omitempty"`
-	AverageRating         float64        `xml:"averageRating,attr,omitempty"`
-	PlayCount             int64          `xml:"playCount,attr,omitempty"`
-	DiscNumber            int            `xml:"discNumber,attr,omitempty"`
-	Created               time.Time      `xml:"created,attr,omitempty"`
-	Starred               time.Time      `xml:"starred,attr,omitempty"`
-	AlbumID               string         `xml:"albumId,attr,omitempty"`
-	ArtistID              string         `xml:"artistId,attr,omitempty"`
-	Type                  string         `xml:"type,attr,omitempty"` // May be one of music, podcast, audiobook, video
-	BookmarkPosition      int64          `xml:"bookmarkPosition,attr,omitempty"`
-	OriginalWidth         int            `xml:"originalWidth,attr,omitempty"`
-	OriginalHeight        int            `xml:"originalHeight,attr,omitempty"`
+	StreamID              string    `xml:"streamId,attr,omitempty"`
+	ChannelID             string    `xml:"channelId,attr"`
+	Description           string    `xml:"description,attr,omitempty"`
+	Status                string    `xml:"status,attr"` // May be one of new, downloading, completed, error, deleted, skipped
+	PublishDate           time.Time `xml:"publishDate,attr,omitempty"`
+	Parent                string    `xml:"parent,attr,omitempty"`
+	IsDir                 bool      `xml:"isDir,attr"`
+	Title                 string    `xml:"title,attr"`
+	Album                 string    `xml:"album,attr,omitempty"`
+	Artist                string    `xml:"artist,attr,omitempty"`
+	Track                 int       `xml:"track,attr,omitempty"`
+	Year                  int       `xml:"year,attr,omitempty"`
+	Genre                 string    `xml:"genre,attr,omitempty"`
+	CoverArt              string    `xml:"coverArt,attr,omitempty"`
+	Size                  int64     `xml:"size,attr,omitempty"`
+	ContentType           string    `xml:"contentType,attr,omitempty"`
+	Suffix                string    `xml:"suffix,attr,omitempty"`
+	TranscodedContentType string    `xml:"transcodedContentType,attr,omitempty"`
+	TranscodedSuffix      string    `xml:"transcodedSuffix,attr,omitempty"`
+	Duration              int       `xml:"duration,attr,omitempty"`
+	BitRate               int       `xml:"bitRate,attr,omitempty"`
+	Path                  string    `xml:"path,attr,omitempty"`
+	IsVideo               bool      `xml:"isVideo,attr,omitempty"`
+	UserRating            int       `xml:"userRating,attr,omitempty"`
+	AverageRating         float64   `xml:"averageRating,attr,omitempty"`
+	PlayCount             int64     `xml:"playCount,attr,omitempty"`
+	DiscNumber            int       `xml:"discNumber,attr,omitempty"`
+	Created               time.Time `xml:"created,attr,omitempty"`
+	Starred               time.Time `xml:"starred,attr,omitempty"`
+	AlbumID               string    `xml:"albumId,attr,omitempty"`
+	ArtistID              string    `xml:"artistId,attr,omitempty"`
+	Type                  string    `xml:"type,attr,omitempty"` // May be one of music, podcast, audiobook, video
+	BookmarkPosition      int64     `xml:"bookmarkPosition,attr,omitempty"`
+	OriginalWidth         int       `xml:"originalWidth,attr,omitempty"`
+	OriginalHeight        int       `xml:"originalHeight,attr,omitempty"`
 }
 
 func (t *PodcastEpisode) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
@@ -451,9 +451,6 @@ func (t *PodcastEpisode) UnmarshalXML(d *xml.Decoder, start xml.StartElement) er
 	overlay.Starred = (*xsdDateTime)(&overlay.T.Starred)
 	return d.DecodeElement(&overlay, &start)
 }
-
-// May be one of new, downloading, completed, error, deleted, skipped
-type PodcastStatus string
 
 type podcasts struct {
 	Channel []*PodcastChannel `xml:"http://subsonic.org/restapi channel,omitempty"`
