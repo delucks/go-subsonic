@@ -146,6 +146,7 @@ func TestNavidrome(t *testing.T) {
 	runPlaylistTests(client, t)
 	runRetrievalTests(client, t)
 	runSearchTests(client, t)
+	runAnnotationTests(client, t)
 }
 
 func TestAirsonic(t *testing.T) {
@@ -165,6 +166,7 @@ func TestAirsonic(t *testing.T) {
 	runPlaylistTests(client, t)
 	runRetrievalTests(client, t)
 	runSearchTests(client, t)
+	runAnnotationTests(client, t)
 	runAirsonicTests(client, t)
 }
 
@@ -184,5 +186,6 @@ func TestSubsonic(t *testing.T) {
 	runListsTests(client, t)
 	runRetrievalTests(client, t)
 	runSearchTests(client, t)
+	runAnnotationTests(client, t)
 	runAirsonicTests(client, t)
 }

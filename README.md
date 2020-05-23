@@ -64,7 +64,7 @@ Video endpoints are currently out of scope- please file an issue if you would li
 
 ## Media retrieval
 
-- [x] stream (1.0.0)
+- [ ] stream (1.0.0) (this one will return an `io.Reader` rather than `[]byte`)
 - [ ] download (1.0.0)
 - [ ] getCoverArt (1.0.0)
 - [ ] getLyrics (1.2.0)
@@ -72,8 +72,8 @@ Video endpoints are currently out of scope- please file an issue if you would li
 
 ## Media annotation
 
-- [ ] star (1.8.0)
-- [ ] unstar (1.8.0)
+- [x] star (1.8.0)
+- [x] unstar (1.8.0)
 - [ ] setRating (1.6.0)
 - [ ] scrobble (1.5.0)
 
