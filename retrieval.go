@@ -124,3 +124,37 @@ func (s *Client) GetCoverArt(id string, parameters map[string]string) (image.Ima
 	}
 	return image, nil
 }
+
+// GetAvatar returns the avatar (personal image) for a user.
+func (s *Client) GetAvatar(username string) (image.Image, error) {
+	params := url.Values{}
+	params.Add("username", username)
+	response, err := s.Request("GET", "getAvatar", params)
+	if err != nil {
+		return nil, err
+	}
+	contentType := response.Header.Get("Content-Type")
+	if strings.HasPrefix(contentType, "text/xml") || strings.HasPrefix(contentType, "application/xml") {
+		// An error was returned
+		responseBody, err := ioutil.ReadAll(response.Body)
+		if err != nil {
+			return nil, err
+		}
+		resp := Response{}
+		err = xml.Unmarshal(responseBody, &resp)
+		if err != nil {
+			return nil, err
+		}
+		if resp.Error != nil {
+			err = fmt.Errorf("Error #%d: %s\n", resp.Error.Code, resp.Error.Message)
+		} else {
+			err = fmt.Errorf("An error occurred: %#v\n", resp)
+		}
+		return nil, err
+	}
+	image, _, err := image.Decode(response.Body)
+	if err != nil {
+		return nil, err
+	}
+	return image, nil
+}

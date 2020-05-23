@@ -58,4 +58,12 @@ func runRetrievalTests(client Client, t *testing.T) {
 			t.Fatalf("Image %#v has empty bounds", img)
 		}
 	})
+
+	t.Run("GetAvatar", func(t *testing.T) {
+		// Avatars aren't always returned by servers, so this test is a no-op
+		_, err := client.GetAvatar(client.User)
+		if err != nil {
+			t.Log(err)
+		}
+	})
 }
