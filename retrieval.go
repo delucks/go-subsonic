@@ -49,3 +49,33 @@ func (s *Client) Stream(id string, parameters map[string]string) (io.Reader, err
 	}
 	return response.Body, nil
 }
+
+// Download returns a given media file. Similar to stream, but this method returns the original media data without transcoding or downsampling.
+func (s *Client) Download(id string) (io.Reader, error) {
+	params := url.Values{}
+	params.Add("id", id)
+	response, err := s.Request("GET", "download", params)
+	if err != nil {
+		return nil, err
+	}
+	contentType := response.Header.Get("Content-Type")
+	if strings.HasPrefix(contentType, "text/xml") || strings.HasPrefix(contentType, "application/xml") {
+		// An error was returned
+		responseBody, err := ioutil.ReadAll(response.Body)
+		if err != nil {
+			return nil, err
+		}
+		resp := Response{}
+		err = xml.Unmarshal(responseBody, &resp)
+		if err != nil {
+			return nil, err
+		}
+		if resp.Error != nil {
+			err = fmt.Errorf("Error #%d: %s\n", resp.Error.Code, resp.Error.Message)
+		} else {
+			err = fmt.Errorf("An error occurred: %#v\n", resp)
+		}
+		return nil, err
+	}
+	return response.Body, nil
+}

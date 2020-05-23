@@ -24,4 +24,24 @@ func runRetrievalTests(client Client, t *testing.T) {
 			t.Errorf("Error reading sample %v: %v", sample, err)
 		}
 	})
+
+	t.Run("Download", func(t *testing.T) {
+		// Purposefully choose an ID that returns an error
+		_, err := client.Download("23")
+		if err == nil {
+			t.Error("An error was not returned on ID 1")
+		}
+		contents, err := client.Download(sampleSong.ID)
+		if err != nil {
+			t.Error(err)
+		}
+		if contents == nil {
+			t.Fatal("No content returned")
+		}
+		sample := make([]byte, 8)
+		_, err = contents.Read(sample)
+		if err != nil {
+			t.Errorf("Error reading sample %v: %v", sample, err)
+		}
+	})
 }
