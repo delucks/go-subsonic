@@ -63,7 +63,7 @@ func (s *Client) GetArtist(id string) (*ArtistWithAlbumsID3, error) {
 }
 
 // GetAlbum returns an Album by ID.
-func (s *Client) GetAlbum(id string) (*AlbumWithSongsID3, error) {
+func (s *Client) GetAlbum(id string) (*AlbumID3, error) {
 	resp, err := s.Get("getAlbum", map[string]string{"id": id})
 	if err != nil {
 		return nil, err

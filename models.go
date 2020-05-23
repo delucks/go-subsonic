@@ -27,6 +27,7 @@ type AlbumID3 struct {
 	Starred   time.Time `xml:"starred,attr,omitempty"`
 	Year      int       `xml:"year,attr,omitempty"`
 	Genre     string    `xml:"genre,attr,omitempty"`
+	Song      []*Child  `xml:"http://subsonic.org/restapi song,omitempty"` // Merged from AlbumWithSongsID3
 }
 
 // AlbumInfo is a collection of notes and links describing an album.
@@ -45,22 +46,6 @@ type albumList struct {
 
 type albumList2 struct {
 	Album []*AlbumID3 `xml:"http://subsonic.org/restapi album,omitempty"`
-}
-
-// AlbumWithSongsID3 is an Album organized by ID3 tags with songs, obtained by a call to getAlbum.
-type AlbumWithSongsID3 struct {
-	Song      []*Child  `xml:"http://subsonic.org/restapi song,omitempty"`
-	Name      string    `xml:"name,attr"`
-	Artist    string    `xml:"artist,attr,omitempty"`
-	ArtistID  string    `xml:"artistId,attr,omitempty"`
-	CoverArt  string    `xml:"coverArt,attr,omitempty"`
-	SongCount int       `xml:"songCount,attr"`
-	Duration  int       `xml:"duration,attr"`
-	PlayCount int64     `xml:"playCount,attr,omitempty"`
-	Created   time.Time `xml:"created,attr"`
-	Starred   time.Time `xml:"starred,attr,omitempty"`
-	Year      int       `xml:"year,attr,omitempty"`
-	Genre     string    `xml:"genre,attr,omitempty"`
 }
 
 // Artist is a single artist from the database.
@@ -507,7 +492,7 @@ type Response struct {
 	Genres                *genres                `xml:"http://subsonic.org/restapi genres"`
 	Artists               *ArtistsID3            `xml:"http://subsonic.org/restapi artists"`
 	Artist                *ArtistWithAlbumsID3   `xml:"http://subsonic.org/restapi artist"`
-	Album                 *AlbumWithSongsID3     `xml:"http://subsonic.org/restapi album"`
+	Album                 *AlbumID3              `xml:"http://subsonic.org/restapi album"`
 	Song                  *Child                 `xml:"http://subsonic.org/restapi song"`
 	NowPlaying            *nowPlaying            `xml:"http://subsonic.org/restapi nowPlaying"`
 	SearchResult2         *SearchResult2         `xml:"http://subsonic.org/restapi searchResult2"`
