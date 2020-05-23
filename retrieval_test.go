@@ -18,5 +18,10 @@ func runRetrievalTests(client Client, t *testing.T) {
 		if contents == nil {
 			t.Error("No content returned")
 		}
+		sample := make([]byte, 8)
+		_, err = contents.Read(sample)
+		if err != nil {
+			t.Errorf("Error reading sample %v: %v", sample, err)
+		}
 	})
 }

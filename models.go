@@ -1,6 +1,7 @@
 package subsonic
 
 /* This file was automatically generated from the xsd schema provided by Subsonic, then manually modified.
+ *   http://www.subsonic.org/pages/inc/api/schema/subsonic-rest-api-1.16.1.xsd
  *   xsdgen -o xml.go -pkg subsonic -ns "http://subsonic.org/restapi" subsonic-rest-api-1.16.1.xsd
  * Changes from the original include:
  * - Adding missing name (value of xml element) for each genre

@@ -3,6 +3,7 @@ package subsonic
 import (
 	"encoding/xml"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/url"
 	"strings"
@@ -17,7 +18,7 @@ import (
 //   size:                   (Since 1.6.0) Only applicable to video streaming. Requested video size specified as WxH, for instance "640x480".
 //   estimateContentLength:  (Since 1.8.0). If set to "true", the Content-Length HTTP header will be set to an estimated value for transcoded or downsampled media.
 //   converted:              (Since 1.14.0) Only applicable to video streaming. Subsonic can optimize videos for streaming by converting them to MP4. If a conversion exists for the video in question, then setting this parameter to "true" will cause the converted video to be returned instead of the original.
-func (s *Client) Stream(id string, parameters map[string]string) ([]byte, error) {
+func (s *Client) Stream(id string, parameters map[string]string) (io.Reader, error) {
 	params := url.Values{}
 	params.Add("id", id)
 	for k, v := range parameters {
@@ -28,12 +29,12 @@ func (s *Client) Stream(id string, parameters map[string]string) ([]byte, error)
 		return nil, err
 	}
 	contentType := response.Header.Get("Content-Type")
-	responseBody, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		return nil, err
-	}
 	if strings.HasPrefix(contentType, "text/xml") || strings.HasPrefix(contentType, "application/xml") {
 		// An error was returned
+		responseBody, err := ioutil.ReadAll(response.Body)
+		if err != nil {
+			return nil, err
+		}
 		resp := Response{}
 		err = xml.Unmarshal(responseBody, &resp)
 		if err != nil {
@@ -46,5 +47,5 @@ func (s *Client) Stream(id string, parameters map[string]string) ([]byte, error)
 		}
 		return nil, err
 	}
-	return responseBody, nil
+	return response.Body, nil
 }
