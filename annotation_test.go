@@ -25,4 +25,31 @@ func runAnnotationTests(client Client, t *testing.T) {
 			t.Error(err)
 		}
 	})
+
+	t.Run("SetRating", func(t *testing.T) {
+		err := client.SetRating(sampleSong.ID, -1)
+		if err == nil {
+			t.Error("Bounds checking on ratings failed")
+		}
+		err = client.SetRating(sampleSong.ID, 10)
+		if err == nil {
+			t.Error("Bounds checking on ratings failed")
+		}
+		err = client.SetRating(sampleSong.ID, 4)
+		if err != nil {
+			t.Error(err)
+		}
+		err = client.SetRating(sampleSong.ID, 0)
+		if err != nil {
+			t.Error(err)
+		}
+		err = client.SetRating(sampleArtist.ID, 5)
+		if err != nil {
+			t.Error(err)
+		}
+		err = client.SetRating(sampleArtist.ID, 0)
+		if err != nil {
+			t.Error(err)
+		}
+	})
 }

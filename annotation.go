@@ -1,6 +1,10 @@
 package subsonic
 
-import "net/url"
+import (
+	"errors"
+	"fmt"
+	"net/url"
+)
 
 // StarParameters are used to identify songs, albums, and artists (or some subset of those) at the same time.
 // subsonic.Star and subsonic.Unstar both use StarParameters to identify things to star.
@@ -42,6 +46,22 @@ func (s *Client) Unstar(parameters StarParameters) error {
 		params.Add("artistId", artist)
 	}
 	_, err := s.getValues("unstar", params)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// SetRating sets the rating of a music file.
+func (s *Client) SetRating(id string, rating int) error {
+	if rating > 5 || rating < 0 {
+		return errors.New("Rating can only be in the range 0-5")
+	}
+	params := map[string]string{
+		"id":     id,
+		"rating": fmt.Sprintf("%d", rating),
+	}
+	_, err := s.Get("setRating", params)
 	if err != nil {
 		return err
 	}
