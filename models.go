@@ -114,27 +114,6 @@ type ArtistWithAlbumsID3 struct {
 	Starred        time.Time   `xml:"starred,attr,omitempty"`
 }
 
-func (t *ArtistWithAlbumsID3) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
-	type T ArtistWithAlbumsID3
-	var layout struct {
-		*T
-		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
-	}
-	layout.T = (*T)(t)
-	layout.Starred = (*xsdDateTime)(&layout.T.Starred)
-	return e.EncodeElement(layout, start)
-}
-func (t *ArtistWithAlbumsID3) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	type T ArtistWithAlbumsID3
-	var overlay struct {
-		*T
-		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
-	}
-	overlay.T = (*T)(t)
-	overlay.Starred = (*xsdDateTime)(&overlay.T.Starred)
-	return d.DecodeElement(&overlay, &start)
-}
-
 type ArtistsID3 struct {
 	Index           []*IndexID3 `xml:"http://subsonic.org/restapi index,omitempty"`
 	IgnoredArticles string      `xml:"ignoredArticles,attr"`
