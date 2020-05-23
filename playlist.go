@@ -15,7 +15,7 @@ func (s *Client) GetPlaylists(parameters map[string]string) ([]*Playlist, error)
 }
 
 // GetPlaylist returns a listing of files in a saved playlist.
-func (s *Client) GetPlaylist(id string) (*PlaylistWithSongs, error) {
+func (s *Client) GetPlaylist(id string) (*Playlist, error) {
 	resp, err := s.Get("getPlaylist", map[string]string{"id": id})
 	if err != nil {
 		return nil, err

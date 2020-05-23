@@ -359,22 +359,8 @@ func (t *PlayQueue) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 
 // Playlist is a collection of songs with metadata like a name, comment, and information about the total duration of the playlist.
 type Playlist struct {
-	ID          string    `xml:"id,attr"` // Added manually
-	AllowedUser []string  `xml:"http://subsonic.org/restapi allowedUser,omitempty"`
-	Name        string    `xml:"name,attr"`
-	Comment     string    `xml:"comment,attr,omitempty"`
-	Owner       string    `xml:"owner,attr,omitempty"`
-	Public      bool      `xml:"public,attr,omitempty"`
-	SongCount   int       `xml:"songCount,attr"`
-	Duration    int       `xml:"duration,attr"`
-	Created     time.Time `xml:"created,attr"`
-	Changed     time.Time `xml:"changed,attr"`
-	CoverArt    string    `xml:"coverArt,attr,omitempty"`
-}
-
-type PlaylistWithSongs struct {
-	ID          string    `xml:"id,attr"` // Manually added
-	Entry       []*Child  `xml:"http://subsonic.org/restapi entry,omitempty"`
+	ID          string    `xml:"id,attr"`                                     // Added manually
+	Entry       []*Child  `xml:"http://subsonic.org/restapi entry,omitempty"` // Merged from PlaylistWithSongs
 	AllowedUser []string  `xml:"http://subsonic.org/restapi allowedUser,omitempty"`
 	Name        string    `xml:"name,attr"`
 	Comment     string    `xml:"comment,attr,omitempty"`
@@ -491,7 +477,7 @@ type Response struct {
 	SearchResult2         *SearchResult2         `xml:"http://subsonic.org/restapi searchResult2"`
 	SearchResult3         *SearchResult3         `xml:"http://subsonic.org/restapi searchResult3"`
 	Playlists             *playlists             `xml:"http://subsonic.org/restapi playlists"`
-	Playlist              *PlaylistWithSongs     `xml:"http://subsonic.org/restapi playlist"`
+	Playlist              *Playlist              `xml:"http://subsonic.org/restapi playlist"`
 	JukeboxStatus         *JukeboxStatus         `xml:"http://subsonic.org/restapi jukeboxStatus"`
 	JukeboxPlaylist       *JukeboxPlaylist       `xml:"http://subsonic.org/restapi jukeboxPlaylist"`
 	Users                 *users                 `xml:"http://subsonic.org/restapi users"`
