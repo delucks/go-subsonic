@@ -134,10 +134,6 @@ type bookmarks struct {
 	Bookmark []*Bookmark `xml:"http://subsonic.org/restapi bookmark,omitempty"`
 }
 
-type Captions struct {
-	Name string `xml:"name,attr,omitempty"`
-}
-
 type ChatMessage struct {
 	Username string `xml:"username,attr"`
 	Time     int64  `xml:"time,attr"`
@@ -148,6 +144,8 @@ type chatMessages struct {
 	ChatMessage []*ChatMessage `xml:"http://subsonic.org/restapi chatMessage,omitempty"`
 }
 
+// Child is a song, or a generic entry in the hierarchical directory structure of the database.
+// You can tell if Child is used as a song contextually based on what it was returned by, or if the IsDir boolean was set to true.
 type Child struct {
 	ID                    string    `xml:"id,attr"` // Manually added
 	Parent                string    `xml:"parent,attr,omitempty"`
@@ -182,6 +180,7 @@ type Child struct {
 	OriginalHeight        int       `xml:"originalHeight,attr,omitempty"`
 }
 
+// Directory is an entry in the hierarchical folder structure organization of the server database.
 type Directory struct {
 	ID            string    `xml:"id,attr"` // Manually added
 	Child         []*Child  `xml:"http://subsonic.org/restapi child,omitempty"`
@@ -198,6 +197,7 @@ type Error struct {
 	Message string `xml:"message,attr,omitempty"`
 }
 
+// Genre is a style tag for a collection of songs and albums.
 type Genre struct {
 	Name       string `xml:",chardata"` // Added manually
 	SongCount  int    `xml:"songCount,attr"`
@@ -208,16 +208,20 @@ type genres struct {
 	Genre []*Genre `xml:"http://subsonic.org/restapi genre,omitempty"`
 }
 
+// Index is a collection of artists that begin with the same first letter, along with that letter or category.
 type Index struct {
 	Artist []*Artist `xml:"http://subsonic.org/restapi artist,omitempty"`
 	Name   string    `xml:"name,attr"`
 }
 
+// Index is a collection of artists by ID3 tag that begin with the same first letter, along with that letter or category.
 type IndexID3 struct {
 	Artist []*ArtistID3 `xml:"http://subsonic.org/restapi artist,omitempty"`
 	Name   string       `xml:"name,attr"`
 }
 
+// Indexes is the full index of the database, returned by getIndex.
+// It contains some Index structs for each letter of the DB, plus Child entries for individual tracks.
 type Indexes struct {
 	Shortcut        []*Artist `xml:"http://subsonic.org/restapi shortcut,omitempty"`
 	Index           []*Index  `xml:"http://subsonic.org/restapi index,omitempty"`
@@ -285,6 +289,7 @@ type nowPlaying struct {
 	Entry []*NowPlayingEntry `xml:"http://subsonic.org/restapi entry,omitempty"`
 }
 
+// NowPlayingEntry is one individual stream coming from the server along with information about who was streaming it.
 type NowPlayingEntry struct {
 	Username              string     `xml:"username,attr"`
 	MinutesAgo            int        `xml:"minutesAgo,attr"`
@@ -352,6 +357,7 @@ func (t *PlayQueue) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return d.DecodeElement(&overlay, &start)
 }
 
+// Playlist is a collection of songs with metadata like a name, comment, and information about the total duration of the playlist.
 type Playlist struct {
 	ID          string    `xml:"id,attr"` // Added manually
 	AllowedUser []string  `xml:"http://subsonic.org/restapi allowedUser,omitempty"`
@@ -521,12 +527,14 @@ type ScanStatus struct {
 	Count    int64 `xml:"count,attr,omitempty"`
 }
 
+// SearchResult2 is a collection of songs, albums, and artists related to a query.
 type SearchResult2 struct {
 	Artist []*Artist `xml:"http://subsonic.org/restapi artist,omitempty"`
 	Album  []*Child  `xml:"http://subsonic.org/restapi album,omitempty"`
 	Song   []*Child  `xml:"http://subsonic.org/restapi song,omitempty"`
 }
 
+// SearchResult3 is a collection of songs, albums, and artists related to a query.
 type SearchResult3 struct {
 	Artist []*ArtistID3 `xml:"http://subsonic.org/restapi artist,omitempty"`
 	Album  []*AlbumID3  `xml:"http://subsonic.org/restapi album,omitempty"`
@@ -589,12 +597,14 @@ type songs struct {
 	Song []*Child `xml:"http://subsonic.org/restapi song,omitempty"`
 }
 
+// Starred is a collection of songs, albums, and artists annotated by a user as starred.
 type Starred struct {
 	Artist []*Artist `xml:"http://subsonic.org/restapi artist,omitempty"`
 	Album  []*Child  `xml:"http://subsonic.org/restapi album,omitempty"`
 	Song   []*Child  `xml:"http://subsonic.org/restapi song,omitempty"`
 }
 
+// Starred is a collection of songs, albums, and artists organized by ID3 tags annotated by a user as starred.
 type Starred2 struct {
 	Artist []*ArtistID3 `xml:"http://subsonic.org/restapi artist,omitempty"`
 	Album  []*AlbumID3  `xml:"http://subsonic.org/restapi album,omitempty"`
