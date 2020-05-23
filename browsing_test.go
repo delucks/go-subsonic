@@ -1,6 +1,9 @@
 package subsonic
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
 func runBrowsingTests(client Client, t *testing.T) {
 	sampleArtist := getSampleArtist(client)
@@ -115,6 +118,10 @@ func runBrowsingTests(client Client, t *testing.T) {
 		if len(album.Song) != album.SongCount {
 			t.Errorf("Album %s has %d songs in the 'song' key, but an songCount of %d", album.Name, len(album.Song), album.SongCount)
 		}
+		var empty time.Time
+		if album.Created == empty {
+			t.Errorf("Album %#v has an empty created date", album)
+		}
 	})
 
 	t.Run("GetSong", func(t *testing.T) {
@@ -124,6 +131,10 @@ func runBrowsingTests(client Client, t *testing.T) {
 		}
 		if song.ID == "" {
 			t.Errorf("Song was not returned properly, %#v\n", song)
+		}
+		var empty time.Time
+		if song.Created == empty {
+			t.Errorf("Song %#v has an empty created date", song)
 		}
 	})
 

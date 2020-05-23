@@ -12,9 +12,13 @@ func runPlaylistTests(client Client, t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
+		var empty time.Time
 		for _, p := range playlists {
 			if p.ID == "" {
 				t.Errorf("Invalid playlist returned %#v", p)
+			}
+			if p.Created == empty {
+				t.Errorf("Playlist %#v had an empty created", p)
 			}
 		}
 	})
@@ -40,6 +44,10 @@ func runPlaylistTests(client Client, t *testing.T) {
 		}
 		if playlist.ID == "" || playlist.ID != testPlaylist.ID {
 			t.Errorf("Invalid playlist returned %#v", playlist)
+		}
+		var empty time.Time
+		if playlist.Created == empty {
+			t.Errorf("Playlist %#v had an empty created", playlist)
 		}
 	})
 

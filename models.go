@@ -29,31 +29,6 @@ type AlbumID3 struct {
 	Genre     string    `xml:"genre,attr,omitempty"`
 }
 
-func (t *AlbumID3) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
-	type T AlbumID3
-	var layout struct {
-		*T
-		Created *xsdDateTime `xml:"created,attr"`
-		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
-	}
-	layout.T = (*T)(t)
-	layout.Created = (*xsdDateTime)(&layout.T.Created)
-	layout.Starred = (*xsdDateTime)(&layout.T.Starred)
-	return e.EncodeElement(layout, start)
-}
-func (t *AlbumID3) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	type T AlbumID3
-	var overlay struct {
-		*T
-		Created *xsdDateTime `xml:"created,attr"`
-		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
-	}
-	overlay.T = (*T)(t)
-	overlay.Created = (*xsdDateTime)(&overlay.T.Created)
-	overlay.Starred = (*xsdDateTime)(&overlay.T.Starred)
-	return d.DecodeElement(&overlay, &start)
-}
-
 // AlbumInfo is a collection of notes and links describing an album.
 type AlbumInfo struct {
 	Notes          string `xml:"http://subsonic.org/restapi notes,omitempty"`
@@ -88,31 +63,6 @@ type AlbumWithSongsID3 struct {
 	Genre     string    `xml:"genre,attr,omitempty"`
 }
 
-func (t *AlbumWithSongsID3) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
-	type T AlbumWithSongsID3
-	var layout struct {
-		*T
-		Created *xsdDateTime `xml:"created,attr"`
-		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
-	}
-	layout.T = (*T)(t)
-	layout.Created = (*xsdDateTime)(&layout.T.Created)
-	layout.Starred = (*xsdDateTime)(&layout.T.Starred)
-	return e.EncodeElement(layout, start)
-}
-func (t *AlbumWithSongsID3) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	type T AlbumWithSongsID3
-	var overlay struct {
-		*T
-		Created *xsdDateTime `xml:"created,attr"`
-		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
-	}
-	overlay.T = (*T)(t)
-	overlay.Created = (*xsdDateTime)(&overlay.T.Created)
-	overlay.Starred = (*xsdDateTime)(&overlay.T.Starred)
-	return d.DecodeElement(&overlay, &start)
-}
-
 // Artist is a single artist from the database.
 type Artist struct {
 	Name           string    `xml:"name,attr"`
@@ -120,27 +70,6 @@ type Artist struct {
 	Starred        time.Time `xml:"starred,attr,omitempty"`
 	UserRating     int       `xml:"userRating,attr,omitempty"`
 	AverageRating  float64   `xml:"averageRating,attr,omitempty"`
-}
-
-func (t *Artist) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
-	type T Artist
-	var layout struct {
-		*T
-		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
-	}
-	layout.T = (*T)(t)
-	layout.Starred = (*xsdDateTime)(&layout.T.Starred)
-	return e.EncodeElement(layout, start)
-}
-func (t *Artist) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	type T Artist
-	var overlay struct {
-		*T
-		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
-	}
-	overlay.T = (*T)(t)
-	overlay.Starred = (*xsdDateTime)(&overlay.T.Starred)
-	return d.DecodeElement(&overlay, &start)
 }
 
 // ArtistID3 is a single artist from the database, organized by ID3 tag.
@@ -151,27 +80,6 @@ type ArtistID3 struct {
 	ArtistImageUrl string    `xml:"artistImageUrl,attr,omitempty"`
 	AlbumCount     int       `xml:"albumCount,attr"`
 	Starred        time.Time `xml:"starred,attr,omitempty"`
-}
-
-func (t *ArtistID3) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
-	type T ArtistID3
-	var layout struct {
-		*T
-		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
-	}
-	layout.T = (*T)(t)
-	layout.Starred = (*xsdDateTime)(&layout.T.Starred)
-	return e.EncodeElement(layout, start)
-}
-func (t *ArtistID3) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	type T ArtistID3
-	var overlay struct {
-		*T
-		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
-	}
-	overlay.T = (*T)(t)
-	overlay.Starred = (*xsdDateTime)(&overlay.T.Starred)
-	return d.DecodeElement(&overlay, &start)
 }
 
 // ArtistInfo is all auxillary information about an artist from GetArtistInfo.
@@ -323,31 +231,6 @@ type Child struct {
 	OriginalHeight        int       `xml:"originalHeight,attr,omitempty"`
 }
 
-func (t *Child) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
-	type T Child
-	var layout struct {
-		*T
-		Created *xsdDateTime `xml:"created,attr,omitempty"`
-		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
-	}
-	layout.T = (*T)(t)
-	layout.Created = (*xsdDateTime)(&layout.T.Created)
-	layout.Starred = (*xsdDateTime)(&layout.T.Starred)
-	return e.EncodeElement(layout, start)
-}
-func (t *Child) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	type T Child
-	var overlay struct {
-		*T
-		Created *xsdDateTime `xml:"created,attr,omitempty"`
-		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
-	}
-	overlay.T = (*T)(t)
-	overlay.Created = (*xsdDateTime)(&overlay.T.Created)
-	overlay.Starred = (*xsdDateTime)(&overlay.T.Starred)
-	return d.DecodeElement(&overlay, &start)
-}
-
 type Directory struct {
 	ID            string    `xml:"id,attr"` // Manually added
 	Child         []*Child  `xml:"http://subsonic.org/restapi child,omitempty"`
@@ -357,27 +240,6 @@ type Directory struct {
 	UserRating    int       `xml:"userRating,attr,omitempty"`
 	AverageRating float64   `xml:"averageRating,attr,omitempty"`
 	PlayCount     int64     `xml:"playCount,attr,omitempty"`
-}
-
-func (t *Directory) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
-	type T Directory
-	var layout struct {
-		*T
-		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
-	}
-	layout.T = (*T)(t)
-	layout.Starred = (*xsdDateTime)(&layout.T.Starred)
-	return e.EncodeElement(layout, start)
-}
-func (t *Directory) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	type T Directory
-	var overlay struct {
-		*T
-		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
-	}
-	overlay.T = (*T)(t)
-	overlay.Starred = (*xsdDateTime)(&overlay.T.Starred)
-	return d.DecodeElement(&overlay, &start)
 }
 
 type Error struct {
@@ -446,31 +308,6 @@ type License struct {
 	TrialExpires   time.Time `xml:"trialExpires,attr,omitempty"`
 }
 
-func (t *License) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
-	type T License
-	var layout struct {
-		*T
-		LicenseExpires *xsdDateTime `xml:"licenseExpires,attr,omitempty"`
-		TrialExpires   *xsdDateTime `xml:"trialExpires,attr,omitempty"`
-	}
-	layout.T = (*T)(t)
-	layout.LicenseExpires = (*xsdDateTime)(&layout.T.LicenseExpires)
-	layout.TrialExpires = (*xsdDateTime)(&layout.T.TrialExpires)
-	return e.EncodeElement(layout, start)
-}
-func (t *License) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	type T License
-	var overlay struct {
-		*T
-		LicenseExpires *xsdDateTime `xml:"licenseExpires,attr,omitempty"`
-		TrialExpires   *xsdDateTime `xml:"trialExpires,attr,omitempty"`
-	}
-	overlay.T = (*T)(t)
-	overlay.LicenseExpires = (*xsdDateTime)(&overlay.T.LicenseExpires)
-	overlay.TrialExpires = (*xsdDateTime)(&overlay.T.TrialExpires)
-	return d.DecodeElement(&overlay, &start)
-}
-
 type Lyrics struct {
 	Artist string `xml:"artist,attr,omitempty"`
 	Title  string `xml:"title,attr,omitempty"`
@@ -534,31 +371,6 @@ type NowPlayingEntry struct {
 	OriginalHeight        int        `xml:"originalHeight,attr,omitempty"`
 }
 
-func (t *NowPlayingEntry) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
-	type T NowPlayingEntry
-	var layout struct {
-		*T
-		Created *xsdDateTime `xml:"created,attr,omitempty"`
-		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
-	}
-	layout.T = (*T)(t)
-	layout.Created = (*xsdDateTime)(&layout.T.Created)
-	layout.Starred = (*xsdDateTime)(&layout.T.Starred)
-	return e.EncodeElement(layout, start)
-}
-func (t *NowPlayingEntry) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	type T NowPlayingEntry
-	var overlay struct {
-		*T
-		Created *xsdDateTime `xml:"created,attr,omitempty"`
-		Starred *xsdDateTime `xml:"starred,attr,omitempty"`
-	}
-	overlay.T = (*T)(t)
-	overlay.Created = (*xsdDateTime)(&overlay.T.Created)
-	overlay.Starred = (*xsdDateTime)(&overlay.T.Starred)
-	return d.DecodeElement(&overlay, &start)
-}
-
 type PlayQueue struct {
 	Entry     []*Child  `xml:"http://subsonic.org/restapi entry,omitempty"`
 	Current   int       `xml:"current,attr,omitempty"`
@@ -603,31 +415,6 @@ type Playlist struct {
 	CoverArt    string    `xml:"coverArt,attr,omitempty"`
 }
 
-func (t *Playlist) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
-	type T Playlist
-	var layout struct {
-		*T
-		Created *xsdDateTime `xml:"created,attr"`
-		Changed *xsdDateTime `xml:"changed,attr"`
-	}
-	layout.T = (*T)(t)
-	layout.Created = (*xsdDateTime)(&layout.T.Created)
-	layout.Changed = (*xsdDateTime)(&layout.T.Changed)
-	return e.EncodeElement(layout, start)
-}
-func (t *Playlist) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	type T Playlist
-	var overlay struct {
-		*T
-		Created *xsdDateTime `xml:"created,attr"`
-		Changed *xsdDateTime `xml:"changed,attr"`
-	}
-	overlay.T = (*T)(t)
-	overlay.Created = (*xsdDateTime)(&overlay.T.Created)
-	overlay.Changed = (*xsdDateTime)(&overlay.T.Changed)
-	return d.DecodeElement(&overlay, &start)
-}
-
 type PlaylistWithSongs struct {
 	ID          string    `xml:"id,attr"` // Manually added
 	Entry       []*Child  `xml:"http://subsonic.org/restapi entry,omitempty"`
@@ -641,31 +428,6 @@ type PlaylistWithSongs struct {
 	Created     time.Time `xml:"created,attr"`
 	Changed     time.Time `xml:"changed,attr"`
 	CoverArt    string    `xml:"coverArt,attr,omitempty"`
-}
-
-func (t *PlaylistWithSongs) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
-	type T PlaylistWithSongs
-	var layout struct {
-		*T
-		Created *xsdDateTime `xml:"created,attr"`
-		Changed *xsdDateTime `xml:"changed,attr"`
-	}
-	layout.T = (*T)(t)
-	layout.Created = (*xsdDateTime)(&layout.T.Created)
-	layout.Changed = (*xsdDateTime)(&layout.T.Changed)
-	return e.EncodeElement(layout, start)
-}
-func (t *PlaylistWithSongs) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	type T PlaylistWithSongs
-	var overlay struct {
-		*T
-		Created *xsdDateTime `xml:"created,attr"`
-		Changed *xsdDateTime `xml:"changed,attr"`
-	}
-	overlay.T = (*T)(t)
-	overlay.Created = (*xsdDateTime)(&overlay.T.Created)
-	overlay.Changed = (*xsdDateTime)(&overlay.T.Changed)
-	return d.DecodeElement(&overlay, &start)
 }
 
 type playlists struct {

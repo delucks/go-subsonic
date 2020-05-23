@@ -45,6 +45,12 @@ func runListsTests(client Client, t *testing.T) {
 		if albums == nil || len(albums) < 1 {
 			t.Error("No albums were returned in a call to a byGenre getAlbumList")
 		}
+		var empty time.Time
+		for _, album := range albums {
+			if album.Created == empty {
+				t.Errorf("Album %#v has empty created time", album)
+			}
+		}
 	})
 
 	t.Run("GetAlbumList2", func(t *testing.T) {
@@ -73,9 +79,13 @@ func runListsTests(client Client, t *testing.T) {
 		if albums == nil {
 			t.Error("No albums were returned in a call to newest getAlbumList2")
 		}
+		var empty time.Time
 		for _, album := range albums {
 			if album.Name == "" {
-				t.Errorf("Album %#v has an empty name :(", album)
+				t.Errorf("Album %#v has an empty name", album)
+			}
+			if album.Created == empty {
+				t.Errorf("Album %#v has empty created time", album)
 			}
 		}
 	})
@@ -85,9 +95,20 @@ func runListsTests(client Client, t *testing.T) {
 		if err != nil || songs == nil {
 			t.Error("Basic call to getRandomSongs failed")
 		}
+		var empty time.Time
+		for _, song := range songs {
+			if song.Created == empty {
+				t.Errorf("Song %#v had an empty created", song)
+			}
+		}
 		songs, err = client.GetRandomSongs(map[string]string{"size": "1"})
 		if len(songs) != 1 {
 			t.Errorf("Limiting songs returned by getRandomSongs failed: expected 1, length actual %d", len(songs))
+		}
+		for _, song := range songs {
+			if song.Created == empty {
+				t.Errorf("Song %#v had an empty created", song)
+			}
 		}
 	})
 
@@ -120,8 +141,12 @@ func runListsTests(client Client, t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
+		var empty time.Time
 		for _, nowPlaying := range entries {
-			t.Logf("%#v", nowPlaying)
+			//t.Logf("NowPlaying %d minutes ago, created %v", nowPlaying.MinutesAgo, nowPlaying.Created.Format("2006-01-02T15:04:05.999999-07:00"))
+			if nowPlaying.Created == empty {
+				t.Errorf("NowPlayingEntry %#v had an empty created", nowPlaying)
+			}
 		}
 	})
 
