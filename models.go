@@ -48,7 +48,7 @@ type albumList2 struct {
 	Album []*AlbumID3 `xml:"http://subsonic.org/restapi album,omitempty"`
 }
 
-// Artist is a single artist from the database.
+// Artist is an artist from the server, organized in the folders pattern.
 type Artist struct {
 	Name           string    `xml:"name,attr"`
 	ArtistImageUrl string    `xml:"artistImageUrl,attr,omitempty"`
@@ -57,14 +57,15 @@ type Artist struct {
 	AverageRating  float64   `xml:"averageRating,attr,omitempty"`
 }
 
-// ArtistID3 is a single artist from the database, organized by ID3 tag.
+// ArtistID3 is an artist from the server, organized by ID3 tag.
 type ArtistID3 struct {
-	ID             string    `xml:"id,attr"` // Manually added
-	Name           string    `xml:"name,attr"`
-	CoverArt       string    `xml:"coverArt,attr,omitempty"`
-	ArtistImageUrl string    `xml:"artistImageUrl,attr,omitempty"`
-	AlbumCount     int       `xml:"albumCount,attr"`
-	Starred        time.Time `xml:"starred,attr,omitempty"`
+	ID             string      `xml:"id,attr"`                                     // Manually added
+	Album          []*AlbumID3 `xml:"http://subsonic.org/restapi album,omitempty"` // Merged with ArtistWithAlbumsID3
+	Name           string      `xml:"name,attr"`
+	CoverArt       string      `xml:"coverArt,attr,omitempty"`
+	ArtistImageUrl string      `xml:"artistImageUrl,attr,omitempty"`
+	AlbumCount     int         `xml:"albumCount,attr"`
+	Starred        time.Time   `xml:"starred,attr,omitempty"`
 }
 
 // ArtistInfo is all auxillary information about an artist from GetArtistInfo.
@@ -89,24 +90,10 @@ type ArtistInfo2 struct {
 	LargeImageUrl  string       `xml:"http://subsonic.org/restapi largeImageUrl,omitempty"`
 }
 
-type ArtistWithAlbumsID3 struct {
-	ID             string      `xml:"id,attr"` // Manually added
-	Album          []*AlbumID3 `xml:"http://subsonic.org/restapi album,omitempty"`
-	Name           string      `xml:"name,attr"`
-	CoverArt       string      `xml:"coverArt,attr,omitempty"`
-	ArtistImageUrl string      `xml:"artistImageUrl,attr,omitempty"`
-	AlbumCount     int         `xml:"albumCount,attr"`
-	Starred        time.Time   `xml:"starred,attr,omitempty"`
-}
-
+// ArtistsID3 is an index of every artist on the server organized by ID3 tag, from getArtists.
 type ArtistsID3 struct {
 	Index           []*IndexID3 `xml:"http://subsonic.org/restapi index,omitempty"`
 	IgnoredArticles string      `xml:"ignoredArticles,attr"`
-}
-
-type AudioTrack struct {
-	Name         string `xml:"name,attr,omitempty"`
-	LanguageCode string `xml:"languageCode,attr,omitempty"`
 }
 
 type Bookmark struct {
@@ -491,7 +478,7 @@ type Response struct {
 	Directory             *Directory             `xml:"http://subsonic.org/restapi directory"`
 	Genres                *genres                `xml:"http://subsonic.org/restapi genres"`
 	Artists               *ArtistsID3            `xml:"http://subsonic.org/restapi artists"`
-	Artist                *ArtistWithAlbumsID3   `xml:"http://subsonic.org/restapi artist"`
+	Artist                *ArtistID3             `xml:"http://subsonic.org/restapi artist"`
 	Album                 *AlbumID3              `xml:"http://subsonic.org/restapi album"`
 	Song                  *Child                 `xml:"http://subsonic.org/restapi song"`
 	NowPlaying            *nowPlaying            `xml:"http://subsonic.org/restapi nowPlaying"`
