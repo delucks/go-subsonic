@@ -4,7 +4,8 @@ package subsonic
  *   xsdgen -o xml.go -pkg subsonic -ns "http://subsonic.org/restapi" subsonic-rest-api-1.16.1.xsd
  * Changes from the original include:
  * - Adding missing name (value of xml element) for each genre
- * - Capitalize "ID" in struct names
+ * - Capitalize "ID" in struct names and add missing ID fields.
+ * - Merge *With* variants of structs.
  */
 
 import (
@@ -13,9 +14,10 @@ import (
 	"time"
 )
 
-// AlbumID3 is an album that's organized by ID3 tags.
+// AlbumID3 is an album that's organized by music file tags.
 type AlbumID3 struct {
-	ID        string    `xml:"id,attr"` // Manually added
+	ID        string    `xml:"id,attr"`                                    // Manually added
+	Song      []*Child  `xml:"http://subsonic.org/restapi song,omitempty"` // Merged from AlbumWithSongsID3
 	Name      string    `xml:"name,attr"`
 	Artist    string    `xml:"artist,attr,omitempty"`
 	ArtistID  string    `xml:"artistId,attr,omitempty"`
@@ -27,7 +29,6 @@ type AlbumID3 struct {
 	Starred   time.Time `xml:"starred,attr,omitempty"`
 	Year      int       `xml:"year,attr,omitempty"`
 	Genre     string    `xml:"genre,attr,omitempty"`
-	Song      []*Child  `xml:"http://subsonic.org/restapi song,omitempty"` // Merged from AlbumWithSongsID3
 }
 
 // AlbumInfo is a collection of notes and links describing an album.
@@ -584,7 +585,7 @@ type Starred struct {
 	Song   []*Child  `xml:"http://subsonic.org/restapi song,omitempty"`
 }
 
-// Starred is a collection of songs, albums, and artists organized by ID3 tags annotated by a user as starred.
+// Starred2 is a collection of songs, albums, and artists organized by ID3 tags annotated by a user as starred.
 type Starred2 struct {
 	Artist []*ArtistID3 `xml:"http://subsonic.org/restapi artist,omitempty"`
 	Album  []*AlbumID3  `xml:"http://subsonic.org/restapi album,omitempty"`
