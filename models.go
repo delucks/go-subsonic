@@ -174,7 +174,7 @@ type Child struct {
 	Starred               time.Time `xml:"starred,attr,omitempty"`
 	AlbumID               string    `xml:"albumId,attr,omitempty"`
 	ArtistID              string    `xml:"artistId,attr,omitempty"`
-	Type                  MediaType `xml:"type,attr,omitempty"`
+	Type                  string    `xml:"type,attr,omitempty"` // May be one of music, podcast, audiobook, video
 	BookmarkPosition      int64     `xml:"bookmarkPosition,attr,omitempty"`
 	OriginalWidth         int       `xml:"originalWidth,attr,omitempty"`
 	OriginalHeight        int       `xml:"originalHeight,attr,omitempty"`
@@ -268,9 +268,6 @@ type Lyrics struct {
 	Title  string `xml:"title,attr,omitempty"`
 }
 
-// May be one of music, podcast, audiobook, video
-type MediaType string
-
 // MusicFolder is a representation of a source of music files added to the server. It is identified primarily by the numeric ID.
 type MusicFolder struct {
 	ID   string `xml:"id,attr"`
@@ -291,40 +288,40 @@ type nowPlaying struct {
 
 // NowPlayingEntry is one individual stream coming from the server along with information about who was streaming it.
 type NowPlayingEntry struct {
-	Username              string     `xml:"username,attr"`
-	MinutesAgo            int        `xml:"minutesAgo,attr"`
-	PlayerID              int        `xml:"playerId,attr"`
-	PlayerName            string     `xml:"playerName,attr,omitempty"`
-	Parent                string     `xml:"parent,attr,omitempty"`
-	IsDir                 bool       `xml:"isDir,attr"`
-	Title                 string     `xml:"title,attr"`
-	Album                 string     `xml:"album,attr,omitempty"`
-	Artist                string     `xml:"artist,attr,omitempty"`
-	Track                 int        `xml:"track,attr,omitempty"`
-	Year                  int        `xml:"year,attr,omitempty"`
-	Genre                 string     `xml:"genre,attr,omitempty"`
-	CoverArt              string     `xml:"coverArt,attr,omitempty"`
-	Size                  int64      `xml:"size,attr,omitempty"`
-	ContentType           string     `xml:"contentType,attr,omitempty"`
-	Suffix                string     `xml:"suffix,attr,omitempty"`
-	TranscodedContentType string     `xml:"transcodedContentType,attr,omitempty"`
-	TranscodedSuffix      string     `xml:"transcodedSuffix,attr,omitempty"`
-	Duration              int        `xml:"duration,attr,omitempty"`
-	BitRate               int        `xml:"bitRate,attr,omitempty"`
-	Path                  string     `xml:"path,attr,omitempty"`
-	IsVideo               bool       `xml:"isVideo,attr,omitempty"`
-	UserRating            int        `xml:"userRating,attr,omitempty"`
-	AverageRating         float64    `xml:"averageRating,attr,omitempty"`
-	PlayCount             int64      `xml:"playCount,attr,omitempty"`
-	DiscNumber            int        `xml:"discNumber,attr,omitempty"`
-	Created               time.Time  `xml:"created,attr,omitempty"`
-	Starred               time.Time  `xml:"starred,attr,omitempty"`
-	AlbumID               string     `xml:"albumId,attr,omitempty"`
-	ArtistID              string     `xml:"artistId,attr,omitempty"`
-	Type                  *MediaType `xml:"type,attr,omitempty"`
-	BookmarkPosition      int64      `xml:"bookmarkPosition,attr,omitempty"`
-	OriginalWidth         int        `xml:"originalWidth,attr,omitempty"`
-	OriginalHeight        int        `xml:"originalHeight,attr,omitempty"`
+	Username              string    `xml:"username,attr"`
+	MinutesAgo            int       `xml:"minutesAgo,attr"`
+	PlayerID              int       `xml:"playerId,attr"`
+	PlayerName            string    `xml:"playerName,attr,omitempty"`
+	Parent                string    `xml:"parent,attr,omitempty"`
+	IsDir                 bool      `xml:"isDir,attr"`
+	Title                 string    `xml:"title,attr"`
+	Album                 string    `xml:"album,attr,omitempty"`
+	Artist                string    `xml:"artist,attr,omitempty"`
+	Track                 int       `xml:"track,attr,omitempty"`
+	Year                  int       `xml:"year,attr,omitempty"`
+	Genre                 string    `xml:"genre,attr,omitempty"`
+	CoverArt              string    `xml:"coverArt,attr,omitempty"`
+	Size                  int64     `xml:"size,attr,omitempty"`
+	ContentType           string    `xml:"contentType,attr,omitempty"`
+	Suffix                string    `xml:"suffix,attr,omitempty"`
+	TranscodedContentType string    `xml:"transcodedContentType,attr,omitempty"`
+	TranscodedSuffix      string    `xml:"transcodedSuffix,attr,omitempty"`
+	Duration              int       `xml:"duration,attr,omitempty"`
+	BitRate               int       `xml:"bitRate,attr,omitempty"`
+	Path                  string    `xml:"path,attr,omitempty"`
+	IsVideo               bool      `xml:"isVideo,attr,omitempty"`
+	UserRating            int       `xml:"userRating,attr,omitempty"`
+	AverageRating         float64   `xml:"averageRating,attr,omitempty"`
+	PlayCount             int64     `xml:"playCount,attr,omitempty"`
+	DiscNumber            int       `xml:"discNumber,attr,omitempty"`
+	Created               time.Time `xml:"created,attr,omitempty"`
+	Starred               time.Time `xml:"starred,attr,omitempty"`
+	AlbumID               string    `xml:"albumId,attr,omitempty"`
+	ArtistID              string    `xml:"artistId,attr,omitempty"`
+	Type                  string    `xml:"type,attr,omitempty"` // May be one of music, podcast, audiobook, video
+	BookmarkPosition      int64     `xml:"bookmarkPosition,attr,omitempty"`
+	OriginalWidth         int       `xml:"originalWidth,attr,omitempty"`
+	OriginalHeight        int       `xml:"originalHeight,attr,omitempty"`
 }
 
 type PlayQueue struct {
@@ -420,7 +417,7 @@ type PodcastEpisode struct {
 	Starred               time.Time      `xml:"starred,attr,omitempty"`
 	AlbumID               string         `xml:"albumId,attr,omitempty"`
 	ArtistID              string         `xml:"artistId,attr,omitempty"`
-	Type                  *MediaType     `xml:"type,attr,omitempty"`
+	Type                  string         `xml:"type,attr,omitempty"` // May be one of music, podcast, audiobook, video
 	BookmarkPosition      int64          `xml:"bookmarkPosition,attr,omitempty"`
 	OriginalWidth         int            `xml:"originalWidth,attr,omitempty"`
 	OriginalHeight        int            `xml:"originalHeight,attr,omitempty"`
