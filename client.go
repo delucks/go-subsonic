@@ -12,7 +12,6 @@ package subsonic
 import (
 	"crypto/md5"
 	"encoding/xml"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -61,10 +60,18 @@ func (s *Client) Authenticate(password string) error {
 	}
 	s.salt = salt
 	s.token = fmt.Sprintf("%x", h.Sum(nil))
+
 	// Test authentication
-	if !s.Ping() {
-		return errors.New("Authentication failed")
+	// Don't use the s.Ping method because that always returns true as long as the servers is up.
+	resp, err := s.Get("ping", nil)
+	if err != nil {
+		return fmt.Errorf("Authentication failed: %s", err)
 	}
+
+	if resp.Error != nil {
+		return fmt.Errorf("Authentication failed: %s", resp.Error.Message)
+	}
+
 	return nil
 }
 
