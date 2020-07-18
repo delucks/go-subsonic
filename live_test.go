@@ -132,11 +132,11 @@ func runAirsonicTests(client Client, t *testing.T) {
 func TestNavidrome(t *testing.T) {
 	client := Client{
 		Client:     &http.Client{},
-		BaseUrl:    "http://192.168.1.7:4040/",
-		User:       "test",
+		BaseUrl:    "http://127.0.0.1:4533/",
+		User:       "admin",
 		ClientName: "go-subsonic_" + libraryVersion,
 	}
-	err := client.Authenticate("blah")
+	err := client.Authenticate("admin")
 	if err != nil {
 		t.Error(err)
 	}
@@ -152,7 +152,7 @@ func TestNavidrome(t *testing.T) {
 func TestAirsonic(t *testing.T) {
 	client := Client{
 		Client:     &http.Client{},
-		BaseUrl:    "http://127.0.0.1:8080/",
+		BaseUrl:    "http://127.0.0.1:4040/",
 		User:       "admin",
 		ClientName: "go-subsonic_" + libraryVersion,
 	}
