@@ -1,0 +1,26 @@
+version: "3"
+services:
+  navidrome:
+    image: deluan/navidrome:latest
+    user: 1000:1000 # should be owner of volumes
+    ports:
+      - "4533:4533"
+    restart: unless-stopped
+    environment:
+      # Put your config options customization here
+      ND_SCANINTERVAL: 1m
+      ND_LOGLEVEL: info
+      ND_SESSIONTIMEOUT: 24h
+      ND_BASEURL: ""
+    volumes:
+      - "./build/data:/data"
+      - "./build/music:/music:ro"
+  airsonic:
+    image: airsonic/airsonic:latest
+    user: 1000:1000
+    ports:
+      - "4040:4040"
+    restart: unless-stopped
+    volumes:
+      - "./build/data:/airsonic/data"
+      - "./build/music:/airsonic/music:ro"
