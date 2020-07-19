@@ -80,9 +80,22 @@ configure_airsonic() {
   cat << DOG > build/data/airsonic.properties
 JWTKey=q7q8u331n25gkvgjiehutl3e4u
 SettingsChanged=$(date +%s)000
+# Try to force immediate library scan
 LastScanned=0
 IndexCreationInterval=1
+# We want to use id3 tags for most tests
+OrganizeByFolderStructure=false
 DOG
+}
+
+create_navidrome_user() {
+  # navidrome does not ship with a built-in user, so we call the API to create a known user before test execution
+  curl -X POST -H "Content-Type: application/json" http://localhost:4533/app/createAdmin --data '{"username":"admin", "password":"admin"}'
+  echo
+}
+
+clear_data_dir() {
+  rm -rf ./build/data/*
 }
 
 main() {
@@ -93,14 +106,17 @@ main() {
   then
     # If the current composition is running, restart it to pick up possible changes
     docker-compose down
-    configure_airsonic  # This must occur in the middle so settings aren't overwritten
-    docker-compose up -d
-  else
-    # Otherwise, bring up the docker containers
-    configure_airsonic
-    docker-compose up -d
   fi
-  # TODO call test function for Airsonic and Navidrome only
+  clear_data_dir
+  configure_airsonic  # This must occur in the middle so settings aren't overwritten
+  docker-compose up -d
+  sleep 10
+  echo "Creating Navidrome administrator (admin/admin)"
+  create_navidrome_user
+  go test . -test.v -run 'Navidrome' -count=1
+  echo "Waiting 30 seconds total for Airsonic to scan the music library..."
+  sleep 20
+  go test . -test.v -run 'Airsonic' -count=1
 }
 
 main
