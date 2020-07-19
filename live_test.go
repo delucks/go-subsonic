@@ -4,25 +4,25 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"strings"
 	"testing"
-	"time"
 )
 
 func getSampleGenre(client Client) *Genre {
-	rand.Seed(time.Now().Unix())
 	genres, err := client.GetGenres()
 	if err != nil {
 		return nil
 	}
-	// make sure the genre has songs present
-	selection := genres[rand.Intn(len(genres))]
-	for {
-		if selection.SongCount > 0 {
-			break
+	for _, selection := range genres {
+		if strings.Contains(selection.Name, "Empty") {
+			// the Empty token should be skipped
+			continue
 		}
-		selection = genres[rand.Intn(len(genres))]
+		if selection.SongCount > 0 && selection.AlbumCount > 0 {
+			return selection
+		}
 	}
-	return selection
+	return nil
 }
 
 func getSampleArtist(client Client) *ArtistID3 {
@@ -62,27 +62,36 @@ func findPlaylistByName(client Client, name string) (*Playlist, error) {
 	return nil, fmt.Errorf("Could not find playlist %s", name)
 }
 
+func getSampleArtistFolder(client Client) string {
+	// this uses the folder-based navigation structure to find one valid child in the hierarchy
+	indexes, err := client.GetIndexes(nil)
+	if err != nil {
+		return ""
+	}
+	return indexes.Index[0].Artist[0].ID
+}
+
 func runAirsonicTests(client Client, t *testing.T) {
 	// These are not implemented in Navidrome yet
 	sampleArtist := getSampleArtist(client)
 	sampleAlbum := getSampleAlbum(client)
+	sampleFolder := getSampleArtistFolder(client)
 
 	// Browsing
 	t.Run("GetSimilarSongs", func(t *testing.T) {
-		_, err := client.GetSimilarSongs("48", nil)
+		_, err := client.GetSimilarSongs(sampleFolder, nil)
 		if err != nil {
 			t.Error(err)
 		}
-		// Cannot check for song contents here because GetSimilarSongs on ID 48 may or may not return data
-		songs, err := client.GetSimilarSongs2("1", nil)
+		songs, err := client.GetSimilarSongs2(sampleFolder, nil)
 		if err != nil {
 			t.Error(err)
 		}
 		if songs == nil {
-			t.Error("GetSimilarSongs2 returned nil recommendations for ID 1!")
+			t.Errorf("GetSimilarSongs2 returned nil recommendations for artist %#v!", sampleFolder)
 		}
 		// Make sure the count argument is getting properly passed
-		songs, err = client.GetSimilarSongs2("1", map[string]string{"count": "1"})
+		songs, err = client.GetSimilarSongs2(sampleFolder, map[string]string{"count": "1"})
 		if err != nil {
 			t.Error(err)
 		}
