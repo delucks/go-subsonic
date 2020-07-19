@@ -25,6 +25,14 @@ func runBrowsingTests(client Client, t *testing.T) {
 	})
 
 	t.Run("GetIndexes", func(t *testing.T) {
+		// This test is potentially affected by race condition between the first and second
+		// GetIndexes call. It's clear that LastModified can differ at any time, but if this
+		// is running against an actively scanning collection with more music to be added,
+		// the index content can differ as well.
+		// tl;dr if this test fails when you're running it against an active music collection and not
+		// the test collection downloaded by test.sh, don't worry about it. If you have suggestions
+		// for how to change this test please make an issue/PR!
+		//
 		// Compare no-args usage versus usage with the folder ID
 		idx, err := client.GetIndexes(nil)
 		if err != nil {
@@ -33,9 +41,6 @@ func runBrowsingTests(client Client, t *testing.T) {
 		specified, err := client.GetIndexes(map[string]string{"musicFolderId": "0"})
 		if err != nil {
 			t.Error(err)
-		}
-		if idx.LastModified != specified.LastModified {
-			t.Errorf("LastModified differs: %v -> %v (specified)", idx.LastModified, specified.LastModified)
 		}
 		if idx.IgnoredArticles != specified.IgnoredArticles {
 			t.Errorf("IgnoredArticles differs: %s -> %s (specified)", idx.IgnoredArticles, specified.IgnoredArticles)
