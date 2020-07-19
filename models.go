@@ -52,6 +52,7 @@ type albumList2 struct {
 
 // Artist is an artist from the server, organized in the folders pattern.
 type Artist struct {
+	ID             string    `xml:"id,attr"`
 	Name           string    `xml:"name,attr"`
 	ArtistImageUrl string    `xml:"artistImageUrl,attr,omitempty"`
 	Starred        time.Time `xml:"starred,attr,omitempty"`
