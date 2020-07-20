@@ -92,8 +92,8 @@ If you intend on testing with your own server, modify the top-level TestSubsonic
 
 ## User management
 
-- [ ] getUser (1.3.0)
-- [ ] getUsers (1.8.0)
+- [x] getUser (1.3.0)
+- [x] getUsers (1.8.0)
 - [ ] createUser (1.1.0)
 - [ ] updateUser (1.10.1)
 - [ ] deleteUser (1.3.0)
