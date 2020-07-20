@@ -12,7 +12,7 @@ err() {
 log() {
   SEV="$1"
   shift
-  echo "$(date +%Y-%m-%d\ %T) - ${SEV^^} - $@" >&2
+  echo "$(date +%Y-%m-%d\ %T) - ${SEV^^} - $*" >&2
 }
 
 for dependency in curl docker-compose; do
