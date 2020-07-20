@@ -97,7 +97,7 @@ If you intend on testing with your own server, modify the top-level TestSubsonic
 - [x] createUser (1.1.0)
 - [x] updateUser (1.10.1)
 - [x] deleteUser (1.3.0)
-- [ ] changePassword (1.1.0)
+- [x] changePassword (1.1.0)
 
 ## Media library scanning
 

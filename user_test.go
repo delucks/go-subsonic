@@ -72,6 +72,13 @@ func runUserTests(client Client, t *testing.T) {
 		}
 	})
 
+	t.Run("ChangePassword", func(t *testing.T) {
+		err := client.ChangePassword(testUserName, "new password")
+		if err != nil {
+			t.Error(err)
+		}
+	})
+
 	t.Run("DeleteUser", func(t *testing.T) {
 		beforeUsers, err := client.GetUsers()
 		if err != nil {

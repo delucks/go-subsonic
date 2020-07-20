@@ -90,3 +90,15 @@ func (s *Client) DeleteUser(username string) error {
 	}
 	return nil
 }
+
+// ChangePassword changes the password of an existing Subsonic user, using the following parameters. You can only change your own password unless you have admin privileges.
+func (c *Client) ChangePassword(username, password string) error {
+	_, err := c.Get("changePassword", map[string]string{
+		"username": username,
+		"password": password,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
