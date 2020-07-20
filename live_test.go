@@ -68,17 +68,22 @@ func getSampleArtistFolder(client Client) string {
 	if err != nil {
 		return ""
 	}
-	return indexes.Index[0].Artist[0].ID
+	for _, index := range indexes.Index {
+		if len(index.Artist) > 0 {
+			return index.Artist[0].ID
+		}
+	}
+	return ""
 }
 
 func runAirsonicTests(client Client, t *testing.T) {
 	// These are not implemented in Navidrome yet
 	sampleArtist := getSampleArtist(client)
 	sampleAlbum := getSampleAlbum(client)
-	sampleFolder := getSampleArtistFolder(client)
 
 	// Browsing
 	t.Run("GetSimilarSongs", func(t *testing.T) {
+		sampleFolder := getSampleArtistFolder(client)
 		_, err := client.GetSimilarSongs(sampleFolder, nil)
 		if err != nil {
 			t.Error(err)
@@ -176,7 +181,10 @@ func TestAirsonic(t *testing.T) {
 	runRetrievalTests(client, t)
 	runSearchTests(client, t)
 	runAnnotationTests(client, t)
+
 	runAirsonicTests(client, t)
+	// Initiating a scan interferes with other tests in the suite by removing indexes temporarily, so we run it last
+	runScanningTests(client, t)
 }
 
 func TestSubsonic(t *testing.T) {
@@ -196,5 +204,7 @@ func TestSubsonic(t *testing.T) {
 	runRetrievalTests(client, t)
 	runSearchTests(client, t)
 	runAnnotationTests(client, t)
+
 	runAirsonicTests(client, t)
+	runScanningTests(client, t)
 }
