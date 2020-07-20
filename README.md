@@ -2,7 +2,30 @@
 
 [![GoDoc](https://godoc.org/github.com/delucks/go-subsonic?status.svg)](https://godoc.org/github.com/delucks/go-subsonic)
 
-This is an API client library for Subsonic and Subsonic-compatible music servers. It has been tested on Subsonic, Airsonic, and Navidrome.
+This is an API client library for Subsonic and Subsonic-compatible music servers. It is tested on Subsonic, Airsonic, and Navidrome.
+
+# Testing
+
+Tests for this library run live against instances of Subsonic-compatible servers. A docker-compose setup comes with this repo to run instances of Airsonic and Navidrome for testing purposes. To set up the test environment and run tests against the docker containers, run `test.sh`. This test runner does the following:
+
+- Download CC-licensed sample music into `build/music`
+- Set up a location for configuration for both servers in `build/data`
+- Run `docker-compose up` to initialize both servers with the music & configuration directories as volumes
+- Wait until the servers are up
+- Run tests for both Subsonic and Navidrome
+
+The tests for Subsonic run against the demo server, so please be mindful to exclude them from all but final test runs in respect for their server load. To manually tests for only one server type, use the `-run` argument to `go test` like so:
+
+```
+# Just Airsonic
+go test . -test.v -run Airsonic
+# Subsonic and Airsonic
+go test . -test.v -run '(Sub|Air)sonic'
+# Navidrome
+go test . -test.v -run Navidrome
+```
+
+If you intend on testing with your own server, modify the top-level TestSubsonic, TestAirsonic, or TestNavidrome functions with your server's address and credentials. Please test this library with other Subsonic-compatible streaming servers, and file an issue if something is amiss!
 
 # API Support
 
@@ -78,8 +101,8 @@ This is an API client library for Subsonic and Subsonic-compatible music servers
 
 ## Media library scanning
 
-- [ ] getScanStatus (1.15.0)
-- [ ] startScan (1.15.0)
+- [x] getScanStatus (1.15.0)
+- [x] startScan (1.15.0)
 
 ## Bookmarks
 
