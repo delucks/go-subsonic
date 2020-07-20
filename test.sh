@@ -9,6 +9,12 @@ err() {
   exit 1
 }
 
+log() {
+  SEV="$1"
+  shift
+  echo "$(date +%Y-%m-%d\ %T) - ${SEV^^} - $@" >&2
+}
+
 for dependency in curl docker-compose; do
   hash "$dependency" 2>/dev/null || err "$dependency must be installed"
 done
@@ -26,7 +32,7 @@ download_audionautix() {
   do
     if test -f "$DESTINATION/$track"
     then
-      echo "Skipping download of Audionautix $track" >&2
+      log info "Skipping download of Audionautix $track"
     else
       curl -L -o "$DESTINATION/$track" "${BASEURL}${track}"
     fi
@@ -44,7 +50,7 @@ download_grabbag() {
   do
     if test -f "$DESTINATION/$track"
     then
-      echo "Skipping download of Grab Bag $track" >&2
+      log info "Skipping download of Grab Bag $track"
     else
       curl -L -o "$DESTINATION/$track" "${BASEURL}${track}"
     fi
@@ -63,7 +69,7 @@ download_fourseasons() {
   do
     if test -f "$DESTINATION/$track"
     then
-      echo "Skipping download of The Four Seasons $track" >&2
+      log info "Skipping download of The Four Seasons $track"
     else
       curl -L -o "$DESTINATION/$track" "${BASEURL}${track}"
     fi
@@ -99,22 +105,26 @@ clear_data_dir() {
 }
 
 main() {
-  # Download free CC-licensed music into the build/music directory
+  log info "Downloading sample music into ./build/music"
   download_sample_audio
   # Create or restart the docker containers of Airsonic and Navidrome
   if [[ $(docker-compose top) ]]
   then
     # If the current composition is running, restart it to pick up possible changes
+    log warn "Downing currently running docker containers"
     docker-compose down
   fi
+  log info "Removing excess data"
   clear_data_dir
+  log info "Configuring Airsonic"
   configure_airsonic  # This must occur in the middle so settings aren't overwritten
+  log info "Bringing up containers"
   docker-compose up -d
   sleep 10
-  echo "Creating Navidrome administrator (admin/admin)"
+  log info "Creating Navidrome administrator (admin/admin)"
   create_navidrome_user
   go test . -test.v -run 'Navidrome' -count=1
-  echo "Waiting 30 seconds total for Airsonic to scan the music library..."
+  log info "Waiting 30 seconds total for Airsonic to scan the music library..."
   sleep 20
   go test . -test.v -run 'Airsonic' -count=1
 }
