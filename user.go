@@ -17,3 +17,76 @@ func (c *Client) GetUsers() ([]*User, error) {
 	}
 	return resp.Users.User, nil
 }
+
+// CreateUser creates a new Subsonic user.
+//
+// Optional Parameters		Default	Description
+//   ldapAuthenticated		false		Whether the user is authenicated in LDAP.
+//   adminRole						false		Whether the user is administrator.
+//   settingsRole					true		Whether the user is allowed to change personal settings and password.
+//   streamRole						true		Whether the user is allowed to play files.
+//   jukeboxRole					false		Whether the user is allowed to play files in jukebox mode.
+//   downloadRole					false		Whether the user is allowed to download files.
+//   uploadRole						false		Whether the user is allowed to upload files.
+//   playlistRole					false		Whether the user is allowed to create and delete playlists. Since 1.8.0, changing this role has no effect.
+//   coverArtRole					false		Whether the user is allowed to change cover art and tags.
+//   commentRole					false		Whether the user is allowed to create and edit comments and ratings.
+//   podcastRole					false		Whether the user is allowed to administrate Podcasts.
+//   shareRole						false		(Since 1.8.0) Whether the user is allowed to share files with anyone.
+//   videoConversionRole	false		(Since 1.15.0) Whether the user is allowed to start video conversions.
+//   musicFolderId				All 		(Since 1.12.0) IDs of the music folders the user is allowed access to. Include the parameter once for each folder.
+func (c *Client) CreateUser(username, password, email string, parameters map[string]string) error {
+	params := make(map[string]string)
+	params["username"] = username
+	params["password"] = password
+	params["email"] = email
+	for k, v := range parameters {
+		params[k] = v
+	}
+	_, err := c.Get("createUser", params)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// UpdateUser modifies an existing Subsonic user.
+//
+// Optional Parameters:
+//   password							The password of the user, either in clear text of hex-encoded.
+//   email								The email address of the user.
+//   ldapAuthenticated		Whether the user is authenicated in LDAP.
+//   adminRole						Whether the user is administrator.
+//   settingsRole					Whether the user is allowed to change personal settings and password.
+//   streamRole						Whether the user is allowed to play files.
+//   jukeboxRole					Whether the user is allowed to play files in jukebox mode.
+//   downloadRole					Whether the user is allowed to download files.
+//   uploadRole						Whether the user is allowed to upload files.
+//   coverArtRole					Whether the user is allowed to change cover art and tags.
+//   commentRole					Whether the user is allowed to create and edit comments and ratings.
+//   podcastRole					Whether the user is allowed to administrate Podcasts.
+//   shareRole						(Since 1.8.0) Whether the user is allowed to share files with anyone.
+//   videoConversionRole	(Since 1.15.0) Whether the user is allowed to start video conversions.
+//   musicFolderId				(Since 1.12.0) IDs of the music folders the user is allowed access to. Include the parameter once for each folder.
+//   maxBitRate						(Since 1.13.0) The maximum bit rate (in Kbps) for the user. Audio streams of higher bit rates are automatically downsampled to this bit rate. Legal values: 0 (no limit), 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320.
+func (c *Client) UpdateUser(username string, parameters map[string]string) error {
+	params := make(map[string]string)
+	params["username"] = username
+	for k, v := range parameters {
+		params[k] = v
+	}
+	_, err := c.Get("updateUser", params)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// DeleteUser deletes an existing Subsonic user.
+func (s *Client) DeleteUser(username string) error {
+	_, err := s.Get("deleteUser", map[string]string{"username": username})
+	if err != nil {
+		return err
+	}
+	return nil
+}

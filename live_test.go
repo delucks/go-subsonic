@@ -78,6 +78,7 @@ func getSampleArtistFolder(client Client) string {
 
 func runAirsonicTests(client Client, t *testing.T) {
 	// These are tests for functionality not implemented in Navidrome yet
+	// Compatibility list: https://www.navidrome.org/docs/developers/subsonic-api/
 	sampleArtist := getSampleArtist(client)
 	sampleAlbum := getSampleAlbum(client)
 
@@ -141,17 +142,6 @@ func runAirsonicTests(client Client, t *testing.T) {
 			t.Errorf("Incorrect song count returned from call to getTopSongs, %d actual 1 expected", len(songs))
 		}
 	})
-
-	// Users
-	t.Run("GetUsers", func(t *testing.T) {
-		users, err := client.GetUsers()
-		if err != nil {
-			t.Error(err)
-		}
-		if len(users) == 0 {
-			t.Error("No users returned by GetUsers")
-		}
-	})
 }
 
 func TestNavidrome(t *testing.T) {
@@ -172,7 +162,6 @@ func TestNavidrome(t *testing.T) {
 	runRetrievalTests(client, t)
 	runSearchTests(client, t)
 	runAnnotationTests(client, t)
-	runUserTests(client, t)
 }
 
 func TestAirsonic(t *testing.T) {
@@ -193,9 +182,9 @@ func TestAirsonic(t *testing.T) {
 	runRetrievalTests(client, t)
 	runSearchTests(client, t)
 	runAnnotationTests(client, t)
-	runUserTests(client, t)
 
 	runAirsonicTests(client, t)
+	runUserTests(client, t)
 	// Initiating a scan interferes with other tests in the suite by removing indexes temporarily, so we run it last
 	runScanningTests(client, t)
 }
@@ -217,8 +206,8 @@ func TestSubsonic(t *testing.T) {
 	runRetrievalTests(client, t)
 	runSearchTests(client, t)
 	runAnnotationTests(client, t)
-	runUserTests(client, t)
 
 	runAirsonicTests(client, t)
+	runUserTests(client, t)
 	runScanningTests(client, t)
 }
