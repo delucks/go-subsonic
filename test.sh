@@ -20,6 +20,7 @@ for dependency in curl docker-compose; do
 done
 
 SOURCE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+NAVIDROME_PORT=4533
 
 download_audionautix() {
   # Audionautix Acoustic is a CC licensed album from Jason Shaw available from Free Music Archive.
@@ -96,7 +97,7 @@ DOG
 
 create_navidrome_user() {
   # navidrome does not ship with a built-in user, so we call the API to create a known user before test execution
-  curl -X POST -H "Content-Type: application/json" http://localhost:4533/app/createAdmin --data '{"username":"admin", "password":"admin"}'
+  curl -X POST -H "Content-Type: application/json" "http://localhost:${NAVIDROME_PORT}/auth/createAdmin" --data '{"username":"admin", "password":"admin"}'
   echo
 }
 
