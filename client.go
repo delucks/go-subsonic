@@ -28,12 +28,14 @@ const (
 )
 
 type Client struct {
-	Client     *http.Client
-	BaseUrl    string
-	User       string
-	ClientName string
-	salt       string
-	token      string
+	Client       *http.Client
+	BaseUrl      string
+	User         string
+	ClientName   string
+	PasswordAuth bool
+	password     string
+	salt         string
+	token        string
 }
 
 func generateSalt() string {
@@ -48,18 +50,22 @@ func generateSalt() string {
 
 // Authenticate authenticates the current user with a provided password. The password is salted before transmission and requires Subsonic > 1.13.0.
 func (s *Client) Authenticate(password string) error {
-	salt := generateSalt()
-	h := md5.New()
-	_, err := io.WriteString(h, password)
-	if err != nil {
-		return err
+	if s.PasswordAuth {
+		s.password = password
+	} else {
+		salt := generateSalt()
+		h := md5.New()
+		_, err := io.WriteString(h, password)
+		if err != nil {
+			return err
+		}
+		_, err = io.WriteString(h, salt)
+		if err != nil {
+			return err
+		}
+		s.salt = salt
+		s.token = fmt.Sprintf("%x", h.Sum(nil))
 	}
-	_, err = io.WriteString(h, salt)
-	if err != nil {
-		return err
-	}
-	s.salt = salt
-	s.token = fmt.Sprintf("%x", h.Sum(nil))
 
 	// Test authentication
 	// Don't use the s.Ping method because that always returns true as long as the servers is up.
@@ -92,8 +98,13 @@ func (s *Client) Request(method string, endpoint string, params url.Values) (*ht
 	q.Add("v", supportedApiVersion)
 	q.Add("c", s.ClientName)
 	q.Add("u", s.User)
-	q.Add("t", s.token)
-	q.Add("s", s.salt)
+	if s.PasswordAuth {
+		q.Add("p", s.password)
+	} else {
+		q.Add("t", s.token)
+		q.Add("s", s.salt)
+	}
+
 	for key, values := range params {
 		for _, val := range values {
 			q.Add(key, val)
