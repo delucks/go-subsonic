@@ -103,6 +103,12 @@ create_navidrome_user() {
 
 clear_data_dir() {
   rm -rf ./build/data/*
+
+  # Ensure the directory has our user permissions, not root.
+  if [ ! -d "./build/data" ]
+  then
+    mkdir ./build/data
+  fi
 }
 
 main() {
