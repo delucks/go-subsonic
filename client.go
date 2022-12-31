@@ -153,12 +153,12 @@ func (s *Client) getValues(endpoint string, params url.Values) (*Response, error
 
 // Ping is used to test connectivity with the server. It returns true if the server is up.
 func (s *Client) Ping() bool {
-	_, err := s.Request("GET", "ping", nil)
+	resp, err := s.Request("GET", "ping", nil)
 	if err != nil {
 		log.Println(err)
 		return false
 	}
-	return true
+	return resp.StatusCode >= 200 && resp.StatusCode < 300
 }
 
 // GetLicense retrieves details about the software license. Subsonic requires a license after a 30-day trial, compatible applications have a perpetually valid license.
