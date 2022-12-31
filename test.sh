@@ -4,6 +4,8 @@
 # It wraps docker-compose to download a sample music library before creating instances of these servers,
 # allowing the go-subsonic tests to run fully against the sample instances.
 
+COMPOSE_BIN=${COMPOSE_BIN:-"docker-compose"}
+
 err() {
   echo "$1" >&2
   exit 1
@@ -15,9 +17,10 @@ log() {
   echo "$(date +%Y-%m-%d\ %T) - ${SEV^^} - $*" >&2
 }
 
-for dependency in curl docker-compose; do
+for dependency in curl docker; do
   hash "$dependency" 2>/dev/null || err "$dependency must be installed"
 done
+$COMPOSE_BIN version 2>/dev/null || err "Docker Compose must be installed"
 
 SOURCE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 NAVIDROME_PORT=4533
@@ -103,24 +106,30 @@ create_navidrome_user() {
 
 clear_data_dir() {
   rm -rf ./build/data/*
+
+  # Ensure the directory has our user permissions, not root.
+  if [ ! -d "./build/data" ]
+  then
+    mkdir ./build/data
+  fi
 }
 
 main() {
   log info "Downloading sample music into ./build/music"
   download_sample_audio
   # Create or restart the docker containers of Airsonic and Navidrome
-  if [[ $(docker-compose top) ]]
+  if [[ $($COMPOSE_BIN top) ]]
   then
     # If the current composition is running, restart it to pick up possible changes
     log warn "Downing currently running docker containers"
-    docker-compose down
+    $COMPOSE_BIN down
   fi
   log info "Removing excess data"
   clear_data_dir
   log info "Configuring Airsonic"
   configure_airsonic  # This must occur in the middle so settings aren't overwritten
   log info "Bringing up containers"
-  docker-compose up -d
+  $COMPOSE_BIN up -d
   sleep 10
   log info "Creating Navidrome administrator (admin/admin)"
   create_navidrome_user
