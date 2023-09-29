@@ -23,7 +23,7 @@ import (
 //   size:                   (Since 1.6.0) Only applicable to video streaming. Requested video size specified as WxH, for instance "640x480".
 //   estimateContentLength:  (Since 1.8.0). If set to "true", the Content-Length HTTP header will be set to an estimated value for transcoded or downsampled media.
 //   converted:              (Since 1.14.0) Only applicable to video streaming. Subsonic can optimize videos for streaming by converting them to MP4. If a conversion exists for the video in question, then setting this parameter to "true" will cause the converted video to be returned instead of the original.
-func (s *Client) Stream(id string, parameters map[string]string) (io.Reader, error) {
+func (s *Client) Stream(id string, parameters map[string]string) (io.ReadCloser, error) {
 	params := url.Values{}
 	params.Add("id", id)
 	for k, v := range parameters {
@@ -56,7 +56,7 @@ func (s *Client) Stream(id string, parameters map[string]string) (io.Reader, err
 }
 
 // Download returns a given media file. Similar to stream, but this method returns the original media data without transcoding or downsampling.
-func (s *Client) Download(id string) (io.Reader, error) {
+func (s *Client) Download(id string) (io.ReadCloser, error) {
 	params := url.Values{}
 	params.Add("id", id)
 	response, err := s.Request("GET", "download", params)
