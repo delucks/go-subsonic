@@ -83,6 +83,28 @@ func (s *Client) Authenticate(password string) error {
 
 // Request performs a HTTP request against the Subsonic server as the current user.
 func (s *Client) Request(method string, endpoint string, params url.Values) (*http.Response, error) {
+	req, err := s.setupRequest(method, endpoint, params)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := s.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+// Get is a convenience interface to issue a GET request and parse the response body (99% of Subsonic API calls)
+func (s *Client) Get(endpoint string, params map[string]string) (*Response, error) {
+	parameters := url.Values{}
+	for k, v := range params {
+		parameters.Add(k, v)
+	}
+	return s.getValues(endpoint, parameters)
+}
+
+func (s *Client) setupRequest(method string, endpoint string, params url.Values) (*http.Request, error) {
 	baseUrl, err := url.Parse(s.BaseUrl)
 	if err != nil {
 		return nil, err
@@ -112,21 +134,7 @@ func (s *Client) Request(method string, endpoint string, params url.Values) (*ht
 	}
 	req.URL.RawQuery = q.Encode()
 	//log.Printf("%s %s", method, req.URL.String())
-
-	resp, err := s.Client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	return resp, nil
-}
-
-// Get is a convenience interface to issue a GET request and parse the response body (99% of Subsonic API calls)
-func (s *Client) Get(endpoint string, params map[string]string) (*Response, error) {
-	parameters := url.Values{}
-	for k, v := range params {
-		parameters.Add(k, v)
-	}
-	return s.getValues(endpoint, parameters)
+	return req, nil
 }
 
 // getValues is a convenience interface to issue a GET request and parse the response body. It supports multiple values by way of the url.Values argument.
