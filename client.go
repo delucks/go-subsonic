@@ -33,9 +33,13 @@ type Client struct {
 	User         string
 	ClientName   string
 	PasswordAuth bool
-	password     string
-	salt         string
-	token        string
+
+	// RequireDotView will use the "(action).view" variant of the API.
+	RequireDotView bool
+
+	password string
+	salt     string
+	token    string
 }
 
 func generateSalt() string {
@@ -87,6 +91,10 @@ func (s *Client) Request(method string, endpoint string, params url.Values) (*ht
 	if err != nil {
 		return nil, err
 	}
+
+	if s.RequireDotView {
+		endpoint = endpoint + ".view"
+	}
 	baseUrl.Path = path.Join(baseUrl.Path, "/rest/", endpoint)
 	req, err := http.NewRequest(method, baseUrl.String(), nil)
 	if err != nil {
@@ -131,6 +139,7 @@ func (s *Client) Get(endpoint string, params map[string]string) (*Response, erro
 
 // getValues is a convenience interface to issue a GET request and parse the response body. It supports multiple values by way of the url.Values argument.
 func (s *Client) getValues(endpoint string, params url.Values) (*Response, error) {
+
 	response, err := s.Request("GET", endpoint, params)
 	if err != nil {
 		return nil, err
@@ -153,12 +162,12 @@ func (s *Client) getValues(endpoint string, params url.Values) (*Response, error
 
 // Ping is used to test connectivity with the server. It returns true if the server is up.
 func (s *Client) Ping() bool {
-	_, err := s.Request("GET", "ping", nil)
+	resp, err := s.Request("GET", "ping", nil)
 	if err != nil {
 		log.Println(err)
 		return false
 	}
-	return true
+	return resp.StatusCode >= 200 && resp.StatusCode < 300
 }
 
 // GetLicense retrieves details about the software license. Subsonic requires a license after a 30-day trial, compatible applications have a perpetually valid license.
