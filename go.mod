@@ -1,3 +1,3 @@
-module github.com/delucks/go-subsonic
+module github.com/apkatsikas/go-subsonic
 
 go 1.13
